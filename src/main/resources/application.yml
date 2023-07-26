@@ -1,0 +1,28 @@
+server:
+  port: 31313
+  servlet:
+    session:
+      timeout: 1800
+  
+cloud:
+  jira:
+    baseurl: https://advanc2d.atlassian.net/
+    id: gkfn185@gmail.com
+    pass: ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F
+    projectKey: ADVANC2D
+    apiVersion: 3
+  oauth2:
+    client:
+      clientId: h3G2k7xZbgBt5odGcGvKrqYhhIvtFTLh
+      clientSecret: ATOAvLp6ZJE_XJHtn5aZOP9AmyaNbyXHMm2z1hQMjdgZDX5GaQ7ENLn4l-5yTergav7dDDD1482A
+      accessTokenUri: https://auth.atlassian.com/oauth/token
+      userAuthorizationUri: https://auth.atlassian.com/authorize?audience=api.atlassian.com
+      authorizationUri: https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=h3G2k7xZbgBt5odGcGvKrqYhhIvtFTLh&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work%20manage%3Ajira-webhook%20manage%3Ajira-data-provider&redirect_uri=http%3A%2F%2Flocalhost%3A31313%2Fcloud%2Fjira%2Foauth%2Fcallback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent
+      redirectUri: http://localhost:31313/cloud/jira/oauth/callback
+      apiResourceUri: https://api.atlassian.com/oauth/token/accessible-resources
+      scope: 'read:jira-user'
+      grantType: 'authorization_code'
+
+app:
+  cloudId: 63j83k6d-c0cd-1055-7c5a-a237kaj84k36
+  jiraUrl: https://api.atlassian.com/ex/jira/
