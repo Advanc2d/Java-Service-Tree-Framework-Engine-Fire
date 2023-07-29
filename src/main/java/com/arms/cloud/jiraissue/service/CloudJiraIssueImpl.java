@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Service("cloudJiraIssue")
@@ -59,20 +58,17 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     public String createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {
 
         final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-        boolean updateHistory = true;
-        boolean applyDefaultValues = false;
-        boolean skipAutoWatch = true;
 
-        String param = "?updateHistory=" + updateHistory + "&applyDefaultValues=" + applyDefaultValues + "&skipAutoWatch=" + skipAutoWatch;
-        String endpoint = "/rest/api/3/issue"+param;
+        String endpoint = "/rest/api/3/issue";
 
-        Mono<String> response = jiraWebClient.post()
+        CloudJiraIssueDTO response = jiraWebClient.post()
                 .uri(endpoint)
                 .bodyValue(cloudJiraIssueInputDTO)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(CloudJiraIssueDTO.class)
+                .block();
 
-        String jsonResponse = response.block();
+        String jsonResponse = response.toString();
 
         return jsonResponse;
     }
