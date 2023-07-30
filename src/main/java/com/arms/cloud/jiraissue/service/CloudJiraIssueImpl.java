@@ -31,9 +31,12 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         CloudJiraIssueSearchDTO response = jiraWebClient.get()
                 .uri(endpoint)
                 .retrieve()
-                .bodyToMono(CloudJiraIssueSearchDTO.class).block();
+                .bodyToMono(CloudJiraIssueSearchDTO.class)
+                .block();
 
-        logger.info(response.toString());
+        String jsonResponse = response.toString();
+        logger.info(jsonResponse);
+
         return response;
     }
 
@@ -46,7 +49,8 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         CloudJiraIssueDTO response = jiraWebClient.get()
                 .uri(endpoint)
                 .retrieve()
-                .bodyToMono(CloudJiraIssueDTO.class).block();
+                .bodyToMono(CloudJiraIssueDTO.class)
+                .block();
 
         String jsonResponse = response.toString();
         logger.info(jsonResponse);
@@ -55,7 +59,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     }
 
     @Override
-    public String createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {
+    public CloudJiraIssueDTO createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {
 
         final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
 
@@ -69,8 +73,9 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
                 .block();
 
         String jsonResponse = response.toString();
+        logger.info(jsonResponse);
 
-        return jsonResponse;
+        return response;
     }
 
 }
