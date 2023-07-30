@@ -1,21 +1,19 @@
 package com.arms.cloud.jiraissuetype.service;
 
-import java.util.List;
-
+import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
+import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeInputDTO;
+import com.arms.config.CloudJiraConfig;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
-import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeInputDTO;
-import com.arms.config.CloudJiraConfig;
-
-import lombok.AllArgsConstructor;
+import java.util.List;
 
 @AllArgsConstructor
-@Service
+@Service("cloudJiraIssueType")
 public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -24,18 +22,18 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
 	@Override
 	public List<CloudJiraIssueTypeDTO> getIssueTypeList() throws Exception {
-                final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+        final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
 
-                String endpoint = "/rest/api/3/issuetype";
+        String endpoint = "/rest/api/3/issuetype";
 
-                List<CloudJiraIssueTypeDTO> issueTypes = jiraWebClient.get()
-                        .uri(endpoint)
-                        .retrieve()
-                        .bodyToMono(List.class).block();
+        List<CloudJiraIssueTypeDTO> issueTypes = jiraWebClient.get()
+                .uri(endpoint)
+                .retrieve()
+                .bodyToMono(List.class).block();
 
-                logger.info(issueTypes.toString());
+        logger.info(issueTypes.toString());
 
-                return issueTypes;
+        return issueTypes;
 	}
 
 	@Override
@@ -55,7 +53,6 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
                 return addCloudJirarIssueTypeDTO;
 	}
-   
-    
+
 
 }

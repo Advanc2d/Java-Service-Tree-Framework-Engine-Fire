@@ -16,5 +16,5 @@ import lombok.ToString;
 public class CloudJiraIssueTypeInputDTO {
     private String description;
     private String name;
-    private String type; // 표준 이슈 유형(수준 0) : standard or 하위 작업 이슈 유형(수준 -1) : subtask
+    private Integer hierarchyLevel; // 표준 이슈 유형(0), 하위 작업 이슈 유형(-1)
 }

@@ -33,12 +33,37 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
 
     public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping() {
         final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-        String uri = "/rest/api/3/issuetypescheme/mapping";
 
-        CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = jiraWebClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<CloudJiraIssueTypeSchemeMappingDTO>() {}).block();
+        int maxResult = 50;
+        int startAt = 0;
+        int index=1;
+        boolean checkLast = false;
+
+        List<CloudJiraIssueTypeSchemeMappingValueDTO> values
+                = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
+
+        CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
+
+        while(!checkLast) {
+            String uri = "/rest/api/3/issuetypescheme/mapping?maxResults="+ maxResult + "&startAt=" + startAt;
+            CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMappingPaging = jiraWebClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<CloudJiraIssueTypeSchemeMappingDTO>() {}).block();
+
+            values.addAll(issueTypeSchemeMappingPaging.getValues());
+
+            if (issueTypeSchemeMappingPaging.getTotal() == values.size()) {
+                issueTypeSchemeMapping = issueTypeSchemeMappingPaging;
+                checkLast = true;
+            }
+            else {
+                startAt = maxResult * index;
+                index++;
+            }
+        }
+
+        issueTypeSchemeMapping.setValues(values);
 
         return issueTypeSchemeMapping;
     }
@@ -68,9 +93,12 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
                 if (result.getStatusCode() == HttpStatus.NO_CONTENT) {
                     System.out.println("이슈 타입 추가 성공");
                 }
+                else {
+                    System.out.println("이슈 타입 추가 실패");
+                    return result.toString();
+                }
             }
         }
-
         return "success";
     }
 
