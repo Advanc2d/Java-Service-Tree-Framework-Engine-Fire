@@ -12,7 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CloudJiraIssueDTO {
-    private String expand;
     private String id;
     private String key;
     private String self;

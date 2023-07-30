@@ -7,5 +7,5 @@ import com.arms.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
 public interface CloudJiraIssue {
     public CloudJiraIssueSearchDTO getIssueSearch(String projectKeyOrId);
     public CloudJiraIssueDTO getIssue(String issueKeyOrId);
-    public String createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception;
+    public CloudJiraIssueDTO createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception;
 }

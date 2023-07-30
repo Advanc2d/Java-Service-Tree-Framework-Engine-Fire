@@ -49,7 +49,7 @@ public class CloudJiraIssueController {
             value = {""},
             method = {RequestMethod.POST}
     )
-    public String makeIssueForReqAdd(@RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO,
+    public CloudJiraIssueDTO makeIssueForReqAdd(@RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO,
                                                 ModelMap model, HttpServletRequest request) throws Exception {
         return cloudJiraIssue.createIssue(cloudJiraIssueInputDTO);
     }
