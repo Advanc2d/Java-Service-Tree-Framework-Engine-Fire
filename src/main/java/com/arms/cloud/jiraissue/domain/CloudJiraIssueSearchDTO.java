@@ -14,5 +14,8 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CloudJiraIssueSearchDTO {
+    private Integer startAt;
+    private Integer maxResults;
+    private Integer total;
     private List<CloudJiraIssueDTO> issues;
 }

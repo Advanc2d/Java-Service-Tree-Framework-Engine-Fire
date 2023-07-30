@@ -70,9 +70,9 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Description {
-        private List<InputFieldDTO.Content> content;
+        private List<Content> content;
         private String type;
-        private int version;
+        private Integer version;
     }
 
     @Getter
@@ -83,7 +83,7 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Content {
-        private List<InputFieldDTO.ContentItem> content;
+        private List<ContentItem> content;
         private String type;
     }
 
@@ -121,7 +121,6 @@ public class FieldsDTO {
         private String accountId;
         private String emailAddress;
     }
-
 
     @Getter
     @Setter
@@ -234,8 +233,6 @@ public class FieldsDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SubTask{
         private String id;
-        private Type type;
-        private OutwardIssue outwardIssue;
     }
 
 }
