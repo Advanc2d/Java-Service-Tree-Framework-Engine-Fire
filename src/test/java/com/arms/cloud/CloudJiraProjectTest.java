@@ -35,7 +35,7 @@ public class CloudJiraProjectTest {
     @Test
     @DisplayName("프로젝트 전체 조회 테스트")
     public void ProjectListCallTest() {
-        String uri = "rest/api/3/project";
+        String uri = "/rest/api/3/project";
 
         List<CloudJiraProjectDTO> projects = webClient.get()
                     .uri(uri)
@@ -48,7 +48,7 @@ public class CloudJiraProjectTest {
     @Test
     @DisplayName("프로젝트 세부 사항 조회 테스트")
     public void ProjectDetailsCallTest() {
-        String uri = "rest/api/3/project/" + projectKeyOrId;
+        String uri = "/rest/api/3/project/" + projectKeyOrId;
 
         CloudJiraProjectDTO project = webClient.get()
                     .uri(uri)

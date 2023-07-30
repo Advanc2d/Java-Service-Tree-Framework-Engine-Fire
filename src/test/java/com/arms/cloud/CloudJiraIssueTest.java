@@ -16,7 +16,7 @@ import com.arms.cloud.jiraissue.service.CloudJiraIssue;
 public class CloudJiraIssueTest {
     WebClient webClient;
 
-    public String baseUrl = "https://advanc2d.atlassian.net/";
+    public String baseUrl = "https://advanc2d.atlassian.net";
     public String id = "gkfn185@gmail.com";
     public String pass = "ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F";
     public String projectKeyOrId = "ADVANC2D";
@@ -38,7 +38,7 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("프로젝트 키의 이슈 전체 조회 테스트")
     public void IssueSearchCallTest() {
-        String uri = "rest/api/3/search?jql=project=" + projectKeyOrId;
+        String uri = "/rest/api/3/search?jql=project=" + projectKeyOrId;
 
         CloudJiraIssueSearchDTO issues = webClient.get()
                     .uri(uri)
@@ -51,7 +51,7 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("이슈 상세조회 조회 테스트")
     public void IssueDetailCallTest() {
-        String uri = "rest/api/3/issue/" + issueKeyOrId;
+        String uri = "/rest/api/3/issue/" + issueKeyOrId;
 
         CloudJiraIssueDTO issue = webClient.get()
                     .uri(uri)

@@ -42,14 +42,31 @@ public class CloudJiraIssueTypeSchemeTest {
     @Test
     @DisplayName("매핑된 issueTypeScheme에 따르는 issueTypeId 전체 조회 api 호출 테스트")
     public void EachIssueTypeSchemeMappingIssueTypeIdCallTest() {
-        String uri = "/rest/api/3/issuetypescheme/mapping";
+        int maxResult = 10;
+        int startAt = 0;
+        int index=1;
+        boolean checkLast = false;
 
-        CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<CloudJiraIssueTypeSchemeMappingDTO>() {}).block();
+        List<CloudJiraIssueTypeSchemeMappingValueDTO> values
+                    = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
-        List<CloudJiraIssueTypeSchemeMappingValueDTO> values = issueTypeSchemeMapping.getValues();
+        while(!checkLast) {
+            String uri = "/rest/api/3/issuetypescheme/mapping?maxResults="+ maxResult + "&startAt=" + startAt;
+            CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = webClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<CloudJiraIssueTypeSchemeMappingDTO>() {}).block();
+
+            values.addAll(issueTypeSchemeMapping.getValues());
+
+            if (issueTypeSchemeMapping.getTotal() == values.size()) {
+                checkLast = true;
+            }
+            else {
+                startAt = maxResult * index;
+                index++;
+            }
+        }
 
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
