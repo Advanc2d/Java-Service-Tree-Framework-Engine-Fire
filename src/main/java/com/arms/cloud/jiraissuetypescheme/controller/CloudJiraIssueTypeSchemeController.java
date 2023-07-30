@@ -5,6 +5,7 @@ import com.arms.cloud.jiraissuetypescheme.service.CloudJiraIssueTypeScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = {"/cloud/jira/issuetypescheme"})
@@ -36,7 +38,7 @@ public class CloudJiraIssueTypeSchemeController {
             value = {"/check/requirement"},
             method = {RequestMethod.PUT}
     )
-    public String addIssueTypeSchemeReqIssueType(ModelMap model, HttpServletRequest request) throws Exception {
+    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType(ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ISSUE TYPE SCHEME CHECK REQUIREMENT PUT API 호출");
         return cloudJiraIssueTypeScheme.addIssueTypeSchemeReqIssueType();
     }

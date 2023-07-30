@@ -68,7 +68,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         return issueTypeSchemeMapping;
     }
 
-    public String addIssueTypeSchemeReqIssueType() {
+    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType() {
         final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = getIssueTypeSchemeMapping();
@@ -80,6 +80,8 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         // DB에서 요구사항 issueType 정보 가져오기
         String issueTypeId = "10028";
 
+        List<ResponseEntity<?>> result = null;
+
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();
             List<String> issueTypeIds = entry.getValue();
@@ -88,18 +90,20 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
                 System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재합니다.");
             } else {
                 System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재하지 않습니다.");
-                ResponseEntity<?>  result = addIssueTypesToIssueTypeScheme(issueTypeSchemeId, issueTypeId);
+                ResponseEntity<?> response = addIssueTypesToIssueTypeScheme(issueTypeSchemeId, issueTypeId);
 
-                if (result.getStatusCode() == HttpStatus.NO_CONTENT) {
+                if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
                     System.out.println("이슈 타입 추가 성공");
+                    result.add(response);
                 }
                 else {
                     System.out.println("이슈 타입 추가 실패");
-                    return result.toString();
+                    result.add(response);
                 }
             }
         }
-        return "success";
+
+        return result;
     }
 
     public ResponseEntity<?> addIssueTypesToIssueTypeScheme(String issueTypeSchemeId, String issueTypeId) {
