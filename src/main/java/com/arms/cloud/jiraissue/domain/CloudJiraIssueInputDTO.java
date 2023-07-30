@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CloudJiraIssueInputDTO {
-    private InputFieldDTO fields;
+    private FieldsDTO fields;
 }
