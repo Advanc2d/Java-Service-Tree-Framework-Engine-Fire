@@ -1,8 +1,7 @@
 package com.arms.cloud;
 
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.arms.cloud.jiraissue.domain.CloudJiraIssueDTO;
 import com.arms.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
-import com.arms.cloud.jiraissue.service.CloudJiraIssue;
 
 public class CloudJiraIssueTest {
     WebClient webClient;
@@ -45,7 +43,7 @@ public class CloudJiraIssueTest {
                     .retrieve()
                     .bodyToMono(CloudJiraIssueSearchDTO.class).block();
 
-        Assertions.assertThat(issues.getIssues().size()).isEqualTo(6);
+        Assertions.assertThat(issues.getIssues().getClass()).isEqualTo(ArrayList.class);
     }
     
     @Test

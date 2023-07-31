@@ -49,7 +49,7 @@ public class CloudJiraConfig {
     public WebClient getJiraWebClient() {
         return WebClient.builder()
                 .baseUrl(jiraUrl)
-                // .defaultHeader("Authorization", "Basic " + getBase64Credentials(jiraID, jiraPass))
+                .defaultHeader("Authorization", "Basic " + getBase64Credentials(jiraID, jiraPass))
                 .build();
     }
 

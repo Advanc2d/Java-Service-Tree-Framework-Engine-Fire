@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CloudJiraIssueTypeScheme {
     public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping();
-    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType();
+    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType() throws Exception;
 }
