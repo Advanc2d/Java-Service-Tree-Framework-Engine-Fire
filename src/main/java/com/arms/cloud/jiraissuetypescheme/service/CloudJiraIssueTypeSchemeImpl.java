@@ -1,5 +1,7 @@
 package com.arms.cloud.jiraissuetypescheme.service;
 
+import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
+import com.arms.cloud.jiraissuetype.service.CloudJiraIssueType;
 import com.arms.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingDTO;
 import com.arms.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingValueDTO;
 import com.arms.cloud.jiraissuetypescheme.domain.IssueTypeIdsDTO;
@@ -30,6 +32,9 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
     @Autowired
     @Qualifier("cloudJiraConfig")
     private CloudJiraConfig cloudJiraConfig;
+
+    @Autowired
+    private CloudJiraIssueType cloudJiraIssueType;
 
     public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping() {
         final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
@@ -68,37 +73,35 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         return issueTypeSchemeMapping;
     }
 
-    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType() {
-        final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType() throws Exception {
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = getIssueTypeSchemeMapping();
-
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values = issueTypeSchemeMapping.getValues();
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
         // 수정필요
         // DB에서 요구사항 issueType 정보 가져오기
-        String issueTypeId = "10028";
+        List<CloudJiraIssueTypeDTO> list =  cloudJiraIssueType.getIssueTypeListByDB();
 
-        List<ResponseEntity<?>> result = null;
+        List<ResponseEntity<?>> result = new ArrayList<>();
 
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();
             List<String> issueTypeIds = entry.getValue();
 
-            if (issueTypeIds.contains(issueTypeId)) {
-                System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재합니다.");
-            } else {
-                System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재하지 않습니다.");
-                ResponseEntity<?> response = addIssueTypesToIssueTypeScheme(issueTypeSchemeId, issueTypeId);
+            for(CloudJiraIssueTypeDTO item : list) {
+                if (issueTypeIds.contains(item.getId())) {
+                    System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + item.getId() + ")가 존재합니다.");
+                } else {
+                    System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + item.getId() + ")가 존재하지 않습니다.");
+                    ResponseEntity<?> response = addIssueTypesToIssueTypeScheme(issueTypeSchemeId, item.getId());
 
-                if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-                    System.out.println("이슈 타입 추가 성공");
-                    result.add(response);
-                }
-                else {
-                    System.out.println("이슈 타입 추가 실패");
-                    result.add(response);
+                    if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+                        result.add(response);
+                    }
+                    else {
+                        result.add(response);
+                    }
                 }
             }
         }

@@ -1,12 +1,13 @@
 package com.arms.cloud;
 
 import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
+import com.arms.cloud.jiraissuetype.service.CloudJiraIssueType;
 import com.arms.cloud.jiraissuetypescheme.domain.*;
-import com.arms.cloud.jiraproject.domain.CloudJiraProjectDTO;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 
+@SpringBootTest
 public class CloudJiraIssueTypeSchemeTest {
     WebClient webClient;
 
@@ -25,6 +27,9 @@ public class CloudJiraIssueTypeSchemeTest {
     public String projectKeyOrId = "ADVANC2D";
     public String projectId = "10000";
     public String issueTypeId = "10028";
+
+    @Autowired
+    CloudJiraIssueType cloudJiraIssueType;
 
     @BeforeEach
     void setUp () {
@@ -41,7 +46,7 @@ public class CloudJiraIssueTypeSchemeTest {
 
     @Test
     @DisplayName("매핑된 issueTypeScheme에 따르는 issueTypeId 전체 조회 api 호출 테스트")
-    public void EachIssueTypeSchemeMappingIssueTypeIdCallTest() {
+    public void EachIssueTypeSchemeMappingIssueTypeIdCallTest() throws Exception {
         int maxResult = 10;
         int startAt = 0;
         int index=1;
@@ -70,14 +75,18 @@ public class CloudJiraIssueTypeSchemeTest {
 
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
+        List<CloudJiraIssueTypeDTO> list = cloudJiraIssueType.getIssueTypeListByDB();
+        
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();
             List<String> issueTypeIds = entry.getValue();
 
-            if (issueTypeIds.contains(issueTypeId)) {
-                System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재합니다.");
-            } else {
-                System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재하지 않습니다.");
+            for (CloudJiraIssueTypeDTO item : list) {
+                if (issueTypeIds.contains(item.getId())) {
+                    System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + item.getId() + ")가 존재합니다.");
+                } else {
+                    System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + item.getId() + ")가 존재하지 않습니다.");
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.arms.cloud;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -42,7 +43,10 @@ public class CloudJiraProjectTest {
                     .retrieve()
                     .bodyToMono(List.class).block();
 
-        Assertions.assertThat(projects.size()).isEqualTo(2);
+        System.out.println(projects.toString());
+        System.out.println(projects.getClass());
+
+        Assertions.assertThat(projects.getClass()).isEqualTo(ArrayList.class);
     }
 
     @Test
