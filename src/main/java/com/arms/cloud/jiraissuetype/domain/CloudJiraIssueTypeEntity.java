@@ -21,37 +21,37 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CloudJiraIssueTypeEntity implements Serializable {
-    @Id
-    @Column(name = "id")
-    private String id;
+   @Id
+   @Column(name = "id")
+   private String id;
 
-    //@Getter @Setter
-    @Column(name = "self")
-    @Type(type="text")
-    private String self;
+   //@Getter @Setter
+   @Column(name = "self")
+   @Type(type="text")
+   private String self;
 
-    @Column(name = "description")
-    @Type(type="text")
-    private String description;
+   @Column(name = "description")
+   @Type(type="text")
+   private String description;
 
-    @Column(name = "iconUrl")
-    @Type(type="text")
-    private String iconUrl;
+   @Column(name = "iconUrl")
+   @Type(type="text")
+   private String iconUrl;
 
-    @Column(name = "name")
-    @Type(type="text")
-    private String name;
+   @Column(name = "name")
+   @Type(type="text")
+   private String name;
 
-    @Column(name = "untranslatedName")
-    @Type(type="text")
-    private String untranslatedName;
+   @Column(name = "untranslatedName")
+   @Type(type="text")
+   private String untranslatedName;
 
-    @Column(name = "subtask")
-    private boolean subtask;
+   @Column(name = "subtask")
+   private boolean subtask;
 
-    @Column(name = "avatarId")
-    private Integer avatarId;
+   @Column(name = "avatarId")
+   private Integer avatarId;
 
-    @Column(name = "hierarchyLevel")
-    private Integer hierarchyLevel;
+   @Column(name = "hierarchyLevel")
+   private Integer hierarchyLevel;
 }

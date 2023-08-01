@@ -33,7 +33,7 @@ public class CloudJiraIssueTypeController {
     )
     public List<CloudJiraIssueTypeDTO> getIssueTypeList(ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ALL ISSUE TYPE GET API 호출");
-        return cloudJiraIssueType.getIssueTypeList();
+        return cloudJiraIssueType.getIssueTypeListByCloud();
     }
 
     @ResponseBody

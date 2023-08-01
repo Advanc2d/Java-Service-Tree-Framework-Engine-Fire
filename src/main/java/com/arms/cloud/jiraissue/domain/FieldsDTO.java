@@ -36,7 +36,7 @@ public class FieldsDTO {
 
     // 추가
     private Priority priority; // 우선순위
-    private List<SubTask> subtasks; // sub task
+    private List<CloudJiraIssueDTO> subtasks; // sub task
 
     @Getter
     @Setter
@@ -70,9 +70,9 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Description {
-        private List<InputFieldDTO.Content> content;
+        private List<Content> content;
         private String type;
-        private int version;
+        private Integer version;
     }
 
     @Getter
@@ -83,7 +83,7 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Content {
-        private List<InputFieldDTO.ContentItem> content;
+        private List<ContentItem> content;
         private String type;
     }
 
@@ -122,7 +122,6 @@ public class FieldsDTO {
         private String emailAddress;
     }
 
-
     @Getter
     @Setter
     @Builder
@@ -134,6 +133,20 @@ public class FieldsDTO {
         private String id;
     }
 
+    // @Getter
+    // @Setter
+    // @Builder
+    // @ToString
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // @JsonInclude(JsonInclude.Include.NON_NULL)
+    // public static class IssueLink {
+    //     private String id;
+    //     private Type type;
+    //     private InwardIssue inwardIssue;
+    //     private OutwardIssue outwardIssue;
+    // }
+
     @Getter
     @Setter
     @Builder
@@ -144,8 +157,8 @@ public class FieldsDTO {
     public static class IssueLink {
         private String id;
         private Type type;
-        private InwardIssue inwardIssue;
-        private OutwardIssue outwardIssue;
+        private CloudJiraIssueDTO inwardIssue;
+        private CloudJiraIssueDTO outwardIssue;
     }
 
     @Getter
@@ -234,8 +247,6 @@ public class FieldsDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SubTask{
         private String id;
-        private Type type;
-        private OutwardIssue outwardIssue;
     }
 
 }

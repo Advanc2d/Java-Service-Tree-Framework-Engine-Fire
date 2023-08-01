@@ -1,15 +1,19 @@
 package com.arms.cloud.jiraissue.service;
 
+import com.arms.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
 import com.arms.cloud.jiraissue.domain.CloudJiraIssueDTO;
+import com.arms.cloud.jiraissue.domain.CloudJiraIssueEntity;
 import com.arms.cloud.jiraissue.domain.CloudJiraIssueInputDTO;
 import com.arms.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
 import com.arms.config.CloudJiraConfig;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @AllArgsConstructor
@@ -21,6 +25,10 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     @Autowired
     @Qualifier("cloudJiraConfig")
     private CloudJiraConfig cloudJiraConfig;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private CloudJiraIssueJpaRepository cloudJiraIssueJpaRepository;
 
     @Override
     public CloudJiraIssueSearchDTO getIssueSearch(String projectKeyOrId) {
@@ -58,6 +66,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return response;
     }
 
+    @Transactional
     @Override
     public CloudJiraIssueDTO createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {
 
@@ -74,6 +83,9 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String jsonResponse = response.toString();
         logger.info(jsonResponse);
+
+        CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(response,CloudJiraIssueEntity.class);
+        cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
 
         return response;
     }

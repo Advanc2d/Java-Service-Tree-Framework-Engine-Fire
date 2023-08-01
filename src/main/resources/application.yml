@@ -33,24 +33,24 @@ app:
   cloudId: 63j83k6d-c0cd-1055-7c5a-a237kaj84k36
   jiraUrl: https://api.atlassian.com/ex/jira/
 
-#spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/engine?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-#    username: mysqluser
-#    password: mysqluserpassword
-#
-#
-#  jpa:
-#    open-in-view: true
-#    hibernate:
-#      ddl-auto: update  # option type: create, create-drop, update, validate, none
-#      # create로 하게되면 기존 테이블을 삭제후 다시 생성하게 된다.
-#      naming:
-#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#      use-new-id-generator-mappings: false
-#    show-sql: true  # sql 쿼리를 보여줍니다.
-#    generate-ddl: true
-#    properties:
-#      hibernate.format_sql: true    # JPA의 구현체인 Hibernate가 동작하면서 발생한 SQL의 가독성을 높여준다.
-#      dialect: org.hibernate.dialect.MySQL5InnoDBDialect    # 쿼리의 기준이 되는 데이터베이스 엔진을 설정합니다.
+spring:
+ datasource:
+   driver-class-name: com.mysql.cj.jdbc.Driver
+   url: jdbc:mysql://localhost:3306/engine?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+   username: mysqluser
+   password: mysqluserpassword
+
+
+ jpa:
+   open-in-view: true
+   hibernate:
+     ddl-auto: update  # option type: create, create-drop, update, validate, none
+     # create로 하게되면 기존 테이블을 삭제후 다시 생성하게 된다.
+     naming:
+       physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+     use-new-id-generator-mappings: false
+   show-sql: true  # sql 쿼리를 보여줍니다.
+   generate-ddl: true
+   properties:
+     hibernate.format_sql: true    # JPA의 구현체인 Hibernate가 동작하면서 발생한 SQL의 가독성을 높여준다.
+     dialect: org.hibernate.dialect.MySQL5InnoDBDialect    # 쿼리의 기준이 되는 데이터베이스 엔진을 설정합니다.

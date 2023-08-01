@@ -10,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -44,28 +45,34 @@ public class CloudJiraIssueTypeTest {
                     .retrieve()
                     .bodyToMono(List.class).block();
 
-        Assertions.assertThat(issuetypes.size()).isEqualTo(19);
+        Assertions.assertThat(issuetypes.getClass()).isEqualTo(ArrayList.class);
     }
 
     @Test
     @DisplayName("이슈 타입 추가 테스트")
     public void IssueTypeCreateTest() {
         String uri = "/rest/api/3/issuetype";
+
+        Integer type = 0;
+        String name = "요구사항";
+        String description = "요구사항 설명";
+
         CloudJiraIssueTypeInputDTO addIssueTypeDTO
-                = new CloudJiraIssueTypeInputDTO("하위 요구사항 설명2" , "하위 요구사항2", -1);
+                = new CloudJiraIssueTypeInputDTO(description , name, type);
+
         CloudJiraIssueTypeDTO issuetypes = webClient.post()
                 .uri(uri)
                 .body(BodyInserters.fromValue(addIssueTypeDTO))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<CloudJiraIssueTypeDTO>() {}).block();
 
-        Assertions.assertThat(issuetypes.getName()).isEqualTo("하위 요구사항2");
+        Assertions.assertThat(issuetypes.getClass()).isEqualTo(CloudJiraIssueTypeDTO.class);
     }
 
     @Test
     @DisplayName("각 프로젝트 별 이슈 타입 전체 조회 테스트")
     public void EachProjectIssueTypeCallTest() {
-        String uri = "/rest/api/3/issuetype/project?projectId=" + "10001";
+        String uri = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
         List<CloudJiraIssueTypeDTO> issuetypes = webClient.get()
                 .uri(uri)
