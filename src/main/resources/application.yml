@@ -3,14 +3,10 @@ server:
   servlet:
     session:
       timeout: 1800
-  
+
 cloud:
   jira:
-    baseurl: https://advanc2d.atlassian.net/
     id: gkfn185@gmail.com
-    pass: ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F
-    projectKey: ADVANC2D
-    apiVersion: 3
   oauth2:
     client:
       clientId: h3G2k7xZbgBt5odGcGvKrqYhhIvtFTLh
@@ -30,13 +26,12 @@ arms:
     pass: flexjava
 
 app:
-  cloudId: 63j83k6d-c0cd-1055-7c5a-a237kaj84k36
   jiraUrl: https://api.atlassian.com/ex/jira/
 
 spring:
  datasource:
    driver-class-name: com.mysql.cj.jdbc.Driver
-   url: jdbc:mysql://localhost:3306/engine?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+   url: jdbc:mysql://svc.sel3.cloudtype.app:32203/engine?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
    username: mysqluser
    password: mysqluserpassword
 
@@ -44,7 +39,7 @@ spring:
  jpa:
    open-in-view: true
    hibernate:
-     ddl-auto: update  # option type: create, create-drop, update, validate, none
+     ddl-auto: none  # option type: create, create-drop, update, validate, none
      # create로 하게되면 기존 테이블을 삭제후 다시 생성하게 된다.
      naming:
        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
