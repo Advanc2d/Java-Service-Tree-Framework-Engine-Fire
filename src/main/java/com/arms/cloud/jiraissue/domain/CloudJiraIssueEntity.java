@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Builder
-@Table(name = "T_ARMS_CLOUD_JIRAISSU")
+@Table(name = "T_ARMS_CLOUD_JIRAISSUE")
 @SelectBeforeUpdate(value=true)
 @DynamicInsert(value=true)
 @DynamicUpdate(value=true)

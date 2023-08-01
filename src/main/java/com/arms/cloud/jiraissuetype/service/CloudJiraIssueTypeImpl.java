@@ -45,7 +45,8 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
                 return issueTypes;
 	}
-    @Transactional
+
+        @Transactional
 	@Override
 	public CloudJiraIssueTypeDTO createIssueType(CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO)
 			throws Exception {
