@@ -54,8 +54,8 @@ public class CloudJiraIssueTypeTest {
         String uri = "/rest/api/3/issuetype";
 
         Integer type = 0;
-        String name = "이슈 타입1";
-        String description = "이슈 타입1 설명";
+        String name = "요구사항";
+        String description = "요구사항 설명";
 
         CloudJiraIssueTypeInputDTO addIssueTypeDTO
                 = new CloudJiraIssueTypeInputDTO(description , name, type);
@@ -72,7 +72,7 @@ public class CloudJiraIssueTypeTest {
     @Test
     @DisplayName("각 프로젝트 별 이슈 타입 전체 조회 테스트")
     public void EachProjectIssueTypeCallTest() {
-        String uri = "/rest/api/3/issuetype/project?projectId=" + "10001";
+        String uri = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
         List<CloudJiraIssueTypeDTO> issuetypes = webClient.get()
                 .uri(uri)

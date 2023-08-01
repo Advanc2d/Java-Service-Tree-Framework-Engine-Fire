@@ -65,6 +65,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         return response;
     }
+
     @Transactional
     @Override
     public CloudJiraIssueDTO createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {

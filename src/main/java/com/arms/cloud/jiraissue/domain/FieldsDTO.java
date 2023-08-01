@@ -36,7 +36,7 @@ public class FieldsDTO {
 
     // 추가
     private Priority priority; // 우선순위
-    private List<SubTask> subtasks; // sub task
+    private List<CloudJiraIssueDTO> subtasks; // sub task
 
     @Getter
     @Setter
@@ -133,6 +133,20 @@ public class FieldsDTO {
         private String id;
     }
 
+    // @Getter
+    // @Setter
+    // @Builder
+    // @ToString
+    // @NoArgsConstructor
+    // @AllArgsConstructor
+    // @JsonInclude(JsonInclude.Include.NON_NULL)
+    // public static class IssueLink {
+    //     private String id;
+    //     private Type type;
+    //     private InwardIssue inwardIssue;
+    //     private OutwardIssue outwardIssue;
+    // }
+
     @Getter
     @Setter
     @Builder
@@ -143,8 +157,8 @@ public class FieldsDTO {
     public static class IssueLink {
         private String id;
         private Type type;
-        private InwardIssue inwardIssue;
-        private OutwardIssue outwardIssue;
+        private CloudJiraIssueDTO inwardIssue;
+        private CloudJiraIssueDTO outwardIssue;
     }
 
     @Getter
