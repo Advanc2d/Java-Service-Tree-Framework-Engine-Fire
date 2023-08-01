@@ -54,4 +54,15 @@ public class CloudJiraIssueController {
         return cloudJiraIssue.createIssue(cloudJiraIssueInputDTO);
     }
 
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/delete/{issueKeyOrId}"},
+            method = {RequestMethod.DELETE,RequestMethod.GET}
+    )
+    public String deleteDataToaRMS(@PathVariable String issueKeyOrId, ModelMap model,
+                                              HttpServletRequest request) throws Exception {
+        return cloudJiraIssue.deleteIssue(issueKeyOrId);
+    }
+
 }
