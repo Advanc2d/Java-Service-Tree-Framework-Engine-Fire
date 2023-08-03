@@ -46,16 +46,16 @@ public class CloudJiraConfig {
     public WebClient getJiraWebClient() {
         CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = cloudJiraConnectInfo.loadConnectInfo(jiraID);
 
-        if(cloudJiraConnectInfoDTO == null || cloudJiraConnectInfoDTO.getUrl().isEmpty() 
-                    || cloudJiraConnectInfoDTO.getId().isEmpty()|| cloudJiraConnectInfoDTO.getToken().isEmpty() ) {
+        if(cloudJiraConnectInfoDTO == null || cloudJiraConnectInfoDTO.getUri().isEmpty() 
+                    || cloudJiraConnectInfoDTO.getEmail().isEmpty()|| cloudJiraConnectInfoDTO.getToken().isEmpty() ) {
 
             // 오류 처리 필요
             return null;
         }
 
         return WebClient.builder()
-                .baseUrl(cloudJiraConnectInfoDTO.getUrl())
-                .defaultHeader("Authorization", "Basic " + getBase64Credentials(cloudJiraConnectInfoDTO.getId(), cloudJiraConnectInfoDTO.getToken()))
+                .baseUrl(cloudJiraConnectInfoDTO.getUri())
+                .defaultHeader("Authorization", "Basic " + getBase64Credentials(cloudJiraConnectInfoDTO.getEmail(), cloudJiraConnectInfoDTO.getToken()))
                 .build();
     }
 
