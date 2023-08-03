@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,7 @@ import com.arms.cloud.jiraproject.domain.CloudJiraProjectDTO;
 import com.arms.cloud.jiraproject.service.CloudJiraProject;
 
 @RestController
-@RequestMapping("/cloud/jira/project")
+@RequestMapping("/{connectId}/cloud/jira/project")
 public class CloudJiraProjectController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -32,9 +31,10 @@ public class CloudJiraProjectController {
             value = {"/{projectKey}"},
             method = {RequestMethod.GET}
     )
-    public CloudJiraProjectDTO getProjectData(@PathVariable String projectKey, ModelMap model, HttpServletRequest request) throws Exception {
+    public CloudJiraProjectDTO getProjectData(@PathVariable String projectKey, @PathVariable("connectId") String connectId,
+                                            ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud PROJECT GET API 호출");
-        return cloudJiraProject.getProjectData(projectKey);
+        return cloudJiraProject.getProjectData(projectKey, connectId);
     }
 
     @ResponseBody
@@ -42,8 +42,9 @@ public class CloudJiraProjectController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<CloudJiraProjectDTO> getProjectList(ModelMap model, HttpServletRequest request) throws Exception {
+    public List<CloudJiraProjectDTO> getProjectList(@PathVariable("connectId") String connectId,
+                                                ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ALL PROJECT GET API 호출");
-        return cloudJiraProject.getProjectList();
+        return cloudJiraProject.getProjectList(connectId);
     }
 }

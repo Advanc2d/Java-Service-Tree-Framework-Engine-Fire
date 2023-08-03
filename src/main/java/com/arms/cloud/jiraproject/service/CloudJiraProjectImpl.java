@@ -10,29 +10,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.arms.cloud.CloudJiraUtils;
+import com.arms.cloud.jiraconnectinfo.domain.CloudJiraConnectInfoDTO;
+import com.arms.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
 import com.arms.cloud.jiraproject.domain.CloudJiraProjectDTO;
-import com.arms.config.CloudJiraConfig;
-
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
 public class CloudJiraProjectImpl implements CloudJiraProject {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-    @Autowired
-    private CloudJiraConfig cloudJiraConfig;
+
+	@Autowired
+	private CloudJiraConnectInfo cloudJiraConnectInfo;
 
 	@Override
-	public CloudJiraProjectDTO getProjectData(String projectKey) throws Exception {
-        final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+	public CloudJiraProjectDTO getProjectData(String projectKey, String connectId) throws Exception {
+		String endpoint = "/rest/api/3/project/"+ projectKey;
+		CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
 
-        String endpoint = "/rest/api/3/project/"+ projectKey;
-
-         CloudJiraProjectDTO project = jiraWebClient.get()
-                .uri(endpoint)
-                .retrieve()
-                .bodyToMono(CloudJiraProjectDTO.class).block();
+        CloudJiraProjectDTO project = CloudJiraUtils.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
 
         logger.info(project.toString());
 
@@ -40,18 +38,23 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	}
 
 	@Override
-	public List<CloudJiraProjectDTO> getProjectList() throws Exception {
-	       final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+	public List<CloudJiraProjectDTO> getProjectList(String connectId) throws Exception {
 
-	        String endpoint = "/rest/api/3/project";
+		String endpoint = "/rest/api/3/project";
 
-	        List<CloudJiraProjectDTO> projects = jiraWebClient.get()
-	                .uri(endpoint)
-	                .retrieve()
-	                .bodyToMono(List.class).block();
+		CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
 
-	        logger.info(projects.toString());
-	        
-	        return projects;
+
+		WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+
+		// ObjectMapper objectMapper = new ObjectMapper();
+		// String response = CloudJiraUtils.get(webClient, endpoint, String.class).block();
+		// List<CloudJiraProjectDTO> projects = objectMapper.readValue(response, new TypeReference<List<CloudJiraProjectDTO>>() {});
+
+		List<CloudJiraProjectDTO> projects = CloudJiraUtils.get(webClient, endpoint, List.class).block();
+
+        logger.info(projects.toString());
+
+	    return projects;
 	}
 }
