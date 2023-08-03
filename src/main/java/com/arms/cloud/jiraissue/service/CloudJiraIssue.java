@@ -10,7 +10,7 @@ import java.util.List;
 public interface CloudJiraIssue {
     public CloudJiraIssueSearchDTO getIssueSearch(String projectKeyOrId);
     public CloudJiraIssueDTO getIssue(String issueKeyOrId);
-    public String deleteIssue(String issueKeyOrId) throws JSONException;
+    public void deleteIssue(String issueKeyOrId) throws JSONException;
     public String deleteIssueAndSubtask(String issueKeyOrId);
     public CloudJiraIssueDTO createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception;
 

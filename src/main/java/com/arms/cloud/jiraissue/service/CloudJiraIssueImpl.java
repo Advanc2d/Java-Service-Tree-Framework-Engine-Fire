@@ -3,6 +3,8 @@ package com.arms.cloud.jiraissue.service;
 import com.arms.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
 import com.arms.cloud.jiraissue.domain.*;
 import com.arms.config.CloudJiraConfig;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -94,68 +96,76 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return response;
     }
 
-    // 서브테스크 무조건 삭제 하는 버전
     @Transactional
     @Override
-    public String deleteIssueAndSubtask(String issueKeyOrId) {
-        Optional<CloudJiraIssueEntity> result = cloudJiraIssueJpaRepository.findById(issueKeyOrId);
+    public void deleteIssue(String issueKeyOrId) throws JSONException{
 
-        if(result.isPresent()){ //디비에서 조회한 값이 있을 때
-            String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=true";
+        Optional<CloudJiraIssueEntity> result = cloudJiraIssueJpaRepository.findById(issueKeyOrId);
+        if(result.isPresent()){
+            deleteSubTask(issueKeyOrId);
+            String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=false";
             final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-            try {
-                //지라 서버 삭제 요청
-                jiraWebClient.delete()
-                        .uri(endpoint)
-                        .retrieve()
-                        .bodyToMono(Void.class)
-                        .block();
-                //디비 해당 값 삭제 처리
-                cloudJiraIssueJpaRepository.deleteById(issueKeyOrId);
-            }catch (WebClientException e){
-                String errorMessage = e.getMessage();
-                logger.info(errorMessage);
-            }catch (Exception e){
-                return "삭제 시 오류 발생";
-            }
-            return "삭제 완료";
-        }else{
-            return "삭제 처리할 대상이 없음";
+            jiraWebClient.delete()
+                    .uri(endpoint)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+            // 디비에서 삭제 처리
+            cloudJiraIssueJpaRepository.deleteById(issueKeyOrId);
+        }
+
+    }
+    @Transactional
+    public void deleteSubTask(String issueKeyOrId) throws JSONException {
+        if(checkSubTask(issueKeyOrId)){// 이슈에 서브테스크가 있다면
+            //이슈에있는 서브테스크 삭제
+
+            // 서브테스크 이슈타입 중 "subtask" false로 변경
+            editSubTaskField(issueKeyOrId);
+            //  서브테스크의 이슈 아이디 등 정보를 가져와 디비에 저장
+
         }
     }
 
-    // 서브테스크 있을 시 삭제 안하고 오류 발생 시키는 버전
-    @Transactional
-    @Override
-    public String deleteIssue(String issueKeyOrId) throws JSONException {
-        Optional<CloudJiraIssueEntity> result = cloudJiraIssueJpaRepository.findById(issueKeyOrId);
-        if(result.isPresent()){
-            String endpoint = "/rest/api/3/issue/" + issueKeyOrId ;
+    public List<CloudJiraIssueDTO> getSubTask(String issueKeyOrId){
+        List<CloudJiraIssueDTO> SubTaskList = getIssue(issueKeyOrId).getFields().getSubtasks();
+        return SubTaskList;
+    }
+
+    public boolean checkSubTask(String issueKeyOrId){
+        if(getSubTask(issueKeyOrId).size()>0){
+            return true;
+        }else return false;
+    }
+
+    // 서브 테스크의 이슈 아이디를 조회하여 필드의 이슈타입 값 중 서브테스크 값을 true 에서 false로 변경 처리
+    // 필드 내부 페어런트 값도 삭제 처리
+    // 고민 해야할 것 : 부모 이슈 필드의 서브테스크 항목 값을 삭제 처리 해줘야하나??
+    public void editSubTaskField(String issueKeyOrId){
+        for(int i=0;i<getSubTask(issueKeyOrId).size();i++){
+            //서브테스크 이슈 아이디 조회하기
+            String id = getSubTask(issueKeyOrId).get(i).getId();
+            // "subtask:true ==> subtask:false"로 수정하기, 필드 내부 페어런트 key 삭제 처리 필요 할듯
+            JsonNodeFactory jnf = JsonNodeFactory.instance;
+            ObjectNode payload = jnf.objectNode();
+            ObjectNode fields = payload.putObject("fields");
+            fields.remove("parent"); // parent 값 삭제
+
+            ObjectNode issuetype = fields.putObject("issuetype");
+            issuetype.put("subtask", false);// 서브테스크 값 변경
+
+
+            String endpoint = "/rest/api/3/issue/" +id;
             final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-            try {
-                jiraWebClient.delete()
-                        .uri(endpoint)
-                        .retrieve()
-                        .bodyToMono(Void.class)
-                        .block();
-                return "삭제 완료";
-            } catch (WebClientResponseException e) {
-                if (e.getRawStatusCode() == 400) {
-                    String responseBody = e.getResponseBodyAsString();
-
-                    JSONObject json = new JSONObject(responseBody);
-                    String errorMessage = json.getJSONArray("errorMessages").getString(0);
-
-                    return errorMessage;
-                } else {
-                    throw e;
-                }
-            }
+            String result = jiraWebClient.put()
+                    .uri(endpoint)
+                    .bodyValue(payload)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            
+            System.out.println("@@@@@@@@@"+result);
         }
-        else{
-            return "삭제 처리할 대상이 없음";
-        }
-
     }
 
 }
