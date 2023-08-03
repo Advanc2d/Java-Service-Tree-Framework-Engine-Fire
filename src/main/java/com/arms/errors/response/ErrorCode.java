@@ -1,4 +1,3 @@
-package com.arms.errors.response;
 // package com.arms.errors.response;
 
 // import lombok.Getter;
