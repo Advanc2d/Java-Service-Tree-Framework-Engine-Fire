@@ -18,6 +18,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = {"/{connectId}/cloud/jira/issuetypescheme"})
 public class CloudJiraIssueTypeSchemeController {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

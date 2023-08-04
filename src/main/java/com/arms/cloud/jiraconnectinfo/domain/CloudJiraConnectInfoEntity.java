@@ -20,6 +20,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CloudJiraConnectInfoEntity {
+
     @Id
     @Column(name = "connect_id")
     @Type(type="text")

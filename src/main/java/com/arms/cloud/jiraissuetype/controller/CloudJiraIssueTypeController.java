@@ -22,6 +22,7 @@ import com.arms.cloud.jiraissuetype.service.CloudJiraIssueType;
 @Controller
 @RequestMapping(value = {"/{connectId}/cloud/jira/issuetype"})
 public class CloudJiraIssueTypeController {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

@@ -5,8 +5,6 @@ server:
       timeout: 1800
 
 cloud:
-  jira:
-    id: gkfn185@gmail.com
   oauth2:
     client:
       clientId: h3G2k7xZbgBt5odGcGvKrqYhhIvtFTLh

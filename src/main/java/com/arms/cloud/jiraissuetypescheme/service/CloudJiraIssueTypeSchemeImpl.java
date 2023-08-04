@@ -47,6 +47,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
 
         while(!checkLast) {
+
             String endpoint = "/rest/api/3/issuetypescheme/mapping?maxResults="+ maxResult + "&startAt=" + startAt;
             CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMappingPaging 
                     = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueTypeSchemeMappingDTO.class).block();
@@ -74,8 +75,6 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values = issueTypeSchemeMapping.getValues();
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
-        // 수정필요
-        // DB에서 요구사항 issueType 정보 가져오기
         List<CloudJiraIssueTypeDTO> list =  cloudJiraIssueType.getIssueTypeListByDB();
 
         Map<String,Object> result = new HashMap<String,Object>();
@@ -109,6 +108,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
     }
 
     public boolean addIssueTypesToIssueTypeScheme(String connectId, String issueTypeSchemeId, String issueTypeId) {
+
         String endpoint = "/rest/api/3/issuetypescheme/"+issueTypeSchemeId+"/issuetype";
         
         List<String> issueTypeIds = new ArrayList<String>();
@@ -131,7 +131,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         // } catch (Exception e) {
         //     // 에러 핸들링 (해당 예외 발생 시에는 isSuccess가 false로 유지됩니다)
         // }
-    
+
         boolean isSuccess = false;
 
         if (result.isPresent()) {

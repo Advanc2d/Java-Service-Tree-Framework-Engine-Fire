@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 public class CloudJiraUtils {
 
     public static WebClient createJiraWebClient(String uri, String email, String apiToken) {
+
         return WebClient.builder()
                 .baseUrl(uri)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -24,11 +25,13 @@ public class CloudJiraUtils {
     }
 
     private static String getBase64Credentials(String jiraID, String jiraPass) {
+
         String credentials = jiraID + ":" + jiraPass;
         return new String(Base64.getEncoder().encode(credentials.getBytes()));
     }
 
     public static <T> Mono<T> get(WebClient webClient, String uri, Class<T> responseType) {
+
         return webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -36,6 +39,7 @@ public class CloudJiraUtils {
     }
 
     public static <T> Mono<T> post(WebClient webClient, String uri, Object requestBody, Class<T> responseType) {
+
         return webClient.post()
                 .uri(uri)
                 .body(BodyInserters.fromValue(requestBody))
@@ -44,6 +48,7 @@ public class CloudJiraUtils {
     }
 
     public static <T> Mono<T> put(WebClient webClient, String uri, Object requestBody, Class<T> responseType) {
+
         return webClient.put()
                 .uri(uri)
                 .body(BodyInserters.fromValue(requestBody))
@@ -52,6 +57,7 @@ public class CloudJiraUtils {
     }
 
     public static <T> Mono<T> delete(WebClient webClient, String uri, Class<T> responseType) {
+
         return webClient.delete()
                 .uri(uri)
                 .retrieve()
@@ -59,13 +65,14 @@ public class CloudJiraUtils {
     }
 
     public static Optional<Boolean> executePut(WebClient webClient, Object requestBody, String uri) {
-    Mono<ResponseEntity<Void>> response = webClient.put()
-            .uri(uri)
-            .body(BodyInserters.fromValue(requestBody))
-            .retrieve()
-            .toEntity(Void.class);
 
-    return response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
-            .blockOptional();
-}
+        Mono<ResponseEntity<Void>> response = webClient.put()
+                                                .uri(uri)
+                                                .body(BodyInserters.fromValue(requestBody))
+                                                .retrieve()
+                                                .toEntity(Void.class);
+
+        return response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                .blockOptional();
+    }
 }

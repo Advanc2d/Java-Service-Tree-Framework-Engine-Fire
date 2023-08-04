@@ -15,9 +15,6 @@ import com.arms.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
 @DependsOn("cloudJiraConnectInfo")
 public class CloudJiraConfig {
 
-    @Value("${cloud.jira.id}")
-    public String jiraID;
-
     @Value("${cloud.oauth2.client.clientId}") 
     public String clientId;
 
@@ -44,7 +41,7 @@ public class CloudJiraConfig {
 
     @Bean
     public WebClient getJiraWebClient() {
-        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = cloudJiraConnectInfo.loadConnectInfo(jiraID);
+        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = cloudJiraConnectInfo.loadConnectInfo("1");
 
         if(cloudJiraConnectInfoDTO == null || cloudJiraConnectInfoDTO.getUri().isEmpty() 
                     || cloudJiraConnectInfoDTO.getEmail().isEmpty()|| cloudJiraConnectInfoDTO.getToken().isEmpty() ) {
