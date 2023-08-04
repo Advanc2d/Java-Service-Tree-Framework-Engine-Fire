@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -92,6 +93,38 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
 
         return response;
+    }
+
+    @Override
+    public String updateIssue(String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
+
+        final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+
+        String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
+        HttpStatus statusCode = null;
+
+        try {
+             WebClient.ResponseSpec responseSpec = jiraWebClient.put()
+                    .uri(endpoint)
+                    .bodyValue(cloudJiraIssueInputDTO)
+                    .retrieve();
+
+             statusCode = responseSpec.toBodilessEntity().block().getStatusCode();
+
+             logger.info("응답 상태 코드: " + statusCode);
+
+             if (statusCode.is2xxSuccessful()) {
+                 logger.info("이슈가 성공적으로 수정되었습니다.");
+             } else {
+                 logger.info("이슈 수정에 실패하였습니다.");
+             }
+        } catch (WebClientResponseException ex) {
+            logger.error("API 호출 실패: " + ex.getStatusCode() + " " + ex.getStatusText());
+        }
+
+        String status = statusCode.toString();
+
+        return status;
     }
 
     // 서브테스크 무조건 삭제 하는 버전
