@@ -23,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @Service("cloudJiraIssueType")
 public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
+
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Autowired

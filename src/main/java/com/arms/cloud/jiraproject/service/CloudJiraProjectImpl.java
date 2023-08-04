@@ -44,6 +44,9 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 
 		CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
 
+		if (found == null) {
+			// throw Exception e; ControllerAdvice 오류 처리
+		}
 
 		WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
 
