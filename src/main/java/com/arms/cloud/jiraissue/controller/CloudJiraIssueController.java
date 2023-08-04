@@ -54,6 +54,15 @@ public class CloudJiraIssueController {
         return cloudJiraIssue.createIssue(cloudJiraIssueInputDTO);
     }
 
+    @ResponseBody
+    @RequestMapping(
+            value = {"/{issueKeyOrId}"},
+            method = {RequestMethod.PUT}
+    )
+    public String updateIssueForReqAdd(@PathVariable String issueKeyOrId,
+                                       @RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
+        return cloudJiraIssue.updateIssue(issueKeyOrId, cloudJiraIssueInputDTO);
+    }
 
     @ResponseBody
     @RequestMapping(
@@ -64,5 +73,4 @@ public class CloudJiraIssueController {
                                               HttpServletRequest request) throws Exception {
         return cloudJiraIssue.deleteIssue(issueKeyOrId);
     }
-
 }
