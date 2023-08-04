@@ -20,17 +20,22 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CloudJiraConnectInfoEntity {
+
     @Id
-    @Column(name = "id")
+    @Column(name = "connect_id")
     @Type(type="text")
-    private String id;
+    private String connectId;
+
+    @Column(name = "email")
+    @Type(type="text")
+    private String email;
 
     //@Getter @Setter
     @Column(name = "token")
     @Type(type="text")
     private String token;
 
-    @Column(name = "url")
+    @Column(name = "uri")
     @Type(type="text")
-    private String url;
+    private String uri;
 }

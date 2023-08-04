@@ -9,7 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CloudJiraConnectInfoDTO {
-    private String id;
+    private String connectId;
+    private String email;
     private String token;
-    private String url;
+    private String uri;
 }

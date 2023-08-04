@@ -19,15 +19,17 @@ public class CloudJiraConnectInfoImpl implements CloudJiraConnectInfo {
     private CloudJiraConnectInfoJpaRepository cloudJiraConnectInfoJpaRepository;
 
     @Override
-    public CloudJiraConnectInfoDTO loadConnectInfo(String id) {
+    public CloudJiraConnectInfoDTO loadConnectInfo(String connectId) {
 
-        Optional<CloudJiraConnectInfoEntity> optionalEntity = cloudJiraConnectInfoJpaRepository.findById(id);
+        Optional<CloudJiraConnectInfoEntity> optionalEntity = cloudJiraConnectInfoJpaRepository.findById(connectId);
+
         if (!optionalEntity.isPresent()) {
             return null;
         }
 
         CloudJiraConnectInfoEntity cloudJiraConnectInfoEntity = optionalEntity.get();
-        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = modelMapper.map(cloudJiraConnectInfoEntity, CloudJiraConnectInfoDTO.class);
+        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO 
+                                        = modelMapper.map(cloudJiraConnectInfoEntity, CloudJiraConnectInfoDTO.class);
 
         return cloudJiraConnectInfoDTO;
     }

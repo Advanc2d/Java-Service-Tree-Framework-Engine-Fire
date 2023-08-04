@@ -1,11 +1,12 @@
 package com.arms.cloud.jiraissuetypescheme.service;
 
 import com.arms.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingDTO;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
+import java.util.Map;
 
 public interface CloudJiraIssueTypeScheme {
-    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping();
-    public List<ResponseEntity<?>> addIssueTypeSchemeReqIssueType() throws Exception;
+
+    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(String connectId);
+
+    public Map<String,Object> addIssueTypeSchemeReqIssueType(String connectId) throws Exception;
+
 }

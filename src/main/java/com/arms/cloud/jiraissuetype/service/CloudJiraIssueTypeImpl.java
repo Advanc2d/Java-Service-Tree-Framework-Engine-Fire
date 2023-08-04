@@ -1,10 +1,12 @@
 package com.arms.cloud.jiraissuetype.service;
 
+import com.arms.cloud.CloudJiraUtils;
+import com.arms.cloud.jiraconnectinfo.domain.CloudJiraConnectInfoDTO;
+import com.arms.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
 import com.arms.cloud.jiraissuetype.dao.CloudJiraIssueTypeJpaRepository;
 import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
 import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeEntity;
 import com.arms.cloud.jiraissuetype.domain.CloudJiraIssueTypeInputDTO;
-import com.arms.config.CloudJiraConfig;
 import lombok.AllArgsConstructor;
 
 import org.modelmapper.ModelMapper;
@@ -21,44 +23,28 @@ import java.util.List;
 @AllArgsConstructor
 @Service("cloudJiraIssueType")
 public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
+
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-        @Autowired
-        private CloudJiraConfig cloudJiraConfig;
         @Autowired
         private CloudJiraIssueTypeJpaRepository cloudJiraIssueTypeJpaRepository;
         @Autowired
         private ModelMapper modelMapper;
-
-        @Override
-        public List<CloudJiraIssueTypeDTO> getIssueTypeListByCloud() throws Exception {
-                final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-
-                String endpoint = "/rest/api/3/issuetype";
-
-                List<CloudJiraIssueTypeDTO> issueTypes = jiraWebClient.get()
-                        .uri(endpoint)
-                        .retrieve()
-                        .bodyToMono(List.class).block();
-
-                logger.info(issueTypes.toString());
-
-                return issueTypes;
-	}
+        @Autowired
+        private CloudJiraConnectInfo cloudJiraConnectInfo;
 
         @Transactional
 	@Override
-	public CloudJiraIssueTypeDTO createIssueType(CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO)
-			throws Exception {
-                final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+	public CloudJiraIssueTypeDTO createIssueType(String connectId, 
+                                                CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO) 
+                                                throws Exception {
 
                 String endpoint = "/rest/api/3/issuetype";
 
-                CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = jiraWebClient.post()
-                        .uri(endpoint)
-                        .bodyValue(cloudJiraIssueTypeInputDTO)
-                        .retrieve()
-                        .bodyToMono(CloudJiraIssueTypeDTO.class).block();
+                CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
+                WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+                CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint, 
+                                                                        cloudJiraIssueTypeInputDTO, CloudJiraIssueTypeDTO.class).block();
 
                 CloudJiraIssueTypeEntity cloudJiraIssueTypeEntity = modelMapper.map(addCloudJirarIssueTypeDTO, CloudJiraIssueTypeEntity.class);
                 cloudJiraIssueTypeJpaRepository.save(cloudJiraIssueTypeEntity);
@@ -68,18 +54,32 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
                 return addCloudJirarIssueTypeDTO;
 	}
 
+        @Override
+        public List<CloudJiraIssueTypeDTO> getIssueTypeListByCloud(String connectId) throws Exception {
+
+                String endpoint = "/rest/api/3/issuetype";
+
+                CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
+                WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+
+                List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint, List.class).block();
+
+                logger.info(issueTypes.toString());
+
+                return issueTypes;
+	}
+
         public List<CloudJiraIssueTypeDTO> getIssueTypeListByDB() {
 
                 List<CloudJiraIssueTypeEntity> issueTypeEntities = cloudJiraIssueTypeJpaRepository.findAll();
                 List<CloudJiraIssueTypeDTO> issueTypeList = new ArrayList<>();
-                
+
                 for (CloudJiraIssueTypeEntity item : issueTypeEntities) {
                         CloudJiraIssueTypeDTO cloudJiraIssueTypeDTO = modelMapper.map(item, CloudJiraIssueTypeDTO.class);
                         issueTypeList.add(cloudJiraIssueTypeDTO);
                 }
-                
+
                 return issueTypeList;
         }
-
 
 }

@@ -15,9 +15,6 @@ import com.arms.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
 @DependsOn("cloudJiraConnectInfo")
 public class CloudJiraConfig {
 
-    @Value("${cloud.jira.id}")
-    public String jiraID;
-
     @Value("${cloud.oauth2.client.clientId}") 
     public String clientId;
 
@@ -44,18 +41,18 @@ public class CloudJiraConfig {
 
     @Bean
     public WebClient getJiraWebClient() {
-        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = cloudJiraConnectInfo.loadConnectInfo(jiraID);
+        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = cloudJiraConnectInfo.loadConnectInfo("1");
 
-        if(cloudJiraConnectInfoDTO == null || cloudJiraConnectInfoDTO.getUrl().isEmpty() 
-                    || cloudJiraConnectInfoDTO.getId().isEmpty()|| cloudJiraConnectInfoDTO.getToken().isEmpty() ) {
+        if(cloudJiraConnectInfoDTO == null || cloudJiraConnectInfoDTO.getUri().isEmpty() 
+                    || cloudJiraConnectInfoDTO.getEmail().isEmpty()|| cloudJiraConnectInfoDTO.getToken().isEmpty() ) {
 
             // 오류 처리 필요
             return null;
         }
 
         return WebClient.builder()
-                .baseUrl(cloudJiraConnectInfoDTO.getUrl())
-                .defaultHeader("Authorization", "Basic " + getBase64Credentials(cloudJiraConnectInfoDTO.getId(), cloudJiraConnectInfoDTO.getToken()))
+                .baseUrl(cloudJiraConnectInfoDTO.getUri())
+                .defaultHeader("Authorization", "Basic " + getBase64Credentials(cloudJiraConnectInfoDTO.getEmail(), cloudJiraConnectInfoDTO.getToken()))
                 .build();
     }
 
