@@ -1,11 +1,10 @@
 package com.engine.jira.cloud;
 
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.engine.jira.cloud.jiraissuetype.service.CloudJiraIssueType;
-import com.arms.cloud.jiraissuetypescheme.domain.*;
-import com.engine.jira.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingDTO;
-import com.engine.jira.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingValueDTO;
-import com.engine.jira.cloud.jiraissuetypescheme.domain.IssueTypeIdsDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

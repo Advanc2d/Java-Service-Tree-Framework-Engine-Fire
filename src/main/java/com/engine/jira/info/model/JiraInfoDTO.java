@@ -1,4 +1,4 @@
-package com.engine.jira.cloud.jiraconnectinfo.domain;
+package com.engine.jira.info.model;
 
 import lombok.*;
 
@@ -8,9 +8,9 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CloudJiraConnectInfoDTO {
+public class JiraInfoDTO {
     private String connectId;
-    private String email;
-    private String token;
+    private String userId;
+    private String passwordOrToken;
     private String uri;
 }

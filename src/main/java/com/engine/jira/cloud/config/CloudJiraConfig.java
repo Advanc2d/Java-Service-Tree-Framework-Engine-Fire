@@ -1,6 +1,9 @@
 package com.engine.jira.cloud.config;
 
 import java.util.Base64;
+
+import com.engine.jira.info.model.JiraInfoDTO;
+import com.engine.jira.info.service.JiraInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,11 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.engine.jira.cloud.jiraconnectinfo.domain.CloudJiraConnectInfoDTO;
-import com.engine.jira.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
-
 @Configuration
-@DependsOn("cloudJiraConnectInfo")
+@DependsOn("jiraInfo")
 public class CloudJiraConfig {
 
     @Value("${cloud.oauth2.client.clientId}") 
@@ -37,22 +37,28 @@ public class CloudJiraConfig {
     public String jiraApiUrl;
 
     @Autowired
-    private CloudJiraConnectInfo cloudJiraConnectInfo;
+    private JiraInfo jiraInfo;
 
     @Bean
     public WebClient getJiraWebClient() {
-        CloudJiraConnectInfoDTO cloudJiraConnectInfoDTO = cloudJiraConnectInfo.loadConnectInfo("1");
+        JiraInfoDTO jiraInfoDTO = jiraInfo.loadConnectInfo("1");
 
-        if(cloudJiraConnectInfoDTO == null || cloudJiraConnectInfoDTO.getUri().isEmpty() 
-                    || cloudJiraConnectInfoDTO.getEmail().isEmpty()|| cloudJiraConnectInfoDTO.getToken().isEmpty() ) {
+        if(jiraInfoDTO == null || jiraInfoDTO.getUri().isEmpty()
+                    || jiraInfoDTO.getUserId().isEmpty()|| jiraInfoDTO.getPasswordOrToken().isEmpty() ) {
 
             // 오류 처리 필요
             return null;
         }
 
+//        JiraInfoDTO jiraInfoDTO = new JiraInfoDTO();
+//        jiraInfoDTO.setUri("https://advanc2d.atlassian.net");
+//        jiraInfoDTO.setUserId("gkfn185@gmail.com");
+//        jiraInfoDTO.setPasswordOrToken("ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F");
+
         return WebClient.builder()
-                .baseUrl(cloudJiraConnectInfoDTO.getUri())
-                .defaultHeader("Authorization", "Basic " + getBase64Credentials(cloudJiraConnectInfoDTO.getEmail(), cloudJiraConnectInfoDTO.getToken()))
+                .baseUrl(jiraInfoDTO.getUri())
+                .defaultHeader("Authorization", "Basic " + getBase64Credentials(jiraInfoDTO.getUserId(),
+                                                                            jiraInfoDTO.getPasswordOrToken()))
                 .build();
     }
 

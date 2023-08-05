@@ -1,7 +1,7 @@
 package com.engine.jira.cloud;
 
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeInputDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

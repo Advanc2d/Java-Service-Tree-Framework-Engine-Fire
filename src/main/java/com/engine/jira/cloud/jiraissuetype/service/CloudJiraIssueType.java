@@ -2,8 +2,8 @@ package com.engine.jira.cloud.jiraissuetype.service;
 
 import java.util.List;
 
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeInputDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
 
 public interface CloudJiraIssueType {
 

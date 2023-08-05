@@ -1,6 +1,6 @@
 package com.engine.jira.cloud.jiraissuetypescheme.service;
 
-import com.engine.jira.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.engine.jira.cloud.jiraproject.domain;
+package com.engine.jira.cloud.jiraproject.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

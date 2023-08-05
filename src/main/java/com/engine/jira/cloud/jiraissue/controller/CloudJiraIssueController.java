@@ -1,9 +1,9 @@
 package com.engine.jira.cloud.jiraissue.controller;
 
 
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueInputDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import com.engine.jira.cloud.jiraissue.service.CloudJiraIssue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

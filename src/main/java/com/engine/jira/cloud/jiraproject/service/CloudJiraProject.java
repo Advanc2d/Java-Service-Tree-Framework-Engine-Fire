@@ -2,7 +2,7 @@ package com.engine.jira.cloud.jiraproject.service;
 
 import java.util.List;
 
-import com.engine.jira.cloud.jiraproject.domain.CloudJiraProjectDTO;
+import com.engine.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
 
 public interface CloudJiraProject {
 

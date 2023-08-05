@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import com.engine.jira.cloud.jiraissue.domain.IssueLinkSubtaskDTO;
+import com.engine.jira.cloud.jiraissue.model.IssueLinkSubtaskDTO;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -20,9 +20,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
-import com.engine.jira.cloud.jiraissue.domain.FieldsDTO.IssueLink;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
+import com.engine.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
 
 public class CloudJiraIssueTest {
     WebClient webClient;

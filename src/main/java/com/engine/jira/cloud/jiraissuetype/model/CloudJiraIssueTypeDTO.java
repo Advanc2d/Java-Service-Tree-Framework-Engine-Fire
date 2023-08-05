@@ -1,4 +1,4 @@
-package com.engine.jira.cloud.jiraissuetype.domain;
+package com.engine.jira.cloud.jiraissuetype.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

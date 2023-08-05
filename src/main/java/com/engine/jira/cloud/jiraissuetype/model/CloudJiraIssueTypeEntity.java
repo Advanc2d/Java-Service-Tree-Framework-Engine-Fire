@@ -1,4 +1,4 @@
-package com.engine.jira.cloud.jiraissuetype.domain;
+package com.engine.jira.cloud.jiraissuetype.model;
 
 import lombok.*;
 import org.hibernate.annotations.Cache;
