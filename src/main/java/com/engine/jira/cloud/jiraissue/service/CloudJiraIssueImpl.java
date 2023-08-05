@@ -1,12 +1,11 @@
 package com.engine.jira.cloud.jiraissue.service;
 
-import com.engine.jira.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
-import com.arms.cloud.jiraissue.domain.*;
 import com.engine.jira.cloud.config.CloudJiraConfig;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueEntity;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueInputDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
+import com.engine.jira.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueEntity;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import lombok.AllArgsConstructor;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;

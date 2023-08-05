@@ -1,20 +1,18 @@
 package com.engine.jira.cloud.jiraproject.service;
 
 
-
-import java.util.List;
-
-import com.engine.jira.cloud.jiraproject.domain.CloudJiraProjectDTO;
+import com.engine.jira.cloud.CloudJiraUtils;
+import com.engine.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
+import com.engine.jira.info.model.JiraInfoDTO;
+import com.engine.jira.info.service.JiraInfo;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.engine.jira.cloud.CloudJiraUtils;
-import com.engine.jira.cloud.jiraconnectinfo.domain.CloudJiraConnectInfoDTO;
-import com.engine.jira.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
-import lombok.AllArgsConstructor;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -22,13 +20,14 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private CloudJiraConnectInfo cloudJiraConnectInfo;
+	private JiraInfo jiraInfo;
 
 	@Override
 	public CloudJiraProjectDTO getProjectData(String projectKey, String connectId) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;
-		CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+
+		JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraProjectDTO project = CloudJiraUtils.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
 
@@ -42,13 +41,13 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 
 		String endpoint = "/rest/api/3/project";
 
-		CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
+		JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
 
 		if (found == null) {
 			// throw Exception e; ControllerAdvice 오류 처리
 		}
 
-		WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+		WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
 		// ObjectMapper objectMapper = new ObjectMapper();
 		// String response = CloudJiraUtils.get(webClient, endpoint, String.class).block();

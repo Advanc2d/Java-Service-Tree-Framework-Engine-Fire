@@ -1,4 +1,4 @@
-package com.engine.jira.cloud.jiraissuetypescheme.domain;
+package com.engine.jira.cloud.jiraissuetypescheme.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

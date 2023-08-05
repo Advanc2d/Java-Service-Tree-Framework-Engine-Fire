@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeInputDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
 import com.engine.jira.cloud.jiraissuetype.service.CloudJiraIssueType;
 
 @Controller

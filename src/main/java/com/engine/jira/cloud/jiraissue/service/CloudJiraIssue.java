@@ -1,8 +1,8 @@
 package com.engine.jira.cloud.jiraissue.service;
 
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueInputDTO;
-import com.engine.jira.cloud.jiraissue.domain.CloudJiraIssueSearchDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
+import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import org.codehaus.jettison.json.JSONException;
 
 public interface CloudJiraIssue {

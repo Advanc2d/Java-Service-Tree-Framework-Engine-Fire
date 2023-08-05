@@ -1,6 +1,6 @@
 package com.engine.jira.cloud.jiraissuetypescheme.controller;
 
-import com.engine.jira.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
 import com.engine.jira.cloud.jiraissuetypescheme.service.CloudJiraIssueTypeScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

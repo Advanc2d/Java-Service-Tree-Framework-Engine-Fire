@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.engine.jira.cloud.jiraproject.domain.CloudJiraProjectDTO;
+import com.engine.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
 import com.engine.jira.cloud.jiraproject.service.CloudJiraProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

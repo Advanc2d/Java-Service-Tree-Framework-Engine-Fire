@@ -1,6 +1,6 @@
 package com.engine.jira.cloud.jiraauth.service;
 
-import com.engine.jira.cloud.jiraauth.domain.CloudJiraTokenRequestDTO;
+import com.engine.jira.cloud.jiraauth.model.CloudJiraTokenRequestDTO;
 import com.engine.jira.cloud.config.CloudJiraConfig;
 
 import org.springframework.stereotype.Service;

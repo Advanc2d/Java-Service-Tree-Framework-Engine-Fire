@@ -1,9 +1,9 @@
-package com.engine.jira.cloud.jiraproject.domain;
+package com.engine.jira.cloud.jiraproject.model;
 
 import java.util.List;
 import java.util.Map;
 
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 

@@ -1,24 +1,21 @@
 package com.engine.jira.cloud.jiraissuetypescheme.service;
 
 import com.engine.jira.cloud.CloudJiraUtils;
-import com.engine.jira.cloud.jiraconnectinfo.domain.CloudJiraConnectInfoDTO;
-import com.engine.jira.cloud.jiraconnectinfo.service.CloudJiraConnectInfo;
-import com.engine.jira.cloud.jiraissuetype.domain.CloudJiraIssueTypeDTO;
+import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.engine.jira.cloud.jiraissuetype.service.CloudJiraIssueType;
-import com.engine.jira.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingDTO;
-import com.engine.jira.cloud.jiraissuetypescheme.domain.CloudJiraIssueTypeSchemeMappingValueDTO;
-import com.engine.jira.cloud.jiraissuetypescheme.domain.IssueTypeIdsDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
+import com.engine.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
+import com.engine.jira.info.model.JiraInfoDTO;
+import com.engine.jira.info.service.JiraInfo;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 
 @AllArgsConstructor
 @Service("cloudJiraIssueTypeScheme")
@@ -29,7 +26,8 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
     private CloudJiraIssueType cloudJiraIssueType;
 
     @Autowired
-    private CloudJiraConnectInfo cloudJiraConnectInfo;
+    private JiraInfo jiraInfo;
+
 
     public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(String connectId) {
 
@@ -41,8 +39,8 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values
                 = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
-        CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
 
@@ -75,26 +73,30 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values = issueTypeSchemeMapping.getValues();
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
-        List<CloudJiraIssueTypeDTO> list =  cloudJiraIssueType.getIssueTypeListByDB();
-
         Map<String,Object> result = new HashMap<String,Object>();
+
+        String issueTypeId =  jiraInfo.getIssueTypeId(connectId);
+
+        if(issueTypeId.isEmpty()) {
+            result.put("success", false);
+            result.put("message", "요구사항 Issue Type이 저장되지 않았습니다.");
+            return result;
+        }
 
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();
             List<String> issueTypeIds = entry.getValue();
 
-            for(CloudJiraIssueTypeDTO item : list) {
-                if (issueTypeIds.contains(item.getId())) {
-                    System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + item.getId() + ")가 존재합니다.");
-                } else {
-                    System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + item.getId() + ")가 존재하지 않습니다.");
-                    Boolean response = addIssueTypesToIssueTypeScheme(connectId, issueTypeSchemeId, item.getId());
+            if (issueTypeIds.contains(issueTypeId)) {
+                logger.info(issueTypeSchemeId + "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재합니다.");
+            } else {
+                logger.info(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재하지 않습니다.");
+                Boolean response = addIssueTypesToIssueTypeScheme(connectId, issueTypeSchemeId, issueTypeId);
 
-                    if (response == false) {
-                        result.put("success", response);
-                        result.put("message", "Issue Type Scheme에 추가하는 중 오류가 발생하였습니다.");
-                        return result;
-                    }
+                if (response == false) {
+                    result.put("success", response);
+                    result.put("message", "Issue Type Scheme에 추가하는 중 오류가 발생하였습니다.");
+                    return result;
                 }
             }
         }
@@ -117,8 +119,8 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         IssueTypeIdsDTO dto = new IssueTypeIdsDTO();
         dto.setIssueTypeIds(issueTypeIds);
 
-        CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> result = CloudJiraUtils.executePut(webClient, dto, endpoint);
 
@@ -138,6 +140,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
             if (result.get()) {
                 // PUT 호출이 HTTP 204로 성공했습니다.
                 isSuccess = true;
+                logger.info(issueTypeSchemeId + "이슈 타입 스킴에 " + issueTypeId + "이슈 타입 저장하였습니다.");
             } 
         }
 

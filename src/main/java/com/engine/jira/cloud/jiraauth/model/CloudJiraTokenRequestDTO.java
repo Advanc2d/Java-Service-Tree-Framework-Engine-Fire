@@ -1,4 +1,4 @@
-package com.engine.jira.cloud.jiraauth.domain;
+package com.engine.jira.cloud.jiraauth.model;
 
 import lombok.Getter;
 import lombok.Setter;
