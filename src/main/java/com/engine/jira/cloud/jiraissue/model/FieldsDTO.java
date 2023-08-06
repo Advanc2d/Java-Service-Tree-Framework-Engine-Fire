@@ -38,6 +38,8 @@ public class FieldsDTO {
     private Priority priority; // 우선순위
     private List<CloudJiraIssueDTO> subtasks; // sub task
 
+    private Status status; // 상태값
+
     @Getter
     @Setter
     @Builder
@@ -224,8 +226,10 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Status {
-        private String iconUrl;
+        private String id;
         private String name;
+        private String description;
+        private String self;
     }
 
     @Getter

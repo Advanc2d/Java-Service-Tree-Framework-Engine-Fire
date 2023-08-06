@@ -1,10 +1,9 @@
 package com.engine.jira.cloud;
 
-import com.engine.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
-import com.engine.jira.cloud.jiraissuetype.service.CloudJiraIssueType;
 import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
 import com.engine.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
 import com.engine.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
+import com.engine.jira.info.service.JiraInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ public class CloudJiraIssueTypeSchemeTest {
     public String issueTypeId = "10028";
 
     @Autowired
-    CloudJiraIssueType cloudJiraIssueType;
+    JiraInfo jiraInfo;
 
     @BeforeEach
     void setUp () {
@@ -77,19 +76,18 @@ public class CloudJiraIssueTypeSchemeTest {
 
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
-        List<CloudJiraIssueTypeDTO> list = cloudJiraIssueType.getIssueTypeListByDB();
+        String issueTypeId = jiraInfo.getIssueTypeId("1");
         
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();
             List<String> issueTypeIds = entry.getValue();
 
-            for (CloudJiraIssueTypeDTO item : list) {
-                if (issueTypeIds.contains(item.getId())) {
-                    System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + item.getId() + ")가 존재합니다.");
-                } else {
-                    System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + item.getId() + ")가 존재하지 않습니다.");
-                }
+            if (issueTypeIds.contains(issueTypeId)) {
+                System.out.println(issueTypeSchemeId + "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재합니다.");
+            } else {
+                System.out.println(issueTypeSchemeId+ "에는 원하는 issueTypeId(" + issueTypeId + ")가 존재하지 않습니다.");
             }
+
         }
     }
 

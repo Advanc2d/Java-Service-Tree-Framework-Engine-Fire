@@ -11,6 +11,4 @@ public interface CloudJiraIssueType {
 
     public List<CloudJiraIssueTypeDTO> getIssueTypeListByCloud(String connectId) throws Exception;
 
-    public List<CloudJiraIssueTypeDTO> getIssueTypeListByDB() throws Exception;
-
 }

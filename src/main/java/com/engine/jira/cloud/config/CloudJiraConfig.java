@@ -50,11 +50,6 @@ public class CloudJiraConfig {
             return null;
         }
 
-//        JiraInfoDTO jiraInfoDTO = new JiraInfoDTO();
-//        jiraInfoDTO.setUri("https://advanc2d.atlassian.net");
-//        jiraInfoDTO.setUserId("gkfn185@gmail.com");
-//        jiraInfoDTO.setPasswordOrToken("ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F");
-
         return WebClient.builder()
                 .baseUrl(jiraInfoDTO.getUri())
                 .defaultHeader("Authorization", "Basic " + getBase64Credentials(jiraInfoDTO.getUserId(),
