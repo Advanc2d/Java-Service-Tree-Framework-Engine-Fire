@@ -7,8 +7,6 @@ import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueEntity;
 import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import lombok.AllArgsConstructor;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Optional;
@@ -132,65 +129,63 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     // 서브테스크 무조건 삭제 하는 버전
     @Transactional
     @Override
-    public String deleteIssueAndSubtask(String issueKeyOrId) {
-        Optional<CloudJiraIssueEntity> result = cloudJiraIssueJpaRepository.findById(issueKeyOrId);
+    public void deleteIssue(String issueKeyOrId) throws Exception {
 
-        if(result.isPresent()){ //디비에서 조회한 값이 있을 때
-            String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=true";
-            final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-            try {
-                //지라 서버 삭제 요청
-                jiraWebClient.delete()
-                        .uri(endpoint)
-                        .retrieve()
-                        .bodyToMono(Void.class)
-                        .block();
-                //디비 해당 값 삭제 처리
-                cloudJiraIssueJpaRepository.deleteById(issueKeyOrId);
-            }catch (WebClientException e){
-                String errorMessage = e.getMessage();
-                logger.info(errorMessage);
-            }catch (Exception e){
-                return "삭제 시 오류 발생";
+        String endpoint ="";
+        if(checkSubTask(issueKeyOrId)){ //서브테스크가 있을 경유
+            for(int i=0;i<getSubTask(issueKeyOrId).size();i++){
+                convertSubtaskToIssue(String.valueOf(getSubTask(issueKeyOrId).get(i).getId()), issueKeyOrId);
             }
-            return "삭제 완료";
+            endpoint= "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=true";
         }else{
-            return "삭제 처리할 대상이 없음";
+            endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=false";
         }
-    }
-
-    // 서브테스크 있을 시 삭제 안하고 오류 발생 시키는 버전
-    @Transactional
-    @Override
-    public String deleteIssue(String issueKeyOrId) throws JSONException {
-        Optional<CloudJiraIssueEntity> result = cloudJiraIssueJpaRepository.findById(issueKeyOrId);
-        if(result.isPresent()){
-            String endpoint = "/rest/api/3/issue/" + issueKeyOrId ;
-            final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
-            try {
-                jiraWebClient.delete()
-                        .uri(endpoint)
-                        .retrieve()
-                        .bodyToMono(Void.class)
-                        .block();
-                return "삭제 완료";
-            } catch (WebClientResponseException e) {
-                if (e.getRawStatusCode() == 400) {
-                    String responseBody = e.getResponseBodyAsString();
-
-                    JSONObject json = new JSONObject(responseBody);
-                    String errorMessage = json.getJSONArray("errorMessages").getString(0);
-
-                    return errorMessage;
-                } else {
-                    throw e;
-                }
-            }
-        }
-        else{
-            return "삭제 처리할 대상이 없음";
-        }
+        final WebClient jiraWebClient = cloudJiraConfig.getJiraWebClient();
+        jiraWebClient.delete()
+                .uri(endpoint)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
+        cloudJiraIssueJpaRepository.deleteById(issueKeyOrId);
 
     }
 
+    public List<CloudJiraIssueDTO> getSubTask(String issueId){
+        List<CloudJiraIssueDTO> SubTaskList = getIssue(issueId).getFields().getSubtasks();
+        return SubTaskList;
+    }
+
+    public boolean checkSubTask(String issueKeyOrId){
+        if(getSubTask(issueKeyOrId).size()>0){
+            return true;
+        }else return false;
+    }
+
+    public void convertSubtaskToIssue(String  subTaskKeyOrId,String issueKeyOrId) throws Exception {
+
+        CloudJiraIssueDTO issue = getIssue(subTaskKeyOrId);
+        String issueTypeId      = getIssue(issueKeyOrId).getFields().getIssuetype().getId();
+        String projectId        = issue.getFields().getProject().getId();
+        String summary          = issue.getFields().getSummary();
+        FieldsDTO.Description descriptionNode = issue.getFields().getDescription();
+
+        FieldsDTO.Project projectDTO = new FieldsDTO.Project();
+        projectDTO.setId(projectId);
+
+        FieldsDTO.IssueType issueTypeDTO = new FieldsDTO.IssueType();
+        issueTypeDTO.setId(issueTypeId);
+
+        FieldsDTO fieldsDTO = new FieldsDTO();
+        fieldsDTO.setProject(projectDTO);
+        fieldsDTO.setIssuetype(issueTypeDTO);
+        fieldsDTO.setSummary(summary);
+        fieldsDTO.setDescription(descriptionNode);
+
+        CloudJiraIssueInputDTO cloudJiraIssueInputDTO = new CloudJiraIssueInputDTO();
+        cloudJiraIssueInputDTO.setFields(fieldsDTO);
+        logger.info(cloudJiraIssueInputDTO.toString());
+        createIssue(cloudJiraIssueInputDTO);
+        // 이슈 생성하고 기존의 서브테스크를 지우는 방식
+        // 이슈 생성하고 서브테스크 상위 이슈를 지우는 방식으로 갈지 고민
+    }
 }
