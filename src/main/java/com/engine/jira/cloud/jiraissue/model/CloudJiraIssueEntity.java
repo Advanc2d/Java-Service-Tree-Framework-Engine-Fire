@@ -14,29 +14,32 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Builder
-@Table(name = "T_ARMS_CLOUD_JIRAISSUE")
-@SelectBeforeUpdate(value=true)
-@DynamicInsert(value=true)
-@DynamicUpdate(value=true)
-@Cache(usage = CacheConcurrencyStrategy.NONE)
+@Table(name = "ENGINE_JIRA_ISSUE")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CloudJiraIssueEntity implements Serializable {
 
     @Id
-    @Column(name = "issue_id")
-    private String id;
-
-    @Column(name = "issue_key")
-    @Type(type="text")
-    private String key;
-
-    @Column(name = "issue_url")
-    @Type(type="text")
+    @Column(name = "self", columnDefinition = "VARCHAR(255)")
     private String self;
 
+    @Column(name = "connect_id", columnDefinition = "TEXT")
+    private String connectId;
+
+    @Column(name = "id", columnDefinition = "TEXT")
+    private String id;
+
+    @Column(name = "issue_key", columnDefinition = "TEXT")
+    private String key;
+
+    @Column(name = "outward_id", columnDefinition = "TEXT")
+    private String outwardId;
+
+    @Column(name = "parent_id", columnDefinition = "TEXT")
+    private String parentId;
+
     //@UpdateTimestamp
-    @Column(name = "Timestamp")
+    @Column(name = "timestamp")
     private Timestamp timestamp;
 
     @PrePersist // 데이터 삽입 시점의 시간 기록

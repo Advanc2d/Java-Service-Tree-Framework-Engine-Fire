@@ -13,10 +13,6 @@ import javax.persistence.Table;
 @Setter
 @Builder
 @Table(name = "ENGINE_INFO")
-@SelectBeforeUpdate(value=true)
-@DynamicInsert(value=true)
-@DynamicUpdate(value=true)
-@Cache(usage = CacheConcurrencyStrategy.NONE)
 @NoArgsConstructor
 @AllArgsConstructor
 public class JiraInfoEntity {
