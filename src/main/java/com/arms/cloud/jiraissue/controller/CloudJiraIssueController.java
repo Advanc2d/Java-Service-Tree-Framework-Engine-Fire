@@ -69,8 +69,9 @@ public class CloudJiraIssueController {
             value = {"/delete/{issueKeyOrId}"},
             method = {RequestMethod.DELETE,RequestMethod.GET}
     )
-    public String deleteDataToaRMS(@PathVariable String issueKeyOrId, ModelMap model,
+    public void deleteDataToaRMS(@PathVariable String issueKeyOrId, ModelMap model,
                                               HttpServletRequest request) throws Exception {
-        return cloudJiraIssue.deleteIssue(issueKeyOrId);
+
+        cloudJiraIssue.deleteIssue(issueKeyOrId);
     }
 }
