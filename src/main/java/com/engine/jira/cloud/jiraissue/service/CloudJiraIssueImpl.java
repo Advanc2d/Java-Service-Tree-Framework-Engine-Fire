@@ -83,6 +83,8 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         logger.info(jsonResponse);
 
         CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(response,CloudJiraIssueEntity.class);
+
+        cloudJiraIssueEntity.setConnectId(connectId);
         cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
 
         return response;
