@@ -5,12 +5,18 @@ import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import org.codehaus.jettison.json.JSONException;
 
-public interface CloudJiraIssue {
-    public CloudJiraIssueSearchDTO getIssueSearch(String projectKeyOrId);
-    public CloudJiraIssueDTO getIssue(String issueKeyOrId);
-    public void deleteIssue(String issueKeyOrId) throws Exception;
+import java.util.Map;
 
-    public CloudJiraIssueDTO createIssue(CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception;
-    public String updateIssue(String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO);
+public interface CloudJiraIssue {
+
+    public CloudJiraIssueSearchDTO getIssueSearch(String connectId, String projectKeyOrId);
+
+    public CloudJiraIssueDTO getIssue(String connectId, String issueKeyOrId);
+
+    public CloudJiraIssueDTO createIssue(String connectId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception;
+
+    public Map<String,Object> updateIssue(String connectId, String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO);
+
+    public void deleteIssue(String connectId, String issueKeyOrId) throws Exception;
 
 }

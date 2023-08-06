@@ -22,6 +22,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	@Autowired
 	private JiraInfo jiraInfo;
 
+
 	@Override
 	public CloudJiraProjectDTO getProjectData(String projectKey, String connectId) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;

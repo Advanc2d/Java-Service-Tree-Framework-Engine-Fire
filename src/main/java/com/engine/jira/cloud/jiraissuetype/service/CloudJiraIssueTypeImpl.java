@@ -47,6 +47,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
                 CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint,
                                                                         cloudJiraIssueTypeInputDTO, CloudJiraIssueTypeDTO.class).block();
 
+                modelMapper.getConfiguration().setSkipNullEnabled(true);
                 JiraInfoEntity jiraInfoEntity = modelMapper.map(found, JiraInfoEntity.class);
 
                 if (jiraInfoEntity != null) {
@@ -60,7 +61,6 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
                 if (returnEntity == null) {
                         return null;
                 }
-//                cloudJiraIssueTypeJpaRepository.save(jiraInfoEntity);
 
                 logger.info(addCloudJirarIssueTypeDTO.toString());
 
@@ -81,18 +81,5 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
                 return issueTypes;
 	}
-
-        public List<CloudJiraIssueTypeDTO> getIssueTypeListByDB() {
-
-                List<CloudJiraIssueTypeEntity> issueTypeEntities = cloudJiraIssueTypeJpaRepository.findAll();
-                List<CloudJiraIssueTypeDTO> issueTypeList = new ArrayList<>();
-
-                for (CloudJiraIssueTypeEntity item : issueTypeEntities) {
-                        CloudJiraIssueTypeDTO cloudJiraIssueTypeDTO = modelMapper.map(item, CloudJiraIssueTypeDTO.class);
-                        issueTypeList.add(cloudJiraIssueTypeDTO);
-                }
-
-                return issueTypeList;
-        }
 
 }

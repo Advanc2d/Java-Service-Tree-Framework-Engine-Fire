@@ -13,9 +13,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
-@RequestMapping(value = {"/cloud/jira/issue"})
+@RequestMapping(value = {"/{connectId}/cloud/jira/issue"})
 public class CloudJiraIssueController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -29,9 +30,10 @@ public class CloudJiraIssueController {
             value = {"/list/{projectKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public CloudJiraIssueSearchDTO miningDataListToaRMS(@PathVariable String projectKeyOrId, ModelMap model, 
-                                    HttpServletRequest request) throws Exception {
-        return cloudJiraIssue.getIssueSearch(projectKeyOrId);
+    public CloudJiraIssueSearchDTO miningDataListToaRMS(@PathVariable("connectId") String connectId,
+                                                        @PathVariable String projectKeyOrId,
+                                                        ModelMap model, HttpServletRequest request) throws Exception {
+        return cloudJiraIssue.getIssueSearch(connectId, projectKeyOrId);
     }
 
     @ResponseBody
@@ -39,9 +41,10 @@ public class CloudJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public CloudJiraIssueDTO miningDataToaRMS(@PathVariable String issueKeyOrId, ModelMap model,
-                                    HttpServletRequest request) throws Exception {
-        return cloudJiraIssue.getIssue(issueKeyOrId);
+    public CloudJiraIssueDTO miningDataToaRMS(@PathVariable("connectId") String connectId,
+                                                @PathVariable String issueKeyOrId,
+                                              ModelMap model, HttpServletRequest request) throws Exception {
+        return cloudJiraIssue.getIssue(connectId, issueKeyOrId);
     }
 
     @ResponseBody
@@ -49,9 +52,10 @@ public class CloudJiraIssueController {
             value = {""},
             method = {RequestMethod.POST}
     )
-    public CloudJiraIssueDTO makeIssueForReqAdd(@RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO,
+    public CloudJiraIssueDTO makeIssueForReqAdd(@PathVariable("connectId") String connectId,
+                                                @RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO,
                                                 ModelMap model, HttpServletRequest request) throws Exception {
-        return cloudJiraIssue.createIssue(cloudJiraIssueInputDTO);
+        return cloudJiraIssue.createIssue(connectId, cloudJiraIssueInputDTO);
     }
 
     @ResponseBody
@@ -59,19 +63,21 @@ public class CloudJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.PUT}
     )
-    public String updateIssueForReqAdd(@PathVariable String issueKeyOrId,
-                                       @RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
-        return cloudJiraIssue.updateIssue(issueKeyOrId, cloudJiraIssueInputDTO);
+    public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") String connectId,
+                                                   @PathVariable String issueKeyOrId,
+                                                   @RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
+        return cloudJiraIssue.updateIssue(connectId, issueKeyOrId, cloudJiraIssueInputDTO);
     }
 
     @ResponseBody
     @RequestMapping(
-            value = {"/delete/{issueKeyOrId}"},
-            method = {RequestMethod.DELETE,RequestMethod.GET}
+            value = {"/{issueKeyOrId}"},
+            method = {RequestMethod.DELETE}
     )
-    public void deleteDataToaRMS(@PathVariable String issueKeyOrId, ModelMap model,
-                                              HttpServletRequest request) throws Exception {
+    public void deleteDataToaRMS(@PathVariable("connectId") String connectId,
+                                    @PathVariable String issueKeyOrId,
+                                 ModelMap model, HttpServletRequest request) throws Exception {
 
-        cloudJiraIssue.deleteIssue(issueKeyOrId);
+        cloudJiraIssue.deleteIssue(connectId, issueKeyOrId);
     }
 }
