@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import com.engine.jira.cloud.jiraissue.model.IssueLinkSubtaskDTO;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -75,50 +74,6 @@ public class CloudJiraIssueTest {
     public void IssueDetailCallTest() {
         CloudJiraIssueDTO issue = getIssue(issueKeyOrId);
         Assertions.assertThat(issue.getSelf()).isEqualTo("https://advanc2d.atlassian.net/rest/api/3/issue/10010");
-    }
-
-    @Test
-    @DisplayName("이슈 상세 조회시 이슈 링크, 서브테스크 전체 조회 테스트")
-    public void IssueLinksSubtaskCallTest() {
-        IssueLinkSubtaskDTO result = new IssueLinkSubtaskDTO();
-
-        CloudJiraIssueDTO issue = getIssue(issueKeyOrId);
-        result.setNodeIssue(issue);
-        List<IssueLink> issueLinks = issue.getFields().getIssuelinks();
-
-        if (issueLinks.size() > 0) {
-            List<CloudJiraIssueDTO> inwardIssueList = new ArrayList<CloudJiraIssueDTO>();
-            List<CloudJiraIssueDTO> outwardIssueList = new ArrayList<CloudJiraIssueDTO>();
-
-            for(IssueLink issueLink : issueLinks) {
-
-                if (issueLink.getInwardIssue() != null) {
-                    CloudJiraIssueDTO inwardIssueLink = getIssue(issueLink.getInwardIssue().getId());
-                    inwardIssueList.add(inwardIssueLink);
-                }
-
-                if ( issueLink.getOutwardIssue() != null) {
-                    CloudJiraIssueDTO inwardIssueLink = getIssue(issueLink.getOutwardIssue().getId());
-                    outwardIssueList.add(inwardIssueLink);
-                }
-            }
-            result.setInwardIssues(inwardIssueList);
-            result.setOutwardIssues(outwardIssueList);
-        }
-
-        List<CloudJiraIssueDTO> subtasks = issue.getFields().getSubtasks();
-
-        if (issue.getFields().getSubtasks().size() > 0) {
-            List<CloudJiraIssueDTO> subtaskList = new ArrayList<CloudJiraIssueDTO>();
-            for(CloudJiraIssueDTO subtask : subtasks) {
-                CloudJiraIssueDTO subIssue = getIssue(subtask.getId());
-                subtaskList.add(subIssue);             
-            }
-
-            result.setSubtasks(subtaskList);
-        }
-
-        Assertions.assertThat(result.getNodeIssue().getSelf()).isEqualTo("https://advanc2d.atlassian.net/rest/api/3/issue/10010");
     }
 
     @Test

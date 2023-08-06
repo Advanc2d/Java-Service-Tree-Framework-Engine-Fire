@@ -36,29 +36,4 @@ public class CloudJiraConfig {
     @Value("${app.jiraUrl}")
     public String jiraApiUrl;
 
-    @Autowired
-    private JiraInfo jiraInfo;
-
-    @Bean
-    public WebClient getJiraWebClient() {
-        JiraInfoDTO jiraInfoDTO = jiraInfo.loadConnectInfo("1");
-
-        if(jiraInfoDTO == null || jiraInfoDTO.getUri().isEmpty()
-                    || jiraInfoDTO.getUserId().isEmpty()|| jiraInfoDTO.getPasswordOrToken().isEmpty() ) {
-
-            // 오류 처리 필요
-            return null;
-        }
-
-        return WebClient.builder()
-                .baseUrl(jiraInfoDTO.getUri())
-                .defaultHeader("Authorization", "Basic " + getBase64Credentials(jiraInfoDTO.getUserId(),
-                                                                            jiraInfoDTO.getPasswordOrToken()))
-                .build();
-    }
-
-    private String getBase64Credentials(String jiraID, String jiraPass) {
-        String credentials = jiraID + ":" + jiraPass;
-        return new String(Base64.getEncoder().encode(credentials.getBytes()));
-    }
 }

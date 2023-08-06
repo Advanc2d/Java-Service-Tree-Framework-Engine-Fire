@@ -39,6 +39,7 @@ public class FieldsDTO {
     private List<CloudJiraIssueDTO> subtasks; // sub task
 
     private Status status; // 상태값
+    private Status resolution;
 
     @Getter
     @Setter
@@ -240,6 +241,7 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Priority {
+        private String self;
         private String id;
         private String name;
     }

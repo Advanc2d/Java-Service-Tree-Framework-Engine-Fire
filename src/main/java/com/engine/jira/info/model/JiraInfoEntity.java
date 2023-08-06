@@ -29,7 +29,6 @@ public class JiraInfoEntity {
     @Type(type="text")
     private String userId;
 
-    //@Getter @Setter
     @Column(name = "password_or_token")
     @Type(type="text")
     private String passwordOrToken;
@@ -39,14 +38,16 @@ public class JiraInfoEntity {
     private String uri;
 
     @Column(name = "issue_id")
-    private String issueId;
-
-    //@Getter @Setter
-    @Column(name = "self")
     @Type(type="text")
-    private String self;
+    private String issueId;
 
     @Column(name = "issue_name")
     @Type(type="text")
     private String issueName;
+
+    @Column(name = "self")
+    @Type(type="text")
+    private String self;
+
+
 }
