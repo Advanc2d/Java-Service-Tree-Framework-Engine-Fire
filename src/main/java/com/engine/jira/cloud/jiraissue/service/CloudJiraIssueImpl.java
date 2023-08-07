@@ -16,10 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 
 @AllArgsConstructor
 @Service("cloudJiraIssue")
@@ -183,5 +181,60 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         createIssue(connectId, cloudJiraIssueInputDTO);
         // 이슈 생성하고 기존의 서브테스크를 지우는 방식
         // 이슈 생성하고 서브테스크 상위 이슈를 지우는 방식으로 갈지 고민
+    }
+
+    @Transactional
+    @Override
+    public String collectLinkAndSubtask(String connectId) {
+        List<CloudJiraIssueEntity> list = cloudJiraIssueJpaRepository.findAll();
+        List<CloudJiraIssueEntity> saveList = new ArrayList<>();
+
+        for (CloudJiraIssueEntity item : list) {
+            CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(item.getConnectId(), item.getId());
+
+            if (cloudJiraIssueDTO.getFields().getIssuelinks().size() > 0) {
+                List<FieldsDTO.IssueLink> linkList = cloudJiraIssueDTO.getFields().getIssuelinks();
+
+                for(FieldsDTO.IssueLink linkItem : linkList) {
+                    if(linkItem.getInwardIssue() != null) {
+                        CloudJiraIssueDTO saveIssueDTO = getIssue(item.getConnectId(), linkItem.getInwardIssue().getId());
+
+                        CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
+                        cloudJiraIssueEntity.setConnectId(item.getConnectId());
+                        cloudJiraIssueEntity.setOutwardId(item.getId());
+                        cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+                        saveList.add(cloudJiraIssueEntity);
+                        // cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
+                    }
+                }
+            }
+
+            if(cloudJiraIssueDTO.getFields().getSubtasks().size() > 0) {
+                List<CloudJiraIssueDTO> subtaskList = cloudJiraIssueDTO.getFields().getSubtasks();
+
+                for(CloudJiraIssueDTO subtaskItem : subtaskList) {
+                    CloudJiraIssueDTO saveIssueDTO = getIssue(item.getConnectId(), subtaskItem.getId());
+
+                    CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
+                    cloudJiraIssueEntity.setConnectId(item.getConnectId());
+                    cloudJiraIssueEntity.setParentId(item.getId());
+                    cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+                    saveList.add(cloudJiraIssueEntity);
+                    // cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
+                }
+            }
+
+            if (saveList.size() > 100) {
+                cloudJiraIssueJpaRepository.saveAll(saveList);
+            }
+        }
+
+        if (saveList.size() > 0 && saveList.size() < 100) {
+            cloudJiraIssueJpaRepository.saveAll(saveList);
+        }
+
+        return "success";
     }
 }
