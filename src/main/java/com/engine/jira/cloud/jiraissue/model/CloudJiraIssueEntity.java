@@ -17,11 +17,16 @@ import java.sql.Timestamp;
 @Table(name = "ENGINE_JIRA_ISSUE")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CloudJiraIssueEntity implements Serializable {
+@IdClass(CloudJiraIssuePK.class)
+public class CloudJiraIssueEntity {
 
     @Id
-    @Column(name = "self", columnDefinition = "VARCHAR(255)")
+    @Column(name = "self", columnDefinition = "VARCHAR(500)")
     private String self;
+
+    @Id
+    @Column(name = "timestamp")
+    private Timestamp timestamp;
 
     @Column(name = "connect_id", columnDefinition = "TEXT")
     private String connectId;
@@ -39,9 +44,6 @@ public class CloudJiraIssueEntity implements Serializable {
     private String parentId;
 
     //@UpdateTimestamp
-    @Column(name = "timestamp")
-    private Timestamp timestamp;
-
     @PrePersist // 데이터 삽입 시점의 시간 기록
     public void prePersist() {
         if (timestamp == null) {

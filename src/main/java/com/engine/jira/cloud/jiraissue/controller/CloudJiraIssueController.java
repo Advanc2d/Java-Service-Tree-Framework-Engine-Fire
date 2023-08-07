@@ -80,4 +80,17 @@ public class CloudJiraIssueController {
 
         cloudJiraIssue.deleteIssue(connectId, issueKeyOrId);
     }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/collection/scheduler"},
+            method = {RequestMethod.PUT}
+    )
+    public String collectLinkAndSubtask(@PathVariable("connectId") String connectId,
+                             ModelMap model, HttpServletRequest request) throws Exception {
+        String result = cloudJiraIssue.collectLinkAndSubtask(connectId);
+
+        return result;
+    }
+
 }
