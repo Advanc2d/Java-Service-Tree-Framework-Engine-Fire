@@ -19,4 +19,6 @@ public interface CloudJiraIssue {
 
     public void deleteIssue(String connectId, String issueKeyOrId) throws Exception;
 
+    public String collectLinkAndSubtask(String connectId);
+
 }
