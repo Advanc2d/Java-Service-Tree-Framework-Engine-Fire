@@ -19,9 +19,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
-import com.engine.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
-import com.engine.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
+import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
+import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
+import com.arms.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
 
 public class CloudJiraIssueTest {
     WebClient webClient;

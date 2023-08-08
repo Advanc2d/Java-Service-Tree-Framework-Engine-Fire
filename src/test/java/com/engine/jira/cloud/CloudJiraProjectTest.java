@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import com.engine.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
+import com.arms.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
