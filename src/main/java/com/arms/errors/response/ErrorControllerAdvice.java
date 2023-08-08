@@ -1,20 +1,18 @@
 package com.arms.errors.response;
 
+import com.arms.errors.CommonResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.arms.errors.CommonResponse.ApiResult;
-import static com.arms.errors.CommonResponse.error;
-
 @ControllerAdvice
 public class ErrorControllerAdvice {
 
-    private ResponseEntity<ApiResult<?>> newResponse(String message, HttpStatus status) {
+    private ResponseEntity<CommonResponse.ApiResult<?>> newResponse(String message, HttpStatus status) {
         HttpHeaders headers = getHttpHeaders();
-        return new ResponseEntity<>(error(message, status), headers, status);
+        return new ResponseEntity<>(CommonResponse.error(message, status), headers, status);
     }
 
     private HttpHeaders getHttpHeaders() {
