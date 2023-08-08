@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class JiraUtils {
+public class OnPremiseJiraUtils {
 
     public static JiraRestClient getJiraRestClient(String jiraUrl, String jiraID, String jiraPass) throws URISyntaxException, IOException {
 

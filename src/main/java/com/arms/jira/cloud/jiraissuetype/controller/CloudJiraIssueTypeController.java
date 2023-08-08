@@ -12,11 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = {"/{connectId}/cloud/jira/issuetype"})
@@ -35,7 +31,19 @@ public class CloudJiraIssueTypeController {
     public List<CloudJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") String connectId,
                                                         ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ALL ISSUE TYPE GET API 호출");
-        return cloudJiraIssueType.getIssueTypeListByCloud(connectId);
+        return cloudJiraIssueType.getIssueTypeListAll(connectId);
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/project"},
+            method = {RequestMethod.GET}
+    )
+    public List<CloudJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") String connectId,
+                                                        @RequestParam("projectId") String projectId,
+                                                        ModelMap model, HttpServletRequest request) throws Exception {
+        logger.info("Jira Cloud"+ projectId +" ProjectId ISSUE TYPE GET API 호출");
+        return cloudJiraIssueType.getIssueTypeListByProjectId(connectId, projectId);
     }
 
     @ResponseBody
