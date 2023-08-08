@@ -29,42 +29,8 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     @Autowired
     private JiraInfo jiraInfo;
 
-    @Transactional
     @Override
-    public CloudJiraIssueTypeDTO createIssueType(String connectId,
-                                                 CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO)
-                                                throws Exception {
-
-        String endpoint = "/rest/api/3/issuetype";
-
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-
-        CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint,
-                                                                cloudJiraIssueTypeInputDTO, CloudJiraIssueTypeDTO.class).block();
-
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-        JiraInfoEntity jiraInfoEntity = modelMapper.map(found, JiraInfoEntity.class);
-
-        if (jiraInfoEntity != null) {
-                jiraInfoEntity.setIssueId(addCloudJirarIssueTypeDTO.getId());
-                jiraInfoEntity.setIssueName(addCloudJirarIssueTypeDTO.getName());
-                jiraInfoEntity.setSelf(addCloudJirarIssueTypeDTO.getSelf());
-        }
-
-        JiraInfoEntity returnEntity = jiraInfo.saveIssueTypeInfo(jiraInfoEntity);
-
-        if (returnEntity == null) {
-                return null;
-        }
-
-        logger.info(addCloudJirarIssueTypeDTO.toString());
-
-        return addCloudJirarIssueTypeDTO;
-    }
-
-    @Override
-    public List<CloudJiraIssueTypeDTO> getIssueTypeListByCloud(String connectId) throws Exception {
+    public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(String connectId) throws Exception {
 
         String endpoint = "/rest/api/3/issuetype";
 
@@ -78,4 +44,52 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         return issueTypes;
     }
 
+    @Override
+    public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(String connectId, String projectId) throws Exception {
+
+        String endpoint = "/rest/api/3/issuetype/project?projectId=" + projectId;
+
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+
+        List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint, List.class).block();
+
+        logger.info(issueTypes.toString());
+
+        return issueTypes;
+    }
+
+    @Transactional
+    @Override
+    public CloudJiraIssueTypeDTO createIssueType(String connectId,
+                                                 CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO)
+            throws Exception {
+
+        String endpoint = "/rest/api/3/issuetype";
+
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+
+        CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint,
+                cloudJiraIssueTypeInputDTO, CloudJiraIssueTypeDTO.class).block();
+
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        JiraInfoEntity jiraInfoEntity = modelMapper.map(found, JiraInfoEntity.class);
+
+        if (jiraInfoEntity != null) {
+            jiraInfoEntity.setIssueId(addCloudJirarIssueTypeDTO.getId());
+            jiraInfoEntity.setIssueName(addCloudJirarIssueTypeDTO.getName());
+            jiraInfoEntity.setSelf(addCloudJirarIssueTypeDTO.getSelf());
+        }
+
+        JiraInfoEntity returnEntity = jiraInfo.saveIssueTypeInfo(jiraInfoEntity);
+
+        if (returnEntity == null) {
+            return null;
+        }
+
+        logger.info(addCloudJirarIssueTypeDTO.toString());
+
+        return addCloudJirarIssueTypeDTO;
+    }
 }

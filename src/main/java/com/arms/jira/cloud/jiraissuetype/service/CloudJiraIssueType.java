@@ -7,8 +7,9 @@ import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
 
 public interface CloudJiraIssueType {
 
+    public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(String connectId) throws Exception;
+
+    public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(String connectId, String projectId) throws Exception;
+
     public CloudJiraIssueTypeDTO createIssueType(String connectId, CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO) throws Exception;
-
-    public List<CloudJiraIssueTypeDTO> getIssueTypeListByCloud(String connectId) throws Exception;
-
 }
