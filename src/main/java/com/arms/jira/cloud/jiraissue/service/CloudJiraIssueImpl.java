@@ -37,22 +37,38 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     @Override
     public CloudJiraIssueSearchDTO getIssueSearch(String connectId, String projectKeyOrId) {
 
-        String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId;
+        int startAt = 0;
+        int maxResults = 10;
+        boolean isLast = false;
 
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        CloudJiraIssueSearchDTO response = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueSearchDTO.class).block();
+        CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = null;
+        List<CloudJiraIssueDTO> issueList = new ArrayList<>(); // 이슈 저장
 
-        String jsonResponse = response.toString();
-        logger.info(jsonResponse);
+        while (!isLast) {
+            String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId + "&startAt=" + startAt + "&maxResults=" + maxResults;
+            CloudJiraIssueSearchDTO cloudJiraIssuePaging = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueSearchDTO.class).block();
 
-        return response;
+            issueList.addAll(cloudJiraIssuePaging.getIssues());
+
+            if (cloudJiraIssuePaging.getTotal() == issueList.size()) {
+                isLast = true;
+                cloudJiraIssueSearchDTO = cloudJiraIssuePaging;
+                cloudJiraIssueSearchDTO.setIssues(issueList);
+
+                return cloudJiraIssueSearchDTO;
+            }
+
+            startAt += maxResults;
+        }
+
+        return cloudJiraIssueSearchDTO;
     }
 
     @Override
     public CloudJiraIssueDTO getIssue(String connectId, String issueKeyOrId) {
-
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
 
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
