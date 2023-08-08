@@ -1,6 +1,6 @@
 //package com.engine.jira.cloud;
 //
-//import com.engine.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
+//import com.arms.model.jiraproject.cloud.jira.CloudJiraProjectDTO;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
