@@ -5,7 +5,7 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
-import com.arms.jira.onpremise.JiraUtils;
+import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class OnPremiseOnPremiseJiraProjectImpl implements OnPremiseJiraProject {
     public List<OnPremiseJiraProjectDTO> getProjectList(String connectId) throws Exception {
 
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
-        JiraRestClient restClient = JiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                 info.getUserId(),
                                                                 info.getPasswordOrToken());
 
@@ -51,7 +51,7 @@ public class OnPremiseOnPremiseJiraProjectImpl implements OnPremiseJiraProject {
     @Override
     public OnPremiseJiraProjectDTO getProject(String connectId, String projectKey) throws Exception {
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
-        JiraRestClient restClient = JiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                 info.getUserId(),
                                                                 info.getPasswordOrToken());
 
