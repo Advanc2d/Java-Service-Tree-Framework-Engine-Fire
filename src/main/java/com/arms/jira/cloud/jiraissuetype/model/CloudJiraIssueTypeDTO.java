@@ -15,10 +15,14 @@ public class CloudJiraIssueTypeDTO {
 	private String self;
 	private String id;
 	private String description;
-	private String iconUrl;
+
+	// non use
+	//private String iconUrl;
 	private String name;
 	private String untranslatedName;
 	private Boolean subtask;
-	private Integer avatarId;
+
+	// non use
+	//private Integer avatarId;
 	private Integer hierarchyLevel;
 }
