@@ -64,11 +64,34 @@ public class CloudJiraUtils {
                 .bodyToMono(responseType);
     }
 
-    public static Optional<Boolean> executePut(WebClient webClient, Object requestBody, String uri) {
+    public static Optional<Boolean> executePost(WebClient webClient, String uri, Object requestBody) {
+
+        Mono<ResponseEntity<Void>> response = webClient.post()
+                                                .uri(uri)
+                                                .body(BodyInserters.fromValue(requestBody))
+                                                .retrieve()
+                                                .toEntity(Void.class);
+
+        return response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                .blockOptional();
+    }
+
+    public static Optional<Boolean> executePut(WebClient webClient, String uri, Object requestBody) {
 
         Mono<ResponseEntity<Void>> response = webClient.put()
                                                 .uri(uri)
                                                 .body(BodyInserters.fromValue(requestBody))
+                                                .retrieve()
+                                                .toEntity(Void.class);
+
+        return response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                .blockOptional();
+    }
+
+    public static Optional<Boolean> executeDelete(WebClient webClient, String uri) {
+
+        Mono<ResponseEntity<Void>> response = webClient.delete()
+                                                .uri(uri)
                                                 .retrieve()
                                                 .toEntity(Void.class);
 

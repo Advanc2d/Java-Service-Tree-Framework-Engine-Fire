@@ -121,7 +121,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        Optional<Boolean> result = CloudJiraUtils.executePut(webClient, dto, endpoint);
+        Optional<Boolean> result = CloudJiraUtils.executePut(webClient, endpoint, dto);
 
         // Mono<Void> addIssueTypeScheme = CloudJiraUtils.put(webClient, endpoint, dto, Void.class);
         // try {

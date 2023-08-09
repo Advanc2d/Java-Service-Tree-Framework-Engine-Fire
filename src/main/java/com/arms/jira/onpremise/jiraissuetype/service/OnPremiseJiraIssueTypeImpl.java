@@ -52,9 +52,9 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
                 .findFirst().orElse(null); // 결과가 없으면 null을 반환합니다.
 
         if (result != null) {
-            System.out.println("찾은 IssueType: " + result);
+            logger.info("찾은 IssueType: " + result);
         } else {
-            System.out.println("ID가 " + issueTypeId + "인 IssueType을 찾을 수 없습니다.");
+            logger.info("ID가 " + issueTypeId + "인 IssueType을 찾을 수 없습니다.");
         }
 
         logger.info(result.toString());
