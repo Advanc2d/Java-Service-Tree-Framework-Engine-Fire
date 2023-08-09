@@ -1,10 +1,8 @@
 package com.arms.jira.cloud.jiraissue.controller;
 
 
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
+import com.arms.jira.cloud.jiraissue.model.*;
 import com.arms.jira.cloud.jiraissue.service.CloudJiraIssue;
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +62,7 @@ public class CloudJiraIssueController {
             method = {RequestMethod.PUT}
     )
     public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") String connectId,
-                                                   @PathVariable String issueKeyOrId,
+                                                   @PathVariable("issueKeyOrId") String issueKeyOrId,
                                                    @RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
         return cloudJiraIssue.updateIssue(connectId, issueKeyOrId, cloudJiraIssueInputDTO);
     }
@@ -74,11 +72,13 @@ public class CloudJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.DELETE}
     )
-    public void deleteDataToaRMS(@PathVariable("connectId") String connectId,
-                                    @PathVariable String issueKeyOrId,
+    public Map<String,Object> deleteDataToaRMS(@PathVariable("connectId") String connectId,
+                                 @PathVariable("issueKeyOrId") String issueKeyOrId,
                                  ModelMap model, HttpServletRequest request) throws Exception {
 
-        cloudJiraIssue.deleteIssue(connectId, issueKeyOrId);
+        Map<String,Object> result = cloudJiraIssue.deleteIssue(connectId, issueKeyOrId);
+
+        return result;
     }
 
     @ResponseBody
@@ -86,11 +86,51 @@ public class CloudJiraIssueController {
             value = {"/collection/scheduler"},
             method = {RequestMethod.PUT}
     )
-    public String collectLinkAndSubtask(@PathVariable("connectId") String connectId,
+    public Map<String,Object> collectLinkAndSubtask(@PathVariable("connectId") String connectId,
                              ModelMap model, HttpServletRequest request) throws Exception {
-        String result = cloudJiraIssue.collectLinkAndSubtask(connectId);
+        Map<String,Object> result = cloudJiraIssue.collectLinkAndSubtask(connectId);
 
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping(
+            value = {"/add/label/{issueKeyOrId}"},
+            method = {RequestMethod.PUT}
+    )
+    public Map<String,Object> addLabel(@PathVariable("connectId") String connectId,
+                                       @PathVariable("issueKeyOrId") String issueKeyOrId,
+                                        @RequestBody IssueLabelUpdateRequestDTO issueLabelUpdateRequestDTO,
+                                                    ModelMap model, HttpServletRequest request) throws Exception {
+        Map<String,Object> result = cloudJiraIssue.addLabel(connectId, issueKeyOrId, issueLabelUpdateRequestDTO);
+
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/{issueKeyOrId}/transitions/list"},
+            method = {RequestMethod.GET}
+    )
+    public TransitionsDTO getIssueStatusAll(@PathVariable("connectId") String connectId,
+                                            @PathVariable("issueKeyOrId") String issueKeyOrId,
+                                            ModelMap model, HttpServletRequest request) throws Exception {
+        TransitionsDTO result = cloudJiraIssue.getIssueStatusAll(connectId, issueKeyOrId);
+
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/{issueKeyOrId}/transitions"},
+            method = {RequestMethod.POST}
+    )
+    public Map<String,Object> updateIssueStatus(@PathVariable("connectId") String connectId,
+                                                @PathVariable("issueKeyOrId") String issueKeyOrId,
+                                                @RequestBody IssueStatusUpdateRequestDTO issueStatusUpdateRequestDTO,
+                                                    ModelMap model, HttpServletRequest request) throws Exception {
+        Map<String,Object> result = cloudJiraIssue.updateIssueStatus(connectId, issueKeyOrId, issueStatusUpdateRequestDTO );
+
+        return result;
+    }
 }
