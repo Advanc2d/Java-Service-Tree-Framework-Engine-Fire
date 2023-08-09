@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@Service("jiraProject")
+@Service("onPremiseJiraProject")
 public class OnPremiseOnPremiseJiraProjectImpl implements OnPremiseJiraProject {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
