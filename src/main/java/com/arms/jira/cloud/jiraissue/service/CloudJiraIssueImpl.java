@@ -139,36 +139,57 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     @Transactional
     @Override
-    public void deleteIssue(String connectId, String issueKeyOrId) throws Exception {
+    public Map<String,Object> deleteIssue(String connectId, String issueKeyOrId) throws Exception {
+
+    	Map<String, Object> result = new HashMap<String, Object>();
 
         String endpoint ="";
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        if(checkSubTask(connectId, issueKeyOrId)){ //서브테스크가 있을 경유
-            for(int i=0;i<getSubTask(connectId, issueKeyOrId).size();i++){
+        if (checkSubTask(connectId, issueKeyOrId)){ //서브테스크가 있을 경유
+            for (int i=0;i<getSubTask(connectId, issueKeyOrId).size();i++) {
                 convertSubtaskToIssue(connectId, String.valueOf(getSubTask(connectId, issueKeyOrId).get(i).getId()), issueKeyOrId);
             }
             endpoint= "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=true";
-        }else{
+        } 
+        else{
             endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=false";
         }
 
-        CloudJiraUtils.delete(webClient, endpoint, Void.class).block();
+        Optional<Boolean> response = CloudJiraUtils.executeDelete(webClient, endpoint);
 
-        cloudJiraIssueJpaRepository.deleteById(issueKeyOrId);
+        boolean isSuccess = false;
 
+        if (response.isPresent()) {
+            if (response.get()) {
+                // PUT 호출이 HTTP 204로 성공했습니다.
+                isSuccess = true;
+                result.put("success", isSuccess);
+                result.put("message", "이슈 삭제 성공");
+
+                cloudJiraIssueJpaRepository.deleteById(issueKeyOrId);
+
+                return result;
+            }
+        }
+
+        result.put("success", isSuccess);
+        result.put("message", "이슈 삭제 실패");
+
+        return result;
     }
 
     public List<CloudJiraIssueDTO> getSubTask(String connectId, String issueId){
         List<CloudJiraIssueDTO> SubTaskList = getIssue(connectId, issueId).getFields().getSubtasks();
+
         return SubTaskList;
     }
 
     public boolean checkSubTask(String connectId,String issueKeyOrId){
-        if(getSubTask(connectId, issueKeyOrId).size()>0){
+        if (getSubTask(connectId, issueKeyOrId).size()>0) {
             return true;
-        }else return false;
+        } else return false;
     }
 
     public void convertSubtaskToIssue(String connectId, String  subTaskKeyOrId,String issueKeyOrId) throws Exception {
@@ -201,7 +222,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     @Transactional
     @Override
-    public String collectLinkAndSubtask(String connectId) {
+    public Map<String,Object> collectLinkAndSubtask(String connectId) {
         List<CloudJiraIssueEntity> list = cloudJiraIssueJpaRepository.findAll();
         List<CloudJiraIssueEntity> saveList = new ArrayList<>();
 
@@ -251,6 +272,10 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
             cloudJiraIssueJpaRepository.saveAll(saveList);
         }
 
-        return "success";
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("success", true);
+        result.put("message", "스케줄러 작동 완료되었습니다.");
+
+        return result;
     }
 }

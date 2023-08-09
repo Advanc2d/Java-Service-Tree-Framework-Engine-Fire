@@ -16,8 +16,8 @@ public interface CloudJiraIssue {
 
     public Map<String,Object> updateIssue(String connectId, String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO);
 
-    public void deleteIssue(String connectId, String issueKeyOrId) throws Exception;
+    public Map<String,Object> deleteIssue(String connectId, String issueKeyOrId) throws Exception;
 
-    public String collectLinkAndSubtask(String connectId);
+    public Map<String,Object> collectLinkAndSubtask(String connectId);
 
 }

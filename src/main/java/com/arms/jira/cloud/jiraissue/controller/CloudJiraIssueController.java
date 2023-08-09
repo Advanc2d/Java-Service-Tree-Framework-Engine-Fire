@@ -74,11 +74,13 @@ public class CloudJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.DELETE}
     )
-    public void deleteDataToaRMS(@PathVariable("connectId") String connectId,
+    public Map<String,Object> deleteDataToaRMS(@PathVariable("connectId") String connectId,
                                     @PathVariable String issueKeyOrId,
                                  ModelMap model, HttpServletRequest request) throws Exception {
 
-        cloudJiraIssue.deleteIssue(connectId, issueKeyOrId);
+    	Map<String,Object> result = cloudJiraIssue.deleteIssue(connectId, issueKeyOrId);
+
+    	return result;
     }
 
     @ResponseBody
@@ -86,9 +88,9 @@ public class CloudJiraIssueController {
             value = {"/collection/scheduler"},
             method = {RequestMethod.PUT}
     )
-    public String collectLinkAndSubtask(@PathVariable("connectId") String connectId,
+    public Map<String,Object> collectLinkAndSubtask(@PathVariable("connectId") String connectId,
                              ModelMap model, HttpServletRequest request) throws Exception {
-        String result = cloudJiraIssue.collectLinkAndSubtask(connectId);
+    	Map<String,Object> result = cloudJiraIssue.collectLinkAndSubtask(connectId);
 
         return result;
     }

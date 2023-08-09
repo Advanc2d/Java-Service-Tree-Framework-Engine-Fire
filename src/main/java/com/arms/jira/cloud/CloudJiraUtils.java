@@ -75,4 +75,15 @@ public class CloudJiraUtils {
         return response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
                 .blockOptional();
     }
+
+    public static Optional<Boolean> executeDelete(WebClient webClient, String uri) {
+
+        Mono<ResponseEntity<Void>> response = webClient.delete()
+                                                .uri(uri)
+                                                .retrieve()
+                                                .toEntity(Void.class);
+
+        return response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                .blockOptional();
+    }
 }
