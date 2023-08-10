@@ -1,9 +1,10 @@
 package com.arms.jira.onpremise.jiraissue.controller;
 
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.arms.jira.onpremise.jiraissue.service.OnPremiseJiraIssue;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +33,31 @@ public class OnPremiseJiraIssueController {
         return onPremiseJiraIssue.createIssue(connectId, onPremiseJiraIssueInputDTO);
     }
 
-    //조회
+    // 전체 조회
     @ResponseBody
     @RequestMapping(
             value = {"/list/{projectKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public OnPremiseJiraIssueDTO miningDataListToaRMS(@PathVariable("connectId") String connectId,
-                                                      @PathVariable String projectKeyOrId,
-                                                      ModelMap model, HttpServletRequest request) throws Exception {
+    public SearchResult getIssueList(@PathVariable("connectId") String connectId,
+                                     @PathVariable String projectKeyOrId,
+                                     ModelMap model, HttpServletRequest request) throws Exception {
+        logger.info("이슈 전체 조회 API 호출");
         return onPremiseJiraIssue.getIssueSearch(connectId, projectKeyOrId);
     }
-
+    // 상세 조회
     @ResponseBody
     @RequestMapping(
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public String miningDataToaRMS(@PathVariable("connectId") String connectId,
-                                   @PathVariable String issueKeyOrId,
-                                   ModelMap model, HttpServletRequest request) throws Exception {
+    public Issue gatIssueDetail(@PathVariable("connectId") String connectId,
+                                  @PathVariable String issueKeyOrId,
+                                  ModelMap model, HttpServletRequest request) throws Exception {
+        logger.info("이슈 상세 조회 API 호출");
         return onPremiseJiraIssue.getIssue(connectId, issueKeyOrId);
     }
-    //수정
+    //업데이트
     @ResponseBody
     @RequestMapping(
             value = {"/{issueKeyOrId}"},
@@ -62,10 +65,9 @@ public class OnPremiseJiraIssueController {
     )
     public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") String connectId,
                                                    @PathVariable String issueKeyOrId,
-                                                   @RequestBody CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
-        return onPremiseJiraIssue.updateIssue(connectId, issueKeyOrId, cloudJiraIssueInputDTO);
+                                                   @RequestBody  OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception{
+        logger.info("이슈 업데이트 API 호출");
+        return onPremiseJiraIssue.updateIssue(connectId, issueKeyOrId, onPremiseJiraIssueInputDTO);
     }
-    //생성
-
     //삭제
 }
