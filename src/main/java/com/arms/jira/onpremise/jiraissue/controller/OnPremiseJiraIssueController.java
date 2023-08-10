@@ -5,6 +5,7 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.arms.jira.onpremise.jiraissue.service.OnPremiseJiraIssue;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,9 @@ public class OnPremiseJiraIssueController {
             value = {"/list/{projectKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public SearchResult getIssueList(@PathVariable("connectId") String connectId,
-                                     @PathVariable String projectKeyOrId,
-                                     ModelMap model, HttpServletRequest request) throws Exception {
+    public JsonNode getIssueList(@PathVariable("connectId") String connectId,
+                                 @PathVariable String projectKeyOrId,
+                                 ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("이슈 전체 조회 API 호출");
         return onPremiseJiraIssue.getIssueSearch(connectId, projectKeyOrId);
     }
