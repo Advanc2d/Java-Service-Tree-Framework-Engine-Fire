@@ -14,6 +14,9 @@ import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldVal
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.TransitionInput;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -88,23 +91,46 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         return onPremiseJiraIssueDTO;
     }
     @Override
-    public SearchResult getIssueSearch(String connectId, String projectKeyOrId) throws Exception {
+    public JsonNode  getIssueSearch(String connectId, String projectKeyOrId) throws Exception {
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
-                                                                         info.getUserId(),
-                                                                         info.getPasswordOrToken());
+                info.getUserId(),
+                info.getPasswordOrToken());
 
         String jql = "project = " + projectKeyOrId;
-        int maxResults = 10;
+        int maxResults = 1000;
         int startAt = 0;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
-        SearchResult tempResult = restClient.getSearchClient().searchJql(jql, maxResults, startAt, fields).get();
 
-        int totalIssues = tempResult.getTotal();
-        maxResults = totalIssues;
-        SearchResult result = restClient.getSearchClient().searchJql(jql, maxResults, startAt, fields).get();
+        // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
+        List<Issue> allIssues = new ArrayList<>();
+        SearchResult searchResult;
+        do {
+            searchResult = restClient.getSearchClient()
+                    .searchJql(jql, maxResults, startAt, fields)
+                    .get();
+            for (Issue issue : searchResult.getIssues()) {
+                allIssues.add(issue);
+            }
+            startAt += maxResults;
+        } while (searchResult.getTotal() > startAt);
 
-        return result;
+        // 변환을 위한 ObjectMapper 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JodaModule()); //Date 처리 위함
+        // 이슈 리스트를 json 형식으로 변환
+        JsonNode issuesAsJson = null;
+        try {
+            Map<String, Object> resultData = new HashMap<>();
+            resultData.put("total", allIssues.size());
+            resultData.put("issues", allIssues);
+
+            issuesAsJson = objectMapper.valueToTree(resultData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return issuesAsJson;
     }
 
     @Override

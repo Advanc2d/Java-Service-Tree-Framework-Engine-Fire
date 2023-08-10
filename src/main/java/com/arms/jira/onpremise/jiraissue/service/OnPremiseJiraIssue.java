@@ -3,7 +3,7 @@ package com.arms.jira.onpremise.jiraissue.service;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Map;
 public interface OnPremiseJiraIssue {
@@ -13,7 +13,7 @@ public interface OnPremiseJiraIssue {
     OnPremiseJiraIssueDTO createIssue(String connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception;
 
     // 프로젝트 이슈 조회
-    SearchResult getIssueSearch(String connectId, String projectKeyOrId) throws Exception;
+    JsonNode getIssueSearch(String connectId, String projectKeyOrId) throws Exception;
 
     // 이슈 정보 상세 조회
     Issue getIssue(String connectId, String issueKeyOrId) throws Exception;
