@@ -43,7 +43,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = null;
+        CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
         List<CloudJiraIssueDTO> issueList = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
@@ -230,7 +230,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         } else return false;
     }
 
-    public void convertSubtaskToIssue(String connectId, String  subTaskKeyOrId,String issueKeyOrId) throws Exception {
+    public void convertSubtaskToIssue(String connectId, String subTaskKeyOrId,String issueKeyOrId) throws Exception {
 
         CloudJiraIssueDTO issue = getIssue(connectId, subTaskKeyOrId);
         String issueTypeId      = getIssue(connectId, issueKeyOrId).getFields().getIssuetype().getId();

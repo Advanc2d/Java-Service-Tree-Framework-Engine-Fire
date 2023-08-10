@@ -69,5 +69,17 @@ public class OnPremiseJiraIssueController {
         logger.info("이슈 업데이트 API 호출");
         return onPremiseJiraIssue.updateIssue(connectId, issueKeyOrId, onPremiseJiraIssueInputDTO);
     }
-    //삭제
+
+    // 이슈 삭제
+    @ResponseBody
+    @RequestMapping(
+            value = {"/{issueKey}"},
+            method = {RequestMethod.DELETE}
+    )
+    public Map<String, Object> deleteIssue(@PathVariable("connectId") String connectId,
+                                           @PathVariable String issueKey) throws Exception {
+        logger.info("이슈 삭제 API 호출");
+        return onPremiseJiraIssue.deleteIssue(connectId, issueKey);
+    }
+
 }

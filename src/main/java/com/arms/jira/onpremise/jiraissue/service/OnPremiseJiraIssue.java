@@ -5,15 +5,12 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Map;
 public interface OnPremiseJiraIssue {
 
 
     // 이슈 생성
-    public OnPremiseJiraIssueDTO createIssue(String connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception;
+    OnPremiseJiraIssueDTO createIssue(String connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception;
 
     // 프로젝트 이슈 조회
     SearchResult getIssueSearch(String connectId, String projectKeyOrId) throws Exception;
@@ -24,5 +21,6 @@ public interface OnPremiseJiraIssue {
     // 이슈 업데이트
     Map<String, Object> updateIssue(String connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception;
 
-
+    // 이슈 삭제
+    Map<String, Object> deleteIssue(String connectId, String issueKey) throws Exception;
 }
