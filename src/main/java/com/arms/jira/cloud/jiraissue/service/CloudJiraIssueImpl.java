@@ -151,20 +151,18 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 //                convertSubtaskToIssue(connectId, String.valueOf(getSubTask(connectId, issueKeyOrId).get(i).getId()), issueKeyOrId);
 //            }
 
-            String labelValue = "삭제처리이슈";
-            IssueLabelUpdateRequestDTO.Label label = new IssueLabelUpdateRequestDTO.Label();
-            label.setAdd(labelValue);
+            /* ***
+                반장님에게 확인 후 수정사항 (Label 덮어씌기로 반영됨)
+            *** */
+            String closedLabel = "closeLabel";
 
-            List<IssueLabelUpdateRequestDTO.Label> labels = new ArrayList<>();
-            labels.add(label);
+            FieldsDTO fieldsDTO = new FieldsDTO();
+            fieldsDTO.setLabels(List.of(closedLabel));
 
-            IssueLabelUpdateRequestDTO.Update update = new IssueLabelUpdateRequestDTO.Update();
-            update.setLabels(labels);
+            CloudJiraIssueInputDTO cloudJiraIssueInputDTO = new CloudJiraIssueInputDTO();
+            cloudJiraIssueInputDTO.setFields(fieldsDTO);
 
-            IssueLabelUpdateRequestDTO issueLabelUpdateRequestDTO = new IssueLabelUpdateRequestDTO();
-            issueLabelUpdateRequestDTO.setUpdate(update);
-
-            Map<String, Object> addLabelResult = addLabel(connectId,issueKeyOrId, issueLabelUpdateRequestDTO);
+            Map<String, Object> addLabelResult = updateIssue(connectId,issueKeyOrId, cloudJiraIssueInputDTO);
 
             if (!((Boolean) addLabelResult.get("success"))) {
                 result.put("success", false);
@@ -173,6 +171,9 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
                 return result;
             }
 
+            /* ***
+                반장님에게 확인 후 수정사항(서브테스크 있을 시 닫기로 변경해야하는데 그 값은 모두 다름)
+            *** */
             String transitionsId = "2";
             IssueStatusUpdateRequestDTO.TransitionInputDTO transitionInputDTO = new IssueStatusUpdateRequestDTO.TransitionInputDTO();
             transitionInputDTO.setId(transitionsId);
@@ -313,49 +314,6 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("success", true);
         result.put("message", "스케줄러 작동 완료되었습니다.");
-
-        return result;
-    }
-
-    public Map<String, Object> addLabel(String connectId, String issueKeyOrId,
-                                        IssueLabelUpdateRequestDTO issueLabelUpdateRequestDTO) {
-
-        String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
-
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-
-//        IssueLabelUpdateRequestDTO.Label label = new IssueLabelUpdateRequestDTO.Label();
-//        label.setAdd(labelValue);
-//
-//        List<IssueLabelUpdateRequestDTO.Label> labels = new ArrayList<>();
-//        labels.add(label);
-//
-//        IssueLabelUpdateRequestDTO.Update update = new IssueLabelUpdateRequestDTO.Update();
-//        update.setLabels(labels);
-//
-//        IssueLabelUpdateRequestDTO issueLabelUpdateRequestDTO = new IssueLabelUpdateRequestDTO();
-//        issueLabelUpdateRequestDTO.setUpdate(update);
-
-        Optional<Boolean> response = CloudJiraUtils.executePut(webClient, endpoint, issueLabelUpdateRequestDTO);
-
-        Map<String,Object> result = new HashMap<String,Object>();
-
-        boolean isSuccess = false;
-
-        if (response.isPresent()) {
-            if (response.get()) {
-                // PUT 호출이 HTTP 204로 성공했습니다.
-                isSuccess = true;
-                result.put("success", isSuccess);
-                result.put("message", "이슈 라벨 추가 성공");
-
-                return result;
-            }
-        }
-
-        result.put("success", isSuccess);
-        result.put("message", "이슈 라벨 추가 실패");
 
         return result;
     }

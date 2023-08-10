@@ -18,8 +18,6 @@ public interface CloudJiraIssue {
 
     public Map<String,Object> collectLinkAndSubtask(String connectId);
 
-    public Map<String, Object> addLabel(String connectId, String issueKeyOrId, IssueLabelUpdateRequestDTO issueLabelUpdateRequestDTO);
-
     public TransitionsDTO getIssueStatusAll(String connectId, String issueKeyOrId);
 
     public Map<String,Object> updateIssueStatus(String connectId, String issueKeyOrId, IssueStatusUpdateRequestDTO issueStatusUpdateRequestDTO);

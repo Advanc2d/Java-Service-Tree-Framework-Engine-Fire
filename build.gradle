@@ -73,7 +73,11 @@ dependencies {
 	implementation 'org.codehaus.jettison:jettison:1.5.4'
 	implementation 'joda-time:joda-time:2.10.14'
 
+	// OnPremise 이슈 전체 조회 시 nested exception is java.lang.NoClassDefFoundError: 에러 해결
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+	// OnPremise 이슈 상세 조회 시 org.joda.time.DateTime 타입에 대한 직렬화/역직렬화 에러 해결
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.12.5'
 
 	// jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

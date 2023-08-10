@@ -17,12 +17,6 @@ cloud:
       scope: 'read:jira-user'
       grantType: 'authorization_code'
 
-arms:
-  jira:
-    baseurl: http://www.313.co.kr/jira
-    id: admin
-    pass: flexjava
-
 app:
   jiraUrl: https://api.atlassian.com/ex/jira/
 
