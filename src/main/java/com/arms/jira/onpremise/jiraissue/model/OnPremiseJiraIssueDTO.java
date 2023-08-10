@@ -12,8 +12,13 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OnPremiseJiraIssueDTO {
+
+    private String id;
+
     private String key;
+
     private String self;
 
     private FieldsDTO fields;
+
 }
