@@ -49,12 +49,12 @@ public class OnPremiseJiraIssueTypeController {
 
     @ResponseBody
     @RequestMapping(
-            value = {"/reqCheck"},
+            value = {"/check/requirement"},
             method = {RequestMethod.GET}
     )
     public Map<String, Object> checkReqIssueType(@PathVariable("connectId") String connectId,
                                                  ModelMap model, HttpServletRequest request ) throws Exception {
-        logger.info("Jira OnPremise CREATE ISSUE TYPE POST API 호출");
+        logger.info("Jira OnPremise Requirement ISSUE TYPE Check API 호출");
         return onPremiseJiraIssueType.checkReqIssueType(connectId);
     }
 

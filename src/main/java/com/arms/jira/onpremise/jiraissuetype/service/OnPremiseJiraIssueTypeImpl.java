@@ -65,6 +65,9 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
     public Map<String, Object> checkReqIssueType(String connectId) throws Exception {
         List<IssueType> issueTypes = getOnPremiseIssueTypeListAll(connectId);
 
+        /* ***
+            반장님에게 확인 후 수정사항
+        *** */
         List<String> searchTerms = Arrays.asList("요구사항", "Requirement");
 
         List<IssueType> issueTypeResult = issueTypes.stream()

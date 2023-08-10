@@ -95,20 +95,6 @@ public class CloudJiraIssueController {
 
     @ResponseBody
     @RequestMapping(
-            value = {"/add/label/{issueKeyOrId}"},
-            method = {RequestMethod.PUT}
-    )
-    public Map<String,Object> addLabel(@PathVariable("connectId") String connectId,
-                                       @PathVariable("issueKeyOrId") String issueKeyOrId,
-                                        @RequestBody IssueLabelUpdateRequestDTO issueLabelUpdateRequestDTO,
-                                                    ModelMap model, HttpServletRequest request) throws Exception {
-        Map<String,Object> result = cloudJiraIssue.addLabel(connectId, issueKeyOrId, issueLabelUpdateRequestDTO);
-
-        return result;
-    }
-
-    @ResponseBody
-    @RequestMapping(
             value = {"/{issueKeyOrId}/transitions/list"},
             method = {RequestMethod.GET}
     )

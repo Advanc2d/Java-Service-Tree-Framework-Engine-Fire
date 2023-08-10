@@ -52,7 +52,7 @@ public class OnPremiseJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public Issue gatIssueDetail(@PathVariable("connectId") String connectId,
+    public Issue getIssueDetail(@PathVariable("connectId") String connectId,
                                   @PathVariable String issueKeyOrId,
                                   ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("이슈 상세 조회 API 호출");

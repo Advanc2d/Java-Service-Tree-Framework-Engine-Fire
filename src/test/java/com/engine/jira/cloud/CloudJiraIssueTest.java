@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
+import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
+import com.arms.jira.cloud.jiraissue.model.FieldsDTO;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,11 +20,15 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import com.arms.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
+import reactor.core.publisher.Mono;
 
 public class CloudJiraIssueTest {
     WebClient webClient;
@@ -162,4 +169,38 @@ public class CloudJiraIssueTest {
             this.linkedIssues = new ArrayList<>();
         }
     }
+
+    @Test
+    @DisplayName("이슈 수정으로 라벨 처리 테스트")
+    public void updatetIssue() {
+        String uri = "/rest/api/3/issue/"+ issueKeyOrId;
+
+        String closedLabel = "closeLabel";
+
+        FieldsDTO fieldsDTO = new FieldsDTO();
+        fieldsDTO.setLabels(List.of(closedLabel));
+
+        CloudJiraIssueInputDTO cloudJiraIssueInputDTO = new CloudJiraIssueInputDTO();
+        cloudJiraIssueInputDTO.setFields(fieldsDTO);
+
+        Mono<ResponseEntity<Void>> response = webClient.put()
+                .uri(uri)
+                .body(BodyInserters.fromValue(cloudJiraIssueInputDTO))
+                .retrieve()
+                .toEntity(Void.class);
+
+        Optional<Boolean> res =  response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                            .blockOptional();
+
+        boolean isSuccess = false;
+        if (res.isPresent()) {
+            if (res.get()) {
+                // PUT 호출이 HTTP 204로 성공했습니다.
+                isSuccess = true;
+            }
+        }
+
+        Assertions.assertThat(isSuccess).isEqualTo(true);
+    }
+
 }
