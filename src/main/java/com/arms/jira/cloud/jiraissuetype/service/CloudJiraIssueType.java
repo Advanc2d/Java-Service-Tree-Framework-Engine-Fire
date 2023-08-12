@@ -12,4 +12,6 @@ public interface CloudJiraIssueType {
     public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(String connectId, String projectId) throws Exception;
 
     public CloudJiraIssueTypeDTO createIssueType(String connectId, CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO) throws Exception;
+
+    void saveIssueTypeByUsers() throws Exception;
 }

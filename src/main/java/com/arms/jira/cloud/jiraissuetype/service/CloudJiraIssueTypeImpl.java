@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -91,5 +92,27 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         logger.info(addCloudJirarIssueTypeDTO.toString());
 
         return addCloudJirarIssueTypeDTO;
+    }
+
+    @Override
+    public void saveIssueTypeByUsers() throws Exception {
+
+        String endpoint = "/rest/api/3/issuetype";
+        List<JiraInfoDTO> founds = jiraInfo.loadConnectInfos();
+
+        for (JiraInfoDTO found : founds) {
+            try{
+
+                WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+                CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>(){})
+                    .subscribe(result-> logger.info(String.valueOf(result)));
+                //TO-DO
+                //ELK 저장
+
+            }catch (Exception e){
+                logger.warn(e.getMessage());
+            }
+        }
+
     }
 }

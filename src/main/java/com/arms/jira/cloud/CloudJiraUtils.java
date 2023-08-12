@@ -3,6 +3,7 @@ package com.arms.jira.cloud;
 import java.util.Base64;
 import java.util.Optional;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,6 +37,14 @@ public class CloudJiraUtils {
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(responseType);
+    }
+
+    public static <T> Mono<T> get(WebClient webClient, String uri, ParameterizedTypeReference<T> elementTypeRef) {
+
+        return webClient.get()
+            .uri(uri)
+            .retrieve()
+            .bodyToMono(elementTypeRef);
     }
 
     public static <T> Mono<T> post(WebClient webClient, String uri, Object requestBody, Class<T> responseType) {
