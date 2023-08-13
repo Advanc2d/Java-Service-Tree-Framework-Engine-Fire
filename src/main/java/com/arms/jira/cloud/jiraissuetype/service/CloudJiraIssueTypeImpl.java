@@ -1,12 +1,8 @@
 package com.arms.jira.cloud.jiraissuetype.service;
 
-import com.arms.jira.cloud.CloudJiraUtils;
-import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
-import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
-import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.model.JiraInfoEntity;
-import com.arms.jira.info.service.JiraInfo;
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +12,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
+import com.arms.elasticsearch.models.EsJiraIssueType;
+import com.arms.elasticsearch.services.EsJiraIssueTypeService;
+import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
+import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
+import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.JiraInfoEntity;
+import com.arms.jira.info.service.JiraInfo;
+
+import lombok.AllArgsConstructor;
+import reactor.core.Disposable;
 
 @AllArgsConstructor
 @Service("cloudJiraIssueType")
@@ -29,6 +35,9 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
     @Autowired
     private JiraInfo jiraInfo;
+
+    @Autowired
+    private final EsJiraIssueTypeService esJiraIssueTypeService;
 
     @Override
     public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(String connectId) throws Exception {
@@ -101,17 +110,29 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         List<JiraInfoDTO> founds = jiraInfo.loadConnectInfos();
 
         for (JiraInfoDTO found : founds) {
-            try{
 
-                WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-                CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>(){})
-                    .subscribe(result-> logger.info(String.valueOf(result)));
-                //TO-DO
-                //ELK 저장
 
-            }catch (Exception e){
-                logger.warn(e.getMessage());
-            }
+            WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+
+            List<EsJiraIssueType> result = new ArrayList<>();
+
+            Disposable subscribe = CloudJiraUtils.get(webClient, endpoint,
+                    new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {
+                    })
+                .subscribe(cloudJiraIssueTypes -> {
+                        cloudJiraIssueTypes.stream()
+                            .forEach(cloudJiraIssueType ->
+                                result.add(modelMapper.map(cloudJiraIssueType, EsJiraIssueType.class))
+                            );
+                    },
+                    error -> {
+                        logger.error(error.getMessage());
+                    },
+                    () -> {
+                        esJiraIssueTypeService.createProductIndexBulk(result);
+                    }
+                );
+
         }
 
     }
