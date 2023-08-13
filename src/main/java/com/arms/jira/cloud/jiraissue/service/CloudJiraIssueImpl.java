@@ -231,6 +231,9 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         } else return false;
     }
 
+    /* ***
+    * 현재 미사용
+    *** */
     public void convertSubtaskToIssue(String connectId, String subTaskKeyOrId,String issueKeyOrId) throws Exception {
 
         CloudJiraIssueDTO issue = getIssue(connectId, subTaskKeyOrId);
@@ -262,28 +265,15 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     @Transactional
     @Override
     public Map<String,Object> collectLinkAndSubtask(String connectId) {
-        List<CloudJiraIssueEntity> list = cloudJiraIssueJpaRepository.findAll();
+        List<CloudJiraIssueEntity> list = cloudJiraIssueJpaRepository.findByOutwardIdAndParentIdisNullAndConnectId(connectId);
         List<CloudJiraIssueEntity> saveList = new ArrayList<>();
 
         for (CloudJiraIssueEntity item : list) {
             CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(item.getConnectId(), item.getId());
 
             if (cloudJiraIssueDTO.getFields().getIssuelinks().size() > 0) {
-                List<FieldsDTO.IssueLink> linkList = cloudJiraIssueDTO.getFields().getIssuelinks();
-
-                for(FieldsDTO.IssueLink linkItem : linkList) {
-                    if(linkItem.getInwardIssue() != null) {
-                        CloudJiraIssueDTO saveIssueDTO = getIssue(item.getConnectId(), linkItem.getInwardIssue().getId());
-
-                        CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
-                        cloudJiraIssueEntity.setConnectId(item.getConnectId());
-                        cloudJiraIssueEntity.setOutwardId(item.getId());
-                        cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
-
-                        saveList.add(cloudJiraIssueEntity);
-                        // cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
-                    }
-                }
+                CloudJiraIssueDTO saveChildIssueList = fetchLinkedIssues(item.getConnectId(), item.getId());
+                saveLinkedIssues(item.getConnectId(), null, saveChildIssueList, 0);
             }
 
             if(cloudJiraIssueDTO.getFields().getSubtasks().size() > 0) {
@@ -316,6 +306,134 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         result.put("message", "스케줄러 작동 완료되었습니다.");
 
         return result;
+    }
+
+    @Transactional
+    public Map<String,Object> collectLinkAndSubtaskByIssueTypeName(String connectId) {
+
+        CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = getIssueListByIssueTypeName(connectId, "요구사항");
+        List<CloudJiraIssueDTO> cloudJiraIssueList = cloudJiraIssueSearchDTO.getIssues();
+
+        List<CloudJiraIssueEntity> saveList = new ArrayList<>();
+
+        for (CloudJiraIssueDTO item : cloudJiraIssueList) {
+            CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(connectId, item.getId());
+
+            if (cloudJiraIssueDTO.getFields().getIssuelinks().size() > 0) {
+                  CloudJiraIssueDTO saveChildIssueList = fetchLinkedIssues(connectId, item.getId());
+                  saveLinkedIssues(connectId, null, saveChildIssueList, 0);
+            }
+
+            if(cloudJiraIssueDTO.getFields().getSubtasks().size() > 0) {
+                List<CloudJiraIssueDTO> subtaskList = cloudJiraIssueDTO.getFields().getSubtasks();
+
+                for(CloudJiraIssueDTO subtaskItem : subtaskList) {
+                    CloudJiraIssueDTO saveIssueDTO = getIssue(connectId, subtaskItem.getId());
+
+                    CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
+                    cloudJiraIssueEntity.setConnectId(connectId);
+
+                    cloudJiraIssueEntity.setParentId(item.getId());
+                    cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+                    saveList.add(cloudJiraIssueEntity);
+                }
+            }
+
+            if (saveList.size() > 100) {
+                cloudJiraIssueJpaRepository.saveAll(saveList);
+            }
+        }
+
+        if (saveList.size() > 0 && saveList.size() <= 100) {
+            cloudJiraIssueJpaRepository.saveAll(saveList);
+        }
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("success", true);
+        result.put("message", "스케줄러 작동 완료되었습니다.");
+
+        return result;
+    }
+
+    public CloudJiraIssueSearchDTO getIssueListByIssueTypeName(String connectId, String issueTypName) {
+        int startAt = 0;
+        int maxResults = 10;
+        boolean isLast = false;
+
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+
+        CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
+        List<CloudJiraIssueDTO> issueList = new ArrayList<>(); // 이슈 저장
+
+        while (!isLast) {
+            String endpoint = "/rest/api/3/search?jql=issuetype=" + issueTypName + "&startAt=" + startAt + "&maxResults=" + maxResults;
+            CloudJiraIssueSearchDTO cloudJiraIssuePaging = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueSearchDTO.class).block();
+
+            issueList.addAll(cloudJiraIssuePaging.getIssues());
+
+            if (cloudJiraIssuePaging.getTotal() == issueList.size()) {
+                isLast = true;
+                cloudJiraIssueSearchDTO = cloudJiraIssuePaging;
+                cloudJiraIssueSearchDTO.setIssues(issueList);
+
+                return cloudJiraIssueSearchDTO;
+            }
+
+            startAt += maxResults;
+        }
+
+        return cloudJiraIssueSearchDTO;
+    }
+
+    private CloudJiraIssueDTO fetchLinkedIssues(String connectId, String issueKeyOrId) {
+
+        CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(connectId, issueKeyOrId);
+
+        CloudJiraIssueDTO childLinkDTO = new CloudJiraIssueDTO(cloudJiraIssueDTO.getId(),
+                                                        cloudJiraIssueDTO.getKey(), cloudJiraIssueDTO.getSelf());
+
+        List<FieldsDTO.IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
+
+        for (int i = 0; i < issueLinks.size(); i++) {
+            FieldsDTO.IssueLink link = issueLinks.get(i);
+
+            if (link.getInwardIssue() != null) {
+                String linkedIssueKey = link.getInwardIssue().getKey();
+                CloudJiraIssueDTO linkedIssueDTO = fetchLinkedIssues(connectId, linkedIssueKey);
+
+                if (linkedIssueDTO != null) {
+                    childLinkDTO.getIssues().add(linkedIssueDTO);
+                }
+            }
+        }
+
+        return childLinkDTO;
+    }
+
+    private void saveLinkedIssues(String connectId, String outwardId, CloudJiraIssueDTO saveIssueDTO, int depth) {
+        String indent = "  ".repeat(depth);
+        // System.out.println(indent + "Issue: " + issueDTO.getKey());
+
+        /***
+         * DB에 저장 로직 구성
+         *** */
+
+        CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
+        cloudJiraIssueEntity.setConnectId(connectId);
+
+        if (outwardId != null) {
+            cloudJiraIssueEntity.setOutwardId(outwardId);
+        }
+
+        cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+        cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
+
+        for (CloudJiraIssueDTO linkedIssue : saveIssueDTO.getIssues()) {
+            saveLinkedIssues(connectId, saveIssueDTO.getId(), linkedIssue, depth + 1);
+        }
     }
 
     public TransitionsDTO getIssueStatusAll(String connectId, String issueKeyOrId) {

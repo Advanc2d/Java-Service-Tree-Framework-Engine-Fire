@@ -1,22 +1,12 @@
 package com.engine.jira.cloud;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-
+import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
+import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import com.arms.jira.cloud.jiraissue.model.FieldsDTO;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import com.arms.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
 import org.assertj.core.api.Assertions;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,11 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
-import com.arms.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.util.*;
 
 public class CloudJiraIssueTest {
     WebClient webClient;
@@ -42,9 +31,9 @@ public class CloudJiraIssueTest {
     @BeforeEach
     void setUp () {
         webClient = WebClient.builder()
-                            .baseUrl(baseUrl)
-                            .defaultHeader("Authorization", "Basic " + getBase64Credentials(id, pass))
-                            .build();
+                .baseUrl(baseUrl)
+                .defaultHeader("Authorization", "Basic " + getBase64Credentials(id, pass))
+                .build();
     }
 
     private String getBase64Credentials(String jiraID, String jiraPass) {
@@ -66,14 +55,31 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("프로젝트 키의 이슈 전체 조회 테스트")
     public void IssueSearchCallTest() {
+        CloudJiraIssueSearchDTO issues = getIssueByProjectKeyOrId(projectKeyOrId);
+
+        Assertions.assertThat(issues.getIssues().getClass()).isEqualTo(ArrayList.class);
+    }
+
+    public CloudJiraIssueSearchDTO getIssueByProjectKeyOrId (String projectKeyOrId) {
         String uri = "/rest/api/3/search?jql=project=" + projectKeyOrId;
 
         CloudJiraIssueSearchDTO issues = webClient.get()
-                    .uri(uri)
-                    .retrieve()
-                    .bodyToMono(CloudJiraIssueSearchDTO.class).block();
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(CloudJiraIssueSearchDTO.class).block();
 
-        Assertions.assertThat(issues.getIssues().getClass()).isEqualTo(ArrayList.class);
+        return issues;
+    }
+
+    public CloudJiraIssueSearchDTO getIssueListByIssueTypeName(String issueTypName) {
+        String uri = "/rest/api/3/search?jql=issuetype=" + issueTypName;
+
+        CloudJiraIssueSearchDTO issues = webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(CloudJiraIssueSearchDTO.class).block();
+
+        return issues;
     }
 
     @Test
@@ -84,13 +90,21 @@ public class CloudJiraIssueTest {
     }
 
     @Test
+    @DisplayName("이슈 타입이 요구사항인 이슈를 전체 조회하고 이슈 링크 내용을 전부 가져오는 스케줄러")
     public void test() {
+        CloudJiraIssueSearchDTO issues = getIssueListByIssueTypeName("요구사항");
+
         try {
-            HttpClient httpClient = HttpClients.createDefault();
-            IssueDTO rootIssue = fetchLinkedIssues(baseUrl, "ADVANC2D-35", httpClient, id, pass);
-            IssueDTO outIssue = fetchOutLinkedIssues(baseUrl, "ADVANC2D-35", httpClient, id, pass);
-            printLinkedIssues(rootIssue, 0);
-            printLinkedIssues(outIssue, 0);
+
+            for (CloudJiraIssueDTO issue : issues.getIssues()) {
+                CloudJiraIssueDTO issueLinkDTO = fetchLinkedIssues(issue.getId());
+                printLinkedIssues(issueLinkDTO, 0);
+            }
+
+            // IssueDTO rootIssue = fetchLinkedIssues(baseUrl, "ADVANC2D-1");
+            // IssueDTO outIssue = fetchOutLinkedIssues(baseUrl, "ADVANC2D-35", httpClient, id, pass);
+            // printLinkedIssues(rootIssue, 0);
+            // printLinkedIssues(outIssue, 0);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -98,70 +112,77 @@ public class CloudJiraIssueTest {
         }
     }
 
-    private IssueDTO fetchLinkedIssues(String jiraBaseUrl, String issueKey, HttpClient httpClient, String username, String password) throws IOException, JSONException {
-        String issueUrl = jiraBaseUrl + "/rest/api/3/issue/" + issueKey;
-        HttpGet issueRequest = new HttpGet(issueUrl);
-        issueRequest.addHeader("Authorization", "Basic " + getBase64Credentials(username, password));
-        HttpResponse issueResponse = httpClient.execute(issueRequest);
-        String issueResponseJson = EntityUtils.toString(issueResponse.getEntity());
-        JSONObject issueJson = new JSONObject(issueResponseJson);
+    private CloudJiraIssueDTO fetchLinkedIssues(String issueKeyOrId) throws IOException, JSONException {
 
-        IssueDTO issueDTO = new IssueDTO(issueJson.getString("key"));
+        CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(issueKeyOrId);
 
-        JSONArray issueLinks = issueJson.getJSONObject("fields").getJSONArray("issuelinks");
-        for (int i = 0; i < issueLinks.length(); i++) {
-            JSONObject link = issueLinks.getJSONObject(i);
+        CloudJiraIssueDTO childLinkDTO = new CloudJiraIssueDTO(cloudJiraIssueDTO.getId(),
+                                                cloudJiraIssueDTO.getKey(), cloudJiraIssueDTO.getSelf());
+        List<IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
+
+        for (int i = 0; i < issueLinks.size(); i++) {
+            IssueLink link = issueLinks.get(i);
 //            if (link.has("outwardIssue")) {
 //                String linkedIssueKey = link.getJSONObject("outwardIssue").getString("key");
 //                IssueDTO linkedIssueDTO = fetchLinkedIssues(jiraBaseUrl, linkedIssueKey, httpClient, username, password);
 //                issueDTO.linkedIssues.add(linkedIssueDTO);
 //            }
 
-            if (link.has("inwardIssue")) {
-                String linkedIssueKey = link.getJSONObject("inwardIssue").getString("key");
-                IssueDTO linkedIssueDTO = fetchLinkedIssues(jiraBaseUrl, linkedIssueKey, httpClient, username, password);
-                issueDTO.linkedIssues.add(linkedIssueDTO);
+            if (link.getInwardIssue() != null) {
+                String linkedIssueKey = link.getInwardIssue().getKey();
+                CloudJiraIssueDTO linkedIssueDTO = fetchLinkedIssues(linkedIssueKey);
+
+                if (linkedIssueDTO != null) {
+                    childLinkDTO.getIssues().add(linkedIssueDTO);
+                }
             }
         }
 
-        return issueDTO;
+        return childLinkDTO;
     }
 
-    private IssueDTO fetchOutLinkedIssues(String jiraBaseUrl, String issueKey, HttpClient httpClient, String username, String password) throws IOException, JSONException {
-        String issueUrl = jiraBaseUrl + "/rest/api/3/issue/" + issueKey;
-        CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(issueKey);
-
-        IssueDTO issueDTO = new IssueDTO(cloudJiraIssueDTO.getKey());
-
-        List<IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
-        for (int i = 0; i < issueLinks.size(); i++) {
-            IssueLink link = issueLinks.get(i);
-            if (link.getOutwardIssue() != null) {
-                String linkedIssueKey = link.getOutwardIssue().getKey();
-                IssueDTO linkedIssueDTO = fetchOutLinkedIssues(jiraBaseUrl, linkedIssueKey, httpClient, username, password);
-                issueDTO.linkedIssues.add(linkedIssueDTO);
-            }
-
-//            if (link.has("inwardIssue")) {
-//                String linkedIssueKey = link.getJSONObject("inwardIssue").getString("key");
-//                IssueDTO linkedIssueDTO = fetchLinkedIssues(jiraBaseUrl, linkedIssueKey, httpClient, username, password);
+//    private IssueDTO fetchOutLinkedIssues(String jiraBaseUrl, String issueKey, HttpClient httpClient, String username, String password) throws IOException, JSONException {
+//        String issueUrl = jiraBaseUrl + "/rest/api/3/issue/" + issueKey;
+//        CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(issueKey);
+//
+//        IssueDTO issueDTO = new IssueDTO(cloudJiraIssueDTO.getKey());
+//
+//        List<IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
+//        for (int i = 0; i < issueLinks.size(); i++) {
+//            IssueLink link = issueLinks.get(i);
+//            if (link.getOutwardIssue() != null) {
+//                String linkedIssueKey = link.getOutwardIssue().getKey();
+//                IssueDTO linkedIssueDTO = fetchOutLinkedIssues(jiraBaseUrl, linkedIssueKey, httpClient, username, password);
 //                issueDTO.linkedIssues.add(linkedIssueDTO);
 //            }
-        }
+//
+////            if (link.has("inwardIssue")) {
+////                String linkedIssueKey = link.getJSONObject("inwardIssue").getString("key");
+////                IssueDTO linkedIssueDTO = fetchLinkedIssues(jiraBaseUrl, linkedIssueKey, httpClient, username, password);
+////                issueDTO.linkedIssues.add(linkedIssueDTO);
+////            }
+//        }
+//
+//        return issueDTO;
+//    }
 
-        return issueDTO;
-    }
-
-    private static void printLinkedIssues(IssueDTO issueDTO, int depth) {
+    private static void printLinkedIssues(CloudJiraIssueDTO issueDTO, int depth) {
         String indent = "  ".repeat(depth);
-        System.out.println(indent + "Issue: " + issueDTO.key);
-        for (IssueDTO linkedIssue : issueDTO.linkedIssues) {
+        System.out.println(indent + "Issue: " + issueDTO.toString());
+
+        /***
+        * DB에 저장 로직 구성
+        *** */
+
+        for (CloudJiraIssueDTO linkedIssue : issueDTO.getIssues()) {
             printLinkedIssues(linkedIssue, depth + 1);
         }
     }
 
     class IssueDTO {
+        String id;
         String key;
+        String self;
         List<IssueDTO> linkedIssues;
 
         public IssueDTO(String key) {
@@ -173,7 +194,13 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("이슈 수정으로 라벨 처리 테스트")
     public void updatetIssue() {
-        String uri = "/rest/api/3/issue/"+ issueKeyOrId;
+        Map<String, Object> result = updateIssue(issueKeyOrId);
+
+        Assertions.assertThat(result.get("success")).isEqualTo(true);
+    }
+
+    public Map<String, Object> updateIssue(String issueKeyOrId) {
+        String uri = "/rest/api/3/issue/" + issueKeyOrId;
 
         String closedLabel = "closeLabel";
 
@@ -189,18 +216,26 @@ public class CloudJiraIssueTest {
                 .retrieve()
                 .toEntity(Void.class);
 
-        Optional<Boolean> res =  response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
-                            .blockOptional();
+        Optional<Boolean> res = response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                .blockOptional();
+
+        Map<String, Object> result = new HashMap<>();
 
         boolean isSuccess = false;
         if (res.isPresent()) {
             if (res.get()) {
                 // PUT 호출이 HTTP 204로 성공했습니다.
                 isSuccess = true;
+                result.put("success", isSuccess);
+                result.put("message", "이슈 수정 성공하였습니다.");
             }
         }
 
-        Assertions.assertThat(isSuccess).isEqualTo(true);
-    }
+        if(result ==null || result.size() == 0) {
+            result.put("success", isSuccess);
+            result.put("message", "이슈 수정 실패하였습니다.");
+        }
 
+        return result;
+    }
 }
