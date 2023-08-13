@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -32,6 +34,16 @@ public class JiraInfoImpl implements JiraInfo {
         JiraInfoDTO jiraInfoDTO = modelMapper.map(jiraInfoEntity, JiraInfoDTO.class);
 
         return jiraInfoDTO;
+    }
+
+    @Override
+    public List<JiraInfoDTO> loadConnectInfos() {
+        List<JiraInfoEntity> jiraInfoEntityList = jiraInfoJpaRepository.findAll();
+        List<JiraInfoDTO> result = new ArrayList<>();
+        for (JiraInfoEntity jiraInfoEntity : jiraInfoEntityList) {
+            result.add(modelMapper.map(jiraInfoEntity, JiraInfoDTO.class));
+        }
+        return result;
     }
 
     public String getIssueTypeId(String connectId) {

@@ -57,4 +57,14 @@ public class CloudJiraIssueTypeController {
         logger.info("Jira Cloud CREATE ISSUE TYPE POST API 호출");
         return cloudJiraIssueType.createIssueType(connectId, cloudJiraIssueTypeInputDTO);
     }
+
+    @ResponseBody
+    @RequestMapping(
+        value = {"/saveAll"},
+        method = {RequestMethod.POST}
+    )
+    public void saveIssueTypeByUsers() throws Exception {
+        logger.info("Jira Cloud ALL USER ISSUE TYPE GET API 호출 -> ELK 저장");
+        cloudJiraIssueType.saveIssueTypeByUsers();
+    }
 }

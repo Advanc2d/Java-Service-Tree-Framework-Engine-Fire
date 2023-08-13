@@ -31,8 +31,8 @@ public class ElasticsearchClientConfig extends AbstractElasticsearchConfiguratio
 				ClientConfiguration
 				.builder()
 				.connectedTo("313.co.kr:9200")
-						.withConnectTimeout(30000)
-						.withSocketTimeout(30000)
+				.withConnectTimeout(30000)
+				.withSocketTimeout(30000)
 				.build();
 
 		return RestClients
