@@ -46,6 +46,7 @@ public class OnPremiseJiraIssueController {
         logger.info("이슈 전체 조회 API 호출");
         return onPremiseJiraIssue.getIssueSearch(connectId, projectKeyOrId);
     }
+
     // 상세 조회
     @ResponseBody
     @RequestMapping(
@@ -58,6 +59,7 @@ public class OnPremiseJiraIssueController {
         logger.info("이슈 상세 조회 API 호출");
         return onPremiseJiraIssue.getIssue(connectId, issueKeyOrId);
     }
+
     //업데이트
     @ResponseBody
     @RequestMapping(
