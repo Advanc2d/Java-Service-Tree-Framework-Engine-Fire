@@ -19,7 +19,7 @@ public class JiraInfoEntity {
 
     @Id
     @Column(name = "connect_id")
-    private String connectId;
+    private Long connectId;
 
     @Column(name = "userId")
     @Type(type="text")

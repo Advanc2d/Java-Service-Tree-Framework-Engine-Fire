@@ -34,7 +34,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     private CloudJiraIssueJpaRepository cloudJiraIssueJpaRepository;
 
     @Override
-    public CloudJiraIssueSearchDTO getIssueSearch(String connectId, String projectKeyOrId) {
+    public CloudJiraIssueSearchDTO getIssueSearch(Long connectId, String projectKeyOrId) {
 
         int startAt = 0;
         int maxResults = 10;
@@ -67,7 +67,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     }
 
     @Override
-    public CloudJiraIssueDTO getIssue(String connectId, String issueKeyOrId) {
+    public CloudJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) {
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
 
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
@@ -83,7 +83,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     @Transactional
     @Override
-    public CloudJiraIssueDTO createIssue(String connectId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {
+    public CloudJiraIssueDTO createIssue(Long connectId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) throws Exception {
 
         String endpoint = "/rest/api/3/issue";
 
@@ -104,7 +104,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     }
 
     @Override
-    public Map<String,Object> updateIssue(String connectId, String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
+    public Map<String,Object> updateIssue(Long connectId, String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
 
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
@@ -138,7 +138,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     @Transactional
     @Override
-    public Map<String,Object> deleteIssue(String connectId, String issueKeyOrId) throws Exception {
+    public Map<String,Object> deleteIssue(Long connectId, String issueKeyOrId) throws Exception {
 
         Map<String, Object> result = new HashMap<String, Object>();
 
@@ -220,12 +220,12 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return result;
     }
 
-    public List<CloudJiraIssueDTO> getSubTask(String connectId, String issueId){
+    public List<CloudJiraIssueDTO> getSubTask(Long connectId, String issueId){
         List<CloudJiraIssueDTO> SubTaskList = getIssue(connectId, issueId).getFields().getSubtasks();
         return SubTaskList;
     }
 
-    public boolean checkSubTask(String connectId,String issueKeyOrId) {
+    public boolean checkSubTask(Long connectId,String issueKeyOrId) {
         if (getSubTask(connectId, issueKeyOrId).size()>0) {
             return true;
         } else return false;
@@ -234,7 +234,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     /* ***
     * 현재 미사용
     *** */
-    public void convertSubtaskToIssue(String connectId, String subTaskKeyOrId,String issueKeyOrId) throws Exception {
+    public void convertSubtaskToIssue(Long connectId, String subTaskKeyOrId,String issueKeyOrId) throws Exception {
 
         CloudJiraIssueDTO issue = getIssue(connectId, subTaskKeyOrId);
         String issueTypeId      = getIssue(connectId, issueKeyOrId).getFields().getIssuetype().getId();
@@ -264,7 +264,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     @Transactional
     @Override
-    public Map<String,Object> collectLinkAndSubtask(String connectId) {
+    public Map<String,Object> collectLinkAndSubtask(Long connectId) {
         List<CloudJiraIssueEntity> list = cloudJiraIssueJpaRepository.findByOutwardIdAndParentIdisNullAndConnectId(connectId);
         List<CloudJiraIssueEntity> saveList = new ArrayList<>();
 
@@ -282,23 +282,11 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
                 for(CloudJiraIssueDTO subtaskItem : subtaskList) {
                     CloudJiraIssueDTO saveIssueDTO = getIssue(item.getConnectId(), subtaskItem.getId());
 
-                    CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
-                    cloudJiraIssueEntity.setConnectId(item.getConnectId());
-                    cloudJiraIssueEntity.setParentId(item.getId());
-                    cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                    CloudJiraIssueDTO saveSubtaskChildIssueList = fetchLinkedIssues(connectId, saveIssueDTO.getId());
+                    saveSubtaskLinkedIssues(connectId, item.getId(), saveSubtaskChildIssueList, 0);
 
-                    saveList.add(cloudJiraIssueEntity);
-                    // cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
                 }
             }
-
-            if (saveList.size() > 100) {
-                cloudJiraIssueJpaRepository.saveAll(saveList);
-            }
-        }
-
-        if (saveList.size() > 0 && saveList.size() < 100) {
-            cloudJiraIssueJpaRepository.saveAll(saveList);
         }
 
         Map<String, Object> result = new HashMap<String, Object>();
@@ -309,7 +297,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     }
 
     @Transactional
-    public Map<String,Object> collectLinkAndSubtaskByIssueTypeName(String connectId) {
+    public Map<String,Object> collectLinkAndSubtaskByIssueTypeName(Long connectId) {
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = getIssueListByIssueTypeName(connectId, "요구사항");
         List<CloudJiraIssueDTO> cloudJiraIssueList = cloudJiraIssueSearchDTO.getIssues();
@@ -330,13 +318,9 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
                 for(CloudJiraIssueDTO subtaskItem : subtaskList) {
                     CloudJiraIssueDTO saveIssueDTO = getIssue(connectId, subtaskItem.getId());
 
-                    CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
-                    cloudJiraIssueEntity.setConnectId(connectId);
+                    CloudJiraIssueDTO saveSubtaskChildIssueList = fetchLinkedIssues(connectId, saveIssueDTO.getId());
+                    saveSubtaskLinkedIssues(connectId, subtaskItem.getId(), saveSubtaskChildIssueList, 0);
 
-                    cloudJiraIssueEntity.setParentId(item.getId());
-                    cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
-
-                    saveList.add(cloudJiraIssueEntity);
                 }
             }
 
@@ -356,7 +340,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return result;
     }
 
-    public CloudJiraIssueSearchDTO getIssueListByIssueTypeName(String connectId, String issueTypName) {
+    public CloudJiraIssueSearchDTO getIssueListByIssueTypeName(Long connectId, String issueTypName) {
         int startAt = 0;
         int maxResults = 10;
         boolean isLast = false;
@@ -387,7 +371,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return cloudJiraIssueSearchDTO;
     }
 
-    private CloudJiraIssueDTO fetchLinkedIssues(String connectId, String issueKeyOrId) {
+    private CloudJiraIssueDTO fetchLinkedIssues(Long connectId, String issueKeyOrId) {
 
         CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(connectId, issueKeyOrId);
 
@@ -396,8 +380,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         List<FieldsDTO.IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
 
-        for (int i = 0; i < issueLinks.size(); i++) {
-            FieldsDTO.IssueLink link = issueLinks.get(i);
+        for (FieldsDTO.IssueLink link : issueLinks) {
 
             if (link.getInwardIssue() != null) {
                 String linkedIssueKey = link.getInwardIssue().getKey();
@@ -412,19 +395,44 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return childLinkDTO;
     }
 
-    private void saveLinkedIssues(String connectId, String outwardId, CloudJiraIssueDTO saveIssueDTO, int depth) {
+    private void saveLinkedIssues(Long connectId, String outwardId, CloudJiraIssueDTO saveIssueDTO, int depth) {
         String indent = "  ".repeat(depth);
-        // System.out.println(indent + "Issue: " + issueDTO.getKey());
-
-        /***
-         * DB에 저장 로직 구성
-         *** */
 
         CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
         cloudJiraIssueEntity.setConnectId(connectId);
 
         if (outwardId != null) {
             cloudJiraIssueEntity.setOutwardId(outwardId);
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        cloudJiraIssueJpaRepository.save(cloudJiraIssueEntity);
+
+        for (CloudJiraIssueDTO linkedIssue : saveIssueDTO.getIssues()) {
+            saveLinkedIssues(connectId, saveIssueDTO.getId(), linkedIssue, depth + 1);
+        }
+    }
+
+    private void saveSubtaskLinkedIssues(Long connectId, String parentId, CloudJiraIssueDTO saveIssueDTO, int depth) {
+        String indent = "  ".repeat(depth);
+
+        CloudJiraIssueEntity cloudJiraIssueEntity = modelMapper.map(saveIssueDTO, CloudJiraIssueEntity.class);
+        cloudJiraIssueEntity.setConnectId(connectId);
+
+        if (parentId != null) {
+            cloudJiraIssueEntity.setParentId(parentId);
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
         cloudJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
@@ -436,7 +444,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         }
     }
 
-    public TransitionsDTO getIssueStatusAll(String connectId, String issueKeyOrId) {
+    public TransitionsDTO getIssueStatusAll(Long connectId, String issueKeyOrId) {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
@@ -448,7 +456,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return transitions;
     }
 
-    public Map<String,Object> updateIssueStatus(String connectId, String issueKeyOrId,
+    public Map<String,Object> updateIssueStatus(Long connectId, String issueKeyOrId,
                                                 IssueStatusUpdateRequestDTO issueStatusUpdateRequestDTO) {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";

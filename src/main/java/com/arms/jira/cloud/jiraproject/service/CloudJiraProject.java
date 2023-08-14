@@ -6,8 +6,8 @@ import com.arms.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
 
 public interface CloudJiraProject {
 
-    public CloudJiraProjectDTO getProjectData(String projectKey, String connectId) throws Exception;
+    public CloudJiraProjectDTO getProjectData(Long connectId, String projectKey) throws Exception;
 
-    public List<CloudJiraProjectDTO> getProjectList(String connectId) throws Exception;
+    public List<CloudJiraProjectDTO> getProjectList(Long connectId) throws Exception;
 
 }

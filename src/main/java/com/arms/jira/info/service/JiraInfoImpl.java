@@ -4,6 +4,7 @@ import com.arms.jira.info.dao.JiraInfoJpaRepository;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.model.JiraInfoEntity;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class JiraInfoImpl implements JiraInfo {
     @Autowired
     private JiraInfoJpaRepository jiraInfoJpaRepository;
 
-    public JiraInfoDTO loadConnectInfo(String connectId) {
+    public JiraInfoDTO loadConnectInfo(Long connectId) {
         Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
@@ -46,7 +47,7 @@ public class JiraInfoImpl implements JiraInfo {
         return result;
     }
 
-    public String getIssueTypeId(String connectId) {
+    public String getIssueTypeId(Long connectId) {
 
         Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
 
@@ -61,21 +62,30 @@ public class JiraInfoImpl implements JiraInfo {
 
     public JiraInfoEntity saveConnectInfo(JiraInfoDTO jiraInfoDTO) {
 
-        //TODO. 이렇게 테스트 코드를 넣으면 안됩니다~
-        //TODO. 이미 있는지 여부 확인해서 ( 동일 URL, ID, PASS ) 있다면, 추가하지 말고 조회결과값 회신하셔요~
-//        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(jiraInfoDTO.getConnectId());
-//        if (!optionalEntity.isPresent()) {
-//            return null;
-//        }
-//
-//        JiraInfoEntity jiraInfoEntity = optionalEntity.get();
+        if (jiraInfoDTO == null) {
+            throw new IllegalArgumentException("JiraInfo 정보가 없습니다.");
+        }
+        else if (StringUtils.isBlank(jiraInfoDTO.getUri())) {
+            throw new IllegalArgumentException("JiraInfo의 URI 정보가 없습니다.");
+        }
+        else if (StringUtils.isBlank(jiraInfoDTO.getUserId())) {
+            throw new IllegalArgumentException("JiraInfo의 사용자 아이디 정보가 없습니다.");
+        }
+        else if (StringUtils.isBlank(jiraInfoDTO.getPasswordOrToken())) {
+            throw new IllegalArgumentException("JiraInfo의 비밀번호나 토큰 정보가 없습니다.");
+        }
 
-        JiraInfoEntity 신규지라서버 = new JiraInfoEntity();
-        신규지라서버.setConnectId(jiraInfoDTO.getConnectId());
-        신규지라서버.setUri(jiraInfoDTO.getUri());
-        신규지라서버.setUserId(jiraInfoDTO.getUserId());
-        신규지라서버.setPasswordOrToken(jiraInfoDTO.getPasswordOrToken());
-        return jiraInfoJpaRepository.save(신규지라서버);
+        JiraInfoDTO loadJiraInfoDTO = loadConnectInfo(jiraInfoDTO.getConnectId());
+        JiraInfoEntity jiraInfoEntity;
+
+        if (loadJiraInfoDTO != null) {
+            jiraInfoEntity = modelMapper.map(loadJiraInfoDTO, JiraInfoEntity.class);
+        }
+        else {
+            jiraInfoEntity = modelMapper.map(jiraInfoDTO, JiraInfoEntity.class);
+        }
+
+        return jiraInfoJpaRepository.save(jiraInfoEntity);
     }
 
     public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity) {

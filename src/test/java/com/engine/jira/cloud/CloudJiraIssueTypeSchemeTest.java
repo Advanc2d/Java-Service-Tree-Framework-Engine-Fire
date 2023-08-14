@@ -76,8 +76,8 @@ public class CloudJiraIssueTypeSchemeTest {
 
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
-        String issueTypeId = jiraInfo.getIssueTypeId("1");
-        
+        String issueTypeId = jiraInfo.getIssueTypeId(1L);
+
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();
             List<String> issueTypeIds = entry.getValue();

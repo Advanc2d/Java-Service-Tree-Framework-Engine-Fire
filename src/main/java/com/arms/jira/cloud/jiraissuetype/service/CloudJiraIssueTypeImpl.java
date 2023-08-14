@@ -40,7 +40,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     private final EsJiraIssueTypeService esJiraIssueTypeService;
 
     @Override
-    public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(String connectId) throws Exception {
+    public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(Long connectId) throws Exception {
 
         String endpoint = "/rest/api/3/issuetype";
 
@@ -55,7 +55,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     }
 
     @Override
-    public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(String connectId, String projectId) throws Exception {
+    public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(Long connectId, String projectId) throws Exception {
 
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
@@ -71,7 +71,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
     @Transactional
     @Override
-    public CloudJiraIssueTypeDTO createIssueType(String connectId,
+    public CloudJiraIssueTypeDTO createIssueType(Long connectId,
                                                  CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO)
             throws Exception {
 

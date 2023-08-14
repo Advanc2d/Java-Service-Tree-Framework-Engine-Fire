@@ -22,7 +22,7 @@ public class OnPremiseJiraProjectController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<OnPremiseJiraProjectDTO> getProjectList(@PathVariable("connectId") String connectId) throws Exception {
+    public List<OnPremiseJiraProjectDTO> getProjectList(@PathVariable("connectId") Long connectId) throws Exception {
         logger.info("프로젝트 전체 조회 API 호출");
         return onPremiseJiraProject.getProjectList(connectId);
     }
@@ -32,7 +32,7 @@ public class OnPremiseJiraProjectController {
             value = {"/{projectKey}"},
             method = {RequestMethod.GET}
     )
-    public OnPremiseJiraProjectDTO getProject(@PathVariable("connectId") String connectId,
+    public OnPremiseJiraProjectDTO getProject(@PathVariable("connectId") Long connectId,
                                               @PathVariable String projectKey) throws Exception {
         logger.info("특정 프로젝트 조회 API 호출");
         return onPremiseJiraProject.getProject(connectId, projectKey);

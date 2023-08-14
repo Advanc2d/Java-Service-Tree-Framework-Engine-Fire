@@ -24,7 +24,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 
 
 	@Override
-	public CloudJiraProjectDTO getProjectData(String projectKey, String connectId) throws Exception {
+	public CloudJiraProjectDTO getProjectData(Long connectId, String projectKey) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;
 
 		JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
@@ -38,7 +38,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	}
 
 	@Override
-	public List<CloudJiraProjectDTO> getProjectList(String connectId) throws Exception {
+	public List<CloudJiraProjectDTO> getProjectList(Long connectId) throws Exception {
 
 		String endpoint = "/rest/api/3/project";
 

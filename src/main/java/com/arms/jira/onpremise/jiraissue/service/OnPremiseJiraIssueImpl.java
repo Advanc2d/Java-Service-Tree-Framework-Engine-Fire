@@ -1,15 +1,17 @@
 package com.arms.jira.onpremise.jiraissue.service;
 
+import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueEntity;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissue.dao.OnPremiseJiraIssueJpaRepository;
-import com.arms.jira.onpremise.jiraissue.model.*;
+import com.arms.jira.onpremise.jiraissue.model.FieldsDTO;
+import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
+import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueEntity;
+import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
-import com.atlassian.jira.rest.client.api.domain.Transition;
+import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -22,9 +24,13 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @AllArgsConstructor
@@ -44,7 +50,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
     @Transactional
     @Override
-    public OnPremiseJiraIssueDTO createIssue(String connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
+    public OnPremiseJiraIssueDTO createIssue(Long connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
 
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
@@ -91,7 +97,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         return onPremiseJiraIssueDTO;
     }
     @Override
-    public JsonNode  getIssueSearch(String connectId, String projectKeyOrId) throws Exception {
+    public JsonNode  getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -134,7 +140,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     }
 
     @Override
-    public Issue getIssue(String connectId, String issueKeyOrId) throws Exception {
+    public Issue getIssue(Long connectId, String issueKeyOrId) throws Exception {
 
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
@@ -147,7 +153,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     }
 
     @Override
-    public Map<String, Object> updateIssue(String connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
+    public Map<String, Object> updateIssue(Long connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
@@ -195,7 +201,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     }
 
     @Override
-    public Map<String, Object> deleteIssue(String connectId, String issueKey) throws Exception {
+    public Map<String, Object> deleteIssue(Long connectId, String issueKey) throws Exception {
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                          info.getUserId(),
@@ -265,5 +271,136 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         return result;
     }
 
+    @Transactional
+    @Override
+    public Map<String,Object> collectLinkAndSubtask(Long connectId) throws Exception {
+        List<OnPremiseJiraIssueEntity> list = onPremiseJiraIssueJpaRepository.findByOutwardIdAndParentIdisNullAndConnectId(connectId);
+        List<CloudJiraIssueEntity> saveList = new ArrayList<>();
 
+        for (OnPremiseJiraIssueEntity item : list) {
+            Issue issue = getIssue(item.getConnectId(), item.getId());
+            List<IssueLink> issueLinks = (List<IssueLink>) issue.getIssueLinks();
+            if (issueLinks.size() > 0) {
+                OnPremiseJiraIssueDTO saveChildIssueList = fetchLinkedIssues(item.getConnectId(), item.getId());
+                saveLinkedIssues(item.getConnectId(), null, saveChildIssueList, 0);
+            }
+
+            List<Subtask> subtaskList = (List<Subtask>) issue.getSubtasks();
+            if(subtaskList.size() > 0) {
+
+                for(Subtask subtaskItem : subtaskList) {
+                    OnPremiseJiraIssueDTO saveIssueDTO = getIssueByWebClient(item.getConnectId(), subtaskItem.getIssueKey());
+
+                    OnPremiseJiraIssueDTO saveSubtaskChildIssueList = fetchLinkedIssues(connectId, saveIssueDTO.getId());
+                    saveSubtaskLinkedIssues(connectId, item.getId(), saveSubtaskChildIssueList, 0);
+                }
+            }
+
+        }
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("success", true);
+        result.put("message", "스케줄러 작동 완료되었습니다.");
+
+        return result;
+    }
+
+    private OnPremiseJiraIssueDTO fetchLinkedIssues(Long connectId, String issueKeyOrId) throws Exception {
+
+        OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = getIssueByWebClient(connectId, issueKeyOrId);
+
+        OnPremiseJiraIssueDTO childLinkDTO
+                = new OnPremiseJiraIssueDTO(onPremiseJiraIssueDTO.getId(),
+                                            onPremiseJiraIssueDTO.getKey(),
+                                            onPremiseJiraIssueDTO.getSelf());
+
+        List<com.arms.jira.onpremise.jiraissue.model.FieldsDTO.IssueLink> issueLinks = onPremiseJiraIssueDTO.getFields().getIssuelinks();
+
+        for (com.arms.jira.onpremise.jiraissue.model.FieldsDTO.IssueLink link : issueLinks) {
+            if (link != null) {
+                if(link.getInwardIssue() != null) {
+                    String linkedIssueKeyOrId = link.getInwardIssue().getKey();
+                    if (linkedIssueKeyOrId != null) {
+                        OnPremiseJiraIssueDTO linkedIssueDTO = fetchLinkedIssues(connectId, linkedIssueKeyOrId);
+
+                        if (linkedIssueDTO != null) {
+                            childLinkDTO.getIssues().add(linkedIssueDTO);
+                        }
+                    }
+                }
+            }
+        }
+
+        return childLinkDTO;
+    }
+
+    private void saveLinkedIssues(Long connectId, String outwardId, OnPremiseJiraIssueDTO saveIssueDTO, int depth) {
+        String indent = "  ".repeat(depth);
+
+        OnPremiseJiraIssueEntity onPremiseJiraIssueEntity = modelMapper.map(saveIssueDTO, OnPremiseJiraIssueEntity.class);
+        onPremiseJiraIssueEntity.setConnectId(connectId);
+
+        if (outwardId != null) {
+            onPremiseJiraIssueEntity.setOutwardId(outwardId);
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        onPremiseJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        onPremiseJiraIssueJpaRepository.save(onPremiseJiraIssueEntity);
+
+        for (OnPremiseJiraIssueDTO linkedIssue : saveIssueDTO.getIssues()) {
+            saveLinkedIssues(connectId, saveIssueDTO.getId(), linkedIssue, depth + 1);
+        }
+    }
+
+    private void saveSubtaskLinkedIssues(Long connectId, String parentId, OnPremiseJiraIssueDTO saveIssueDTO, int depth) {
+        String indent = "  ".repeat(depth);
+        // System.out.println(indent + "Issue: " + issueDTO.getKey());
+
+        OnPremiseJiraIssueEntity onPremiseJiraIssueEntity = modelMapper.map(saveIssueDTO, OnPremiseJiraIssueEntity.class);
+        onPremiseJiraIssueEntity.setConnectId(connectId);
+
+        if (parentId != null) {
+            onPremiseJiraIssueEntity.setParentId(parentId);
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        onPremiseJiraIssueEntity.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+        onPremiseJiraIssueJpaRepository.save(onPremiseJiraIssueEntity);
+
+        for (OnPremiseJiraIssueDTO linkedIssue : saveIssueDTO.getIssues()) {
+            saveLinkedIssues(connectId, saveIssueDTO.getId(), linkedIssue, depth + 1);
+        }
+    }
+
+    public OnPremiseJiraIssueDTO getIssueByWebClient(Long connectId, String issueKeyOrId) throws Exception {
+
+        String endpoint = "/rest/api/2/issue/" + issueKeyOrId;
+        JiraInfoDTO jiraInfoDTO = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = createJiraWebClient(jiraInfoDTO.getUri());
+
+        OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = CloudJiraUtils.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();
+
+        return onPremiseJiraIssueDTO;
+    }
+
+    public static WebClient createJiraWebClient(String uri) {
+
+        return WebClient.builder()
+                .baseUrl(uri)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }

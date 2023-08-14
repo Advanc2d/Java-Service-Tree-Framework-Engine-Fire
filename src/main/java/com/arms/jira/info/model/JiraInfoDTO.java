@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JiraInfoDTO {
-    private String connectId;
+    private Long connectId;
     private String userId;
     private String passwordOrToken;
     private String uri;

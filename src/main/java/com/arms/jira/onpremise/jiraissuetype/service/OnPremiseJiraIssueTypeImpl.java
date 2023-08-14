@@ -31,7 +31,7 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
     private ModelMapper modelMapper;
 
     @Override
-    public List<IssueType> getOnPremiseIssueTypeListAll(String connectId) throws Exception {
+    public List<IssueType> getOnPremiseIssueTypeListAll(Long connectId) throws Exception {
         JiraInfoDTO jiraInfoDTO = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(jiraInfoDTO.getUri(),
                                                                 jiraInfoDTO.getUserId(),
@@ -44,7 +44,7 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
         return issueTypes;
     }
 
-    public IssueType getIssueTypeListByIssueTypeId(String connectId, String issueTypeId) throws Exception {
+    public IssueType getIssueTypeListByIssueTypeId(Long connectId, String issueTypeId) throws Exception {
         List<IssueType> issueTypes = getOnPremiseIssueTypeListAll(connectId);
 
         IssueType result = issueTypes.stream()
@@ -62,7 +62,7 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
         return result;
     }
 
-    public Map<String, Object> checkReqIssueType(String connectId) throws Exception {
+    public Map<String, Object> checkReqIssueType(Long connectId) throws Exception {
         List<IssueType> issueTypes = getOnPremiseIssueTypeListAll(connectId);
 
         List<String> searchTerms = Arrays.asList("요구사항", "Requirement");
