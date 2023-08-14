@@ -61,14 +61,21 @@ public class JiraInfoImpl implements JiraInfo {
 
     public JiraInfoEntity saveConnectInfo(JiraInfoDTO jiraInfoDTO) {
 
-        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(jiraInfoDTO.getConnectId());
-        if (!optionalEntity.isPresent()) {
-            return null;
-        }
+        //TODO. 이렇게 테스트 코드를 넣으면 안됩니다~
+        //TODO. 이미 있는지 여부 확인해서 ( 동일 URL, ID, PASS ) 있다면, 추가하지 말고 조회결과값 회신하셔요~
+//        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(jiraInfoDTO.getConnectId());
+//        if (!optionalEntity.isPresent()) {
+//            return null;
+//        }
+//
+//        JiraInfoEntity jiraInfoEntity = optionalEntity.get();
 
-        JiraInfoEntity jiraInfoEntity = optionalEntity.get();
-
-        return jiraInfoJpaRepository.save(jiraInfoEntity);
+        JiraInfoEntity 신규지라서버 = new JiraInfoEntity();
+        신규지라서버.setConnectId(jiraInfoDTO.getConnectId());
+        신규지라서버.setUri(jiraInfoDTO.getUri());
+        신규지라서버.setUserId(jiraInfoDTO.getUserId());
+        신규지라서버.setPasswordOrToken(jiraInfoDTO.getPasswordOrToken());
+        return jiraInfoJpaRepository.save(신규지라서버);
     }
 
     public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity) {
