@@ -6,8 +6,8 @@ import java.util.Map;
 
 public interface CloudJiraIssueTypeScheme {
 
-    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(String connectId);
+    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(Long connectId);
 
-    public Map<String,Object> addIssueTypeSchemeReqIssueType(String connectId) throws Exception;
+    public Map<String,Object> addIssueTypeSchemeReqIssueType(Long connectId) throws Exception;
 
 }

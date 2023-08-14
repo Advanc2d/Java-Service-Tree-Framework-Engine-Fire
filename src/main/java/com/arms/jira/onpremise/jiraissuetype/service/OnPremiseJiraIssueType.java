@@ -7,10 +7,10 @@ import java.util.Map;
 
 public interface OnPremiseJiraIssueType {
 
-    public List<IssueType> getOnPremiseIssueTypeListAll(String connectId) throws Exception;
+    public List<IssueType> getOnPremiseIssueTypeListAll(Long connectId) throws Exception;
 
-    public IssueType getIssueTypeListByIssueTypeId(String connectId, String issueTypeId) throws Exception;
+    public IssueType getIssueTypeListByIssueTypeId(Long connectId, String issueTypeId) throws Exception;
 
-    public Map<String, Object> checkReqIssueType(String connectId) throws Exception;
+    public Map<String, Object> checkReqIssueType(Long connectId) throws Exception;
 
 }

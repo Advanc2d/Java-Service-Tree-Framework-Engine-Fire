@@ -29,7 +29,7 @@ public class CloudJiraIssueTypeSchemeController {
             value = {"/mapping"},
             method = {RequestMethod.GET}
     )
-    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(@PathVariable("connectId") String connectId,
+    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(@PathVariable("connectId") Long connectId,
                                                                         ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ISSUE TYPE SCHEME MAPPING GET API 호출");
         return cloudJiraIssueTypeScheme.getIssueTypeSchemeMapping(connectId);
@@ -40,7 +40,7 @@ public class CloudJiraIssueTypeSchemeController {
             value = {"/check/requirement"},
             method = {RequestMethod.PUT}
     )
-    public  Map<String,Object> addIssueTypeSchemeReqIssueType(@PathVariable("connectId") String connectId,
+    public  Map<String,Object> addIssueTypeSchemeReqIssueType(@PathVariable("connectId") Long connectId,
                                                             ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ISSUE TYPE SCHEME CHECK REQUIREMENT PUT API 호출");
         return cloudJiraIssueTypeScheme.addIssueTypeSchemeReqIssueType(connectId);

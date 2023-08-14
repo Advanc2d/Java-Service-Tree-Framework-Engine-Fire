@@ -28,7 +28,7 @@ public class OnPremiseJiraIssueController {
             value = {""},
             method = {RequestMethod.POST}
     )
-    public OnPremiseJiraIssueDTO createIssue(@PathVariable("connectId") String connectId,
+    public OnPremiseJiraIssueDTO createIssue(@PathVariable("connectId") Long connectId,
                                              @RequestBody OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
         logger.info("이슈 생성 API 호출");
         return onPremiseJiraIssue.createIssue(connectId, onPremiseJiraIssueInputDTO);
@@ -40,7 +40,7 @@ public class OnPremiseJiraIssueController {
             value = {"/list/{projectKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public JsonNode getIssueList(@PathVariable("connectId") String connectId,
+    public JsonNode getIssueList(@PathVariable("connectId") Long connectId,
                                  @PathVariable String projectKeyOrId,
                                  ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("이슈 전체 조회 API 호출");
@@ -53,7 +53,7 @@ public class OnPremiseJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public Issue getIssueDetail(@PathVariable("connectId") String connectId,
+    public Issue getIssueDetail(@PathVariable("connectId") Long connectId,
                                   @PathVariable String issueKeyOrId,
                                   ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("이슈 상세 조회 API 호출");
@@ -66,7 +66,7 @@ public class OnPremiseJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.PUT}
     )
-    public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") String connectId,
+    public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") Long connectId,
                                                    @PathVariable String issueKeyOrId,
                                                    @RequestBody  OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception{
         logger.info("이슈 업데이트 API 호출");
@@ -79,10 +79,22 @@ public class OnPremiseJiraIssueController {
             value = {"/{issueKey}"},
             method = {RequestMethod.DELETE}
     )
-    public Map<String, Object> deleteIssue(@PathVariable("connectId") String connectId,
+    public Map<String, Object> deleteIssue(@PathVariable("connectId") Long connectId,
                                            @PathVariable String issueKey) throws Exception {
         logger.info("이슈 삭제 API 호출");
         return onPremiseJiraIssue.deleteIssue(connectId, issueKey);
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/collection/scheduler"},
+            method = {RequestMethod.PUT}
+    )
+    public Map<String,Object> collectLinkAndSubtask(@PathVariable("connectId") Long connectId,
+                                                    ModelMap model, HttpServletRequest request) throws Exception {
+        Map<String,Object> result = onPremiseJiraIssue.collectLinkAndSubtask(connectId);
+
+        return result;
     }
 
 }

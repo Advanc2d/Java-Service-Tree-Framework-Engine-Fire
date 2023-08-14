@@ -28,7 +28,7 @@ public class CloudJiraIssueTypeController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<CloudJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") String connectId,
+    public List<CloudJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") Long connectId,
                                                         ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ALL ISSUE TYPE GET API 호출");
         return cloudJiraIssueType.getIssueTypeListAll(connectId);
@@ -39,7 +39,7 @@ public class CloudJiraIssueTypeController {
             value = {"/project"},
             method = {RequestMethod.GET}
     )
-    public List<CloudJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") String connectId,
+    public List<CloudJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") Long connectId,
                                                         @RequestParam("projectId") String projectId,
                                                         ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud"+ projectId +" ProjectId ISSUE TYPE GET API 호출");
@@ -51,7 +51,7 @@ public class CloudJiraIssueTypeController {
             value = {""},
             method = {RequestMethod.POST}
     )
-    public CloudJiraIssueTypeDTO createIssueType(@PathVariable("connectId") String connectId,
+    public CloudJiraIssueTypeDTO createIssueType(@PathVariable("connectId") Long connectId,
                                             @RequestBody CloudJiraIssueTypeInputDTO cloudJiraIssueTypeInputDTO,
                                             ModelMap model, HttpServletRequest request ) throws Exception {
         logger.info("Jira Cloud CREATE ISSUE TYPE POST API 호출");
