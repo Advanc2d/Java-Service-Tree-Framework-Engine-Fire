@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://svc.sel3.cloudtype.app:32203/engine?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: mysqluser
+    password: mysqluserpassword
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: none  # option type: create, create-drop, update, validate, none
+      # create로 하게되면 기존 테이블을 삭제후 다시 생성하게 된다.
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+    show-sql: true  # sql 쿼리를 보여줍니다.
+    generate-ddl: true
+    properties:
+      hibernate.format_sql: true    # JPA의 구현체인 Hibernate가 동작하면서 발생한 SQL의 가독성을 높여준다.
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect    # 쿼리의 기준이 되는 데이터베이스 엔진을 설정합니다.
+
+cloud:
+  oauth2:
+    client:
+      clientId: h3G2k7xZbgBt5odGcGvKrqYhhIvtFTLh
+      clientSecret: ATOAvLp6ZJE_XJHtn5aZOP9AmyaNbyXHMm2z1hQMjdgZDX5GaQ7ENLn4l-5yTergav7dDDD1482A
+      accessTokenUri: https://auth.atlassian.com/oauth/token
+      userAuthorizationUri: https://auth.atlassian.com/authorize?audience=api.atlassian.com
+      authorizationUri: https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=h3G2k7xZbgBt5odGcGvKrqYhhIvtFTLh&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work%20manage%3Ajira-webhook%20manage%3Ajira-data-provider&redirect_uri=http%3A%2F%2Flocalhost%3A31313%2Fcloud%2Fjira%2Foauth%2Fcallback&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent
+      redirectUri: http://localhost:31313/cloud/jira/oauth/callback
+      apiResourceUri: https://api.atlassian.com/oauth/token/accessible-resources
+      scope: 'read:jira-user'
+      grantType: 'authorization_code'
+
+app:
+  jiraUrl: https://api.atlassian.com/ex/jira/
