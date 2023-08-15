@@ -1,4 +1,4 @@
-package com.arms.jira.cloud.jiraissue.model;
+package com.arms.jira.cloud.jiraissueresolution.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,18 +20,4 @@ public class ResolutionSearchDTO {
     private boolean isLast;
     private List<Resolution> values;
 
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Resolution {
-        private String self;
-        private String id;
-        private String name;
-        private String description;
-        private boolean isDefault;
-    }
 }
