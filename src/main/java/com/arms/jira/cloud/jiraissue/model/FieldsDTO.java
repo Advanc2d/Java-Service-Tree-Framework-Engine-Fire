@@ -18,7 +18,6 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FieldsDTO {
 
-    // 필수 및 공통 필드
     private Project project; // 프로젝트
 
     private IssueType issuetype; // 이슈 타입
@@ -29,20 +28,19 @@ public class FieldsDTO {
 
     private Reporter reporter; // 보고자
 
-    private Creator creator; // 보고자 (이슈 조회 시, creator로 리턴)
-
     private Assignee assignee; // 담당자
 
     private List<String> labels; // 라벨
 
     private List<IssueLink> issuelinks; // 연결된 이슈
 
-    // 추가
     private Priority priority; // 우선순위
+
     private List<CloudJiraIssueDTO> subtasks; // sub task
 
     private Status status; // 상태값
-    private Resolution resolution;
+
+    private Resolution resolution; // 해결책
 
     @Getter
     @Setter
@@ -52,7 +50,9 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Project {
+        private String self;
         private String id;
+        private String key;
         private String name;
     }
 
@@ -64,6 +64,7 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class IssueType {
+        private String self;
         private String id;
         private String name;
     }
@@ -113,17 +114,6 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Reporter {
-        private String id;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Creator {
         private String accountId;
         private String emailAddress;
     }
@@ -136,22 +126,9 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Assignee {
-        private String id;
+        private String accountId;
+        private String emailAddress;
     }
-
-    // @Getter
-    // @Setter
-    // @Builder
-    // @ToString
-    // @NoArgsConstructor
-    // @AllArgsConstructor
-    // @JsonInclude(JsonInclude.Include.NON_NULL)
-    // public static class IssueLink {
-    //     private String id;
-    //     private Type type;
-    //     private InwardIssue inwardIssue;
-    //     private OutwardIssue outwardIssue;
-    // }
 
     @Getter
     @Setter
@@ -161,8 +138,8 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class IssueLink {
-        private String id;
         private String self;
+        private String id;
         private Type type;
         private CloudJiraIssueDTO inwardIssue;
         private CloudJiraIssueDTO outwardIssue;
@@ -176,61 +153,11 @@ public class FieldsDTO {
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Type {
+        private String self;
         private String id;
         private String name;
         private String inward;
         private String outward;
-        private String self;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class InwardIssue {
-        private String id;
-        private String key;
-        private String self;
-        private Fields fields;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class OutwardIssue {
-        private String id;
-        private String key;
-        private String self;
-        private Fields fields;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Fields {
-        private Status status;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class SubTask{
-        private String id;
     }
 
 }
