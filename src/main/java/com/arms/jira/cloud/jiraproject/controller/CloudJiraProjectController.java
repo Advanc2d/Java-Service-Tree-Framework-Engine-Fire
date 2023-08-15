@@ -23,17 +23,16 @@ public class CloudJiraProjectController {
 	
 	@Autowired
 	private CloudJiraProject cloudJiraProject;
-	
     
     @ResponseBody
     @RequestMapping(
             value = {"/{projectKey}"},
             method = {RequestMethod.GET}
     )
-    public CloudJiraProjectDTO getProjectData(@PathVariable String projectKey, @PathVariable("connectId") String connectId,
+    public CloudJiraProjectDTO getProjectData(@PathVariable String projectKey, @PathVariable("connectId") Long connectId,
                                               ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud PROJECT GET API 호출");
-        return cloudJiraProject.getProjectData(projectKey, connectId);
+        return cloudJiraProject.getProjectData(connectId, projectKey);
     }
 
     @ResponseBody
@@ -41,7 +40,7 @@ public class CloudJiraProjectController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<CloudJiraProjectDTO> getProjectList(@PathVariable("connectId") String connectId,
+    public List<CloudJiraProjectDTO> getProjectList(@PathVariable("connectId") Long connectId,
                                                 ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ALL PROJECT GET API 호출");
         return cloudJiraProject.getProjectList(connectId);

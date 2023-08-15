@@ -7,11 +7,11 @@ import com.arms.jira.info.model.JiraInfoEntity;
 
 public interface JiraInfo {
 
-    public JiraInfoDTO loadConnectInfo(String connectId);
+    public JiraInfoDTO loadConnectInfo(Long connectId);
 
 	List<JiraInfoDTO> loadConnectInfos();
 
-	public String getIssueTypeId(String connectId);
+	public String getIssueTypeId(Long connectId);
 
     public JiraInfoEntity saveConnectInfo(JiraInfoDTO jiraInfoDTO);
 

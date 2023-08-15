@@ -29,7 +29,7 @@ public class OnPremiseJiraIssueTypeController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<IssueType> getIssueTypeList(@PathVariable("connectId") String connectId,
+    public List<IssueType> getIssueTypeList(@PathVariable("connectId") Long connectId,
                                                   ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira OnPremise ALL ISSUE TYPE GET API 호출");
         return onPremiseJiraIssueType.getOnPremiseIssueTypeListAll(connectId);
@@ -40,7 +40,7 @@ public class OnPremiseJiraIssueTypeController {
             value = {"/{issueTypeId}"},
             method = {RequestMethod.GET}
     )
-    public IssueType getIssueTypeListByIssueTypeId(@PathVariable("connectId") String connectId,
+    public IssueType getIssueTypeListByIssueTypeId(@PathVariable("connectId") Long connectId,
                                                         @PathVariable("issueTypeId") String issueTypeId,
                                                         ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira OnPremise "+ issueTypeId +" issueTypeId ISSUE TYPE GET API 호출");
@@ -52,7 +52,7 @@ public class OnPremiseJiraIssueTypeController {
             value = {"/check/requirement"},
             method = {RequestMethod.GET}
     )
-    public Map<String, Object> checkReqIssueType(@PathVariable("connectId") String connectId,
+    public Map<String, Object> checkReqIssueType(@PathVariable("connectId") Long connectId,
                                                  ModelMap model, HttpServletRequest request ) throws Exception {
         logger.info("Jira OnPremise Requirement ISSUE TYPE Check API 호출");
         return onPremiseJiraIssueType.checkReqIssueType(connectId);

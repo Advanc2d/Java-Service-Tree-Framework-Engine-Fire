@@ -1,8 +1,10 @@
 package com.arms.jira.onpremise.jiraissue.model;
 
-import com.arms.jira.cloud.jiraissue.model.FieldsDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +23,12 @@ public class OnPremiseJiraIssueDTO {
 
     private FieldsDTO fields;
 
+    private List<OnPremiseJiraIssueDTO> issues;
+
+    public OnPremiseJiraIssueDTO(String id, String key, String self) {
+        this.key = key;
+        this.id = id;
+        this.self = self;
+        this.issues = new ArrayList<>();
+    }
 }

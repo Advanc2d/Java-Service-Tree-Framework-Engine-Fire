@@ -28,7 +28,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
     private JiraInfo jiraInfo;
 
 
-    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(String connectId) {
+    public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(Long connectId) {
 
         int maxResult = 50;
         int startAt = 0;
@@ -66,7 +66,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         return issueTypeSchemeMapping;
     }
 
-    public Map<String,Object> addIssueTypeSchemeReqIssueType(String connectId) throws Exception {
+    public Map<String,Object> addIssueTypeSchemeReqIssueType(Long connectId) throws Exception {
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = getIssueTypeSchemeMapping(connectId);
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values = issueTypeSchemeMapping.getValues();
@@ -108,7 +108,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         return result;
     }
 
-    public boolean addIssueTypesToIssueTypeScheme(String connectId, String issueTypeSchemeId, String issueTypeId) {
+    public boolean addIssueTypesToIssueTypeScheme(Long connectId, String issueTypeSchemeId, String issueTypeId) {
 
         String endpoint = "/rest/api/3/issuetypescheme/"+issueTypeSchemeId+"/issuetype";
         

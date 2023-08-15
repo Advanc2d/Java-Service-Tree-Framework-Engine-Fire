@@ -23,7 +23,7 @@ public class OnPremiseJiraIssueEntity {
     private Timestamp timestamp;
 
     @Column(name = "connect_id", columnDefinition = "TEXT")
-    private String connectId;
+    private Long connectId;
 
     @Column(name = "id", columnDefinition = "TEXT")
     private String id;
