@@ -119,4 +119,27 @@ public class CloudJiraIssueController {
 
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/priority/list"},
+            method = {RequestMethod.GET}
+    )
+    public PrioritySearchDTO getPriorityList(@PathVariable("connectId") Long connectId,
+                                            ModelMap model, HttpServletRequest request) throws Exception {
+        PrioritySearchDTO result = cloudJiraIssue.getPriorityList(connectId);
+
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/resolution/list"},
+            method = {RequestMethod.GET}
+    )
+    public ResolutionSearchDTO getResolutionList(@PathVariable("connectId") Long connectId,
+                                            ModelMap model, HttpServletRequest request) throws Exception {
+        ResolutionSearchDTO result = cloudJiraIssue.getResolutionList(connectId);
+        return result;
+    }
 }

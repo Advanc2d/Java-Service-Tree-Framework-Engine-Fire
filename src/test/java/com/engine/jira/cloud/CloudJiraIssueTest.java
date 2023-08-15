@@ -4,7 +4,12 @@ import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import com.arms.jira.cloud.jiraissue.model.FieldsDTO;
+import com.arms.jira.cloud.jiraissue.model.PrioritySearchDTO;
+import com.arms.jira.cloud.jiraissue.model.ResolutionSearchDTO;
 import com.arms.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
+import com.arms.jira.cloud.jiraissue.model.PrioritySearchDTO.Priority;
+import com.arms.jira.cloud.jiraissue.model.ResolutionSearchDTO.Resolution;
+
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
@@ -235,6 +240,100 @@ public class CloudJiraIssueTest {
             result.put("success", isSuccess);
             result.put("message", "이슈 수정 실패하였습니다.");
         }
+
+        return result;
+    }
+
+    @Test
+    @DisplayName("전체 우선순위 조회 테스트")
+    public void IssuePriorityCallTest() {
+        PrioritySearchDTO priorities = getPriority();
+        
+        System.out.println(priorities.toString());
+        
+        Assertions.assertThat(priorities.getTotal()).isEqualTo(5);
+    }
+
+    public PrioritySearchDTO getPriority() {
+        int maxResult = 1048576;
+        int startAt = 0;
+        int index= 1;
+        boolean checkLast = false;
+
+        List<Priority> values = new ArrayList<Priority>();
+        PrioritySearchDTO result = null;
+
+        while(!checkLast) {
+
+            String endpoint = "/rest/api/3/priority/search?maxResults="+ maxResult + "&startAt=" + startAt;
+
+            PrioritySearchDTO priorities = webClient.get()
+                .uri(endpoint)
+                .retrieve()
+                .bodyToMono(PrioritySearchDTO.class).block();
+
+            values.addAll(priorities.getValues());
+
+            if (priorities.getTotal() == values.size()) {
+                result = priorities;
+                result.setValues(null);
+
+                checkLast = true;
+            }
+            else {
+                startAt = maxResult * index;
+                index++;
+            }
+        }
+
+        result.setValues(values);
+
+        return result;
+    }
+
+    @Test
+    @DisplayName("전체 해결책 조회 테스트")
+    public void IssueResolutionCallTest() {
+        ResolutionSearchDTO resolutions = getResoltuionList();
+        
+        System.out.println(resolutions.toString());
+        
+        Assertions.assertThat(resolutions.getTotal()).isEqualTo(5);
+    }
+
+    public ResolutionSearchDTO getResoltuionList() {
+        int maxResult = 1048576;
+        int startAt = 0;
+        int index= 1;
+        boolean checkLast = false;
+
+        List<Resolution> values = new ArrayList<Resolution>();
+        ResolutionSearchDTO result = null;
+
+        while(!checkLast) {
+
+            String endpoint = "/rest/api/3/resolution/search?maxResults="+ maxResult + "&startAt=" + startAt;
+
+            ResolutionSearchDTO resolutions = webClient.get()
+                .uri(endpoint)
+                .retrieve()
+                .bodyToMono(ResolutionSearchDTO.class).block();
+
+            values.addAll(resolutions.getValues());
+
+            if (resolutions.getTotal() == values.size()) {
+                result = resolutions;
+                result.setValues(null);
+
+                checkLast = true;
+            }
+            else {
+                startAt = maxResult * index;
+                index++;
+            }
+        }
+
+        result.setValues(values);
 
         return result;
     }
