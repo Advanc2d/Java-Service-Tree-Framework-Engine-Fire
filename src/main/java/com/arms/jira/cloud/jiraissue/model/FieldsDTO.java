@@ -2,8 +2,9 @@ package com.arms.jira.cloud.jiraissue.model;
 
 import java.util.List;
 
-import com.arms.jira.cloud.jiraissue.model.PrioritySearchDTO.Priority;
-import com.arms.jira.cloud.jiraissue.model.ResolutionSearchDTO.Resolution;
+import com.arms.jira.cloud.jiraissuepriority.model.Priority;
+import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
+import com.arms.jira.cloud.jiraissuestatus.model.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.*;
@@ -219,20 +220,6 @@ public class FieldsDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Fields {
         private Status status;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Status {
-        private String id;
-        private String name;
-        private String description;
-        private String self;
     }
 
     @Getter
