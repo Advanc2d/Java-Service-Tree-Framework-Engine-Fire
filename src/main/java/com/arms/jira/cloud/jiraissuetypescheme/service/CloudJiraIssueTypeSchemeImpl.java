@@ -53,6 +53,8 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
 
             if (issueTypeSchemeMappingPaging.getTotal() == values.size()) {
                 issueTypeSchemeMapping = issueTypeSchemeMappingPaging;
+                issueTypeSchemeMapping.setValues(null);
+
                 checkLast = true;
             }
             else {
