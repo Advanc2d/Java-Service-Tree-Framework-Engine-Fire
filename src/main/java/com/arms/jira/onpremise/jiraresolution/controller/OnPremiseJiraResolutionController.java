@@ -1,7 +1,7 @@
 package com.arms.jira.onpremise.jiraresolution.controller;
 
+import com.arms.jira.onpremise.jiraresolution.model.OnPremiseJiraResolutionDTO;
 import com.arms.jira.onpremise.jiraresolution.service.OnPremiseJiraResolution;
-import com.atlassian.jira.rest.client.api.domain.Resolution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,9 @@ public class OnPremiseJiraResolutionController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<Resolution> getResolutionList(@PathVariable("connectId") Long connectId) throws Exception {
+    public List<OnPremiseJiraResolutionDTO> getResolutionList(@PathVariable("connectId") Long connectId) throws Exception {
         logger.info("해결책 조회 API 호출");
         return onPremiseJiraResolution.getResolutionList(connectId);
     }
+
 }

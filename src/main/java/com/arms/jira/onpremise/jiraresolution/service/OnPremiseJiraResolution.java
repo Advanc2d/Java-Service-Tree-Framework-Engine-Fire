@@ -1,9 +1,9 @@
 package com.arms.jira.onpremise.jiraresolution.service;
 
-import com.atlassian.jira.rest.client.api.domain.Resolution;
+import com.arms.jira.onpremise.jiraresolution.model.OnPremiseJiraResolutionDTO;
 
 import java.util.List;
 
 public interface OnPremiseJiraResolution {
-    List<Resolution> getResolutionList(Long connectId) throws Exception;
+    List<OnPremiseJiraResolutionDTO> getResolutionList(Long connectId) throws Exception;
 }
