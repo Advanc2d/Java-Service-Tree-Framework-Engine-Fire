@@ -4,12 +4,9 @@ import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 
+import com.arms.jira.onpremise.jirastatus.model.OnPremiseJiraStatusDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.Status;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.atlassian.jira.rest.client.api.domain.*;
 import io.atlassian.util.concurrent.Promise;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
+import java.util.*;
 
 
 @AllArgsConstructor
@@ -33,7 +33,7 @@ public class OnPremiseJiraStatusImpl implements OnPremiseJiraStatus{
 
 
     @Override
-    public JsonNode getStatusList(Long connectId) throws Exception {
+    public List<OnPremiseJiraStatusDTO> getStatusList(Long connectId) throws Exception {
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -43,23 +43,17 @@ public class OnPremiseJiraStatusImpl implements OnPremiseJiraStatus{
         Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
         Iterable<Status> statuses = statusesPromise.claim();
 
-        // ObjectMapper 객체 생성
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode statusArray = mapper.createArrayNode();
-
-        // 상태 정보를 JsonNode 형태로 만들기
+        List<OnPremiseJiraStatusDTO> onPremiseJiraStatusDTOList = new ArrayList<>();
         for (Status status : statuses) {
-            ObjectNode statusObject = mapper.createObjectNode();
-            statusObject.put("id", status.getId());
-            statusObject.put("name", status.getName());
-            statusObject.put("description", status.getDescription());
-            statusArray.add(statusObject);
+            OnPremiseJiraStatusDTO onPremiseJiraStatusDTO = new OnPremiseJiraStatusDTO();
+            onPremiseJiraStatusDTO.setSelf(status.getSelf().toString());
+            onPremiseJiraStatusDTO.setId(status.getId());
+            onPremiseJiraStatusDTO.setName(status.getName());
+            onPremiseJiraStatusDTO.setDescription(status.getDescription());
+            onPremiseJiraStatusDTOList.add(onPremiseJiraStatusDTO);
         }
 
-        // ObjectNode 객체를 만들고 상태 리스트를 추가한다.
-        ObjectNode response = mapper.createObjectNode();
-        response.set("statuses", statusArray);
-
-        return response;
+        return onPremiseJiraStatusDTOList;
     }
+
 }
