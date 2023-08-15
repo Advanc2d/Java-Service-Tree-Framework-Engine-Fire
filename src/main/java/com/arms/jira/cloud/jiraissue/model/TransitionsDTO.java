@@ -27,5 +27,13 @@ public class TransitionsDTO {
     public static class Transitions {
         private String id;
         private String name;
+        private Map<String, Object> to;
+
+        private boolean hasScreen;
+        private boolean isGlobal;
+        private boolean isInitial;
+        private boolean isAvailable;
+        private boolean isConditional;
+        private boolean isLooped;
     }
 }

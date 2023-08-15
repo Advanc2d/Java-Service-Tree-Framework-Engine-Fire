@@ -21,4 +21,8 @@ public interface CloudJiraIssue {
     public TransitionsDTO getIssueStatusAll(Long connectId, String issueKeyOrId);
 
     public Map<String,Object> updateIssueStatus(Long connectId, String issueKeyOrId, IssueStatusUpdateRequestDTO issueStatusUpdateRequestDTO);
+
+    public PrioritySearchDTO getPriorityList(Long connectId);
+
+    public ResolutionSearchDTO getResolutionList(Long connectId);
 }
