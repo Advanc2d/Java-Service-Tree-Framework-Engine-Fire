@@ -1,4 +1,4 @@
-package com.arms.jira.onpremise.jirastatus.model;
+package com.arms.jira.onpremise.jiraissuestatus.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OnPremiseJiraStatusDTO {
+public class OnPremiseJiraIssueStatusDTO {
 
     private  String self;
 

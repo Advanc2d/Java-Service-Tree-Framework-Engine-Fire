@@ -1,10 +1,10 @@
-package com.arms.jira.onpremise.jirastatus.service;
+package com.arms.jira.onpremise.jiraissuestatus.service;
 
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 
-import com.arms.jira.onpremise.jirastatus.model.OnPremiseJiraStatusDTO;
+import com.arms.jira.onpremise.jiraissuestatus.model.OnPremiseJiraIssueStatusDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
 import io.atlassian.util.concurrent.Promise;
@@ -21,7 +21,7 @@ import java.util.*;
 
 @AllArgsConstructor
 @Service("onPremiseJiraStatus")
-public class OnPremiseJiraStatusImpl implements OnPremiseJiraStatus{
+public class OnPremiseJiraIssueStatusImpl implements OnPremiseJiraIssueStatus {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -33,7 +33,7 @@ public class OnPremiseJiraStatusImpl implements OnPremiseJiraStatus{
 
 
     @Override
-    public List<OnPremiseJiraStatusDTO> getStatusList(Long connectId) throws Exception {
+    public List<OnPremiseJiraIssueStatusDTO> getStatusList(Long connectId) throws Exception {
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -43,17 +43,17 @@ public class OnPremiseJiraStatusImpl implements OnPremiseJiraStatus{
         Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
         Iterable<Status> statuses = statusesPromise.claim();
 
-        List<OnPremiseJiraStatusDTO> onPremiseJiraStatusDTOList = new ArrayList<>();
+        List<OnPremiseJiraIssueStatusDTO> onPremiseJiraIssueStatusDTOList = new ArrayList<>();
         for (Status status : statuses) {
-            OnPremiseJiraStatusDTO onPremiseJiraStatusDTO = new OnPremiseJiraStatusDTO();
-            onPremiseJiraStatusDTO.setSelf(status.getSelf().toString());
-            onPremiseJiraStatusDTO.setId(status.getId().toString());
-            onPremiseJiraStatusDTO.setName(status.getName());
-            onPremiseJiraStatusDTO.setDescription(status.getDescription());
-            onPremiseJiraStatusDTOList.add(onPremiseJiraStatusDTO);
+            OnPremiseJiraIssueStatusDTO onPremiseJiraIssueStatusDTO = new OnPremiseJiraIssueStatusDTO();
+            onPremiseJiraIssueStatusDTO.setSelf(status.getSelf().toString());
+            onPremiseJiraIssueStatusDTO.setId(status.getId().toString());
+            onPremiseJiraIssueStatusDTO.setName(status.getName());
+            onPremiseJiraIssueStatusDTO.setDescription(status.getDescription());
+            onPremiseJiraIssueStatusDTOList.add(onPremiseJiraIssueStatusDTO);
         }
 
-        return onPremiseJiraStatusDTOList;
+        return onPremiseJiraIssueStatusDTOList;
     }
 
 }
