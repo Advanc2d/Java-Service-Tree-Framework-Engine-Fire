@@ -4,12 +4,11 @@ import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import com.arms.jira.cloud.jiraissue.model.FieldsDTO;
-import com.arms.jira.cloud.jiraissue.model.PrioritySearchDTO;
-import com.arms.jira.cloud.jiraissue.model.ResolutionSearchDTO;
 import com.arms.jira.cloud.jiraissue.model.FieldsDTO.IssueLink;
-import com.arms.jira.cloud.jiraissue.model.PrioritySearchDTO.Priority;
-import com.arms.jira.cloud.jiraissue.model.ResolutionSearchDTO.Resolution;
-
+import com.arms.jira.cloud.jiraissuepriority.model.Priority;
+import com.arms.jira.cloud.jiraissuepriority.model.PrioritySearchDTO;
+import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
+import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;

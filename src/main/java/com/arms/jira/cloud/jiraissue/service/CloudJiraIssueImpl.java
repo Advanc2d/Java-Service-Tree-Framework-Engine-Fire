@@ -3,8 +3,6 @@ package com.arms.jira.cloud.jiraissue.service;
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
 import com.arms.jira.cloud.jiraissue.model.*;
-import com.arms.jira.cloud.jiraissue.model.PrioritySearchDTO.Priority;
-import com.arms.jira.cloud.jiraissue.model.ResolutionSearchDTO.Resolution;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import lombok.AllArgsConstructor;
@@ -496,77 +494,4 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return result;
     }
 
-    @Override
-    public PrioritySearchDTO getPriorityList(Long connectId) {
-
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-
-        int maxResult = 1048576;
-        int startAt = 0;
-        int index= 1;
-        boolean checkLast = false;
-
-        List<Priority> values = new ArrayList<Priority>();
-        PrioritySearchDTO result = null;
-
-        while(!checkLast) {
-            String endpoint = "/rest/api/3/priority/search?maxResults="+ maxResult + "&startAt=" + startAt;
-            PrioritySearchDTO priorities = CloudJiraUtils.get(webClient, endpoint, PrioritySearchDTO.class).block();
-
-            values.addAll(priorities.getValues());
-
-            if (priorities.getTotal() == values.size()) {
-                result = priorities;
-                result.setValues(null);
-
-                checkLast = true;
-            }
-            else {
-                startAt = maxResult * index;
-                index++;
-            }
-        }
-
-        result.setValues(values);
-
-        return result;
-    }
-
-    @Override
-    public ResolutionSearchDTO getResolutionList(Long connectId) {
-
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-
-        int maxResult = 1048576;
-        int startAt = 0;
-        int index= 1;
-        boolean checkLast = false;
-
-        List<Resolution> values = new ArrayList<Resolution>();
-        ResolutionSearchDTO result = null;
-
-        while(!checkLast) {
-            String endpoint = "/rest/api/3/resolution/search?maxResults="+ maxResult + "&startAt=" + startAt;
-            ResolutionSearchDTO resolutions = CloudJiraUtils.get(webClient, endpoint, ResolutionSearchDTO.class).block();
-
-            values.addAll(resolutions.getValues());
-
-            if (resolutions.getTotal() == values.size()) {
-                result = resolutions;
-                result.setValues(null);
-
-                checkLast = true;
-            }
-            else {
-                startAt = maxResult * index;
-                index++;
-            }
-        }
-
-        result.setValues(values);
-
-        return result;
-    }
 }

@@ -1,7 +1,6 @@
 package com.arms.jira.cloud.jiraissue.service;
 
 import com.arms.jira.cloud.jiraissue.model.*;
-
 import java.util.Map;
 
 public interface CloudJiraIssue {
@@ -22,7 +21,4 @@ public interface CloudJiraIssue {
 
     public Map<String,Object> updateIssueStatus(Long connectId, String issueKeyOrId, IssueStatusUpdateRequestDTO issueStatusUpdateRequestDTO);
 
-    public PrioritySearchDTO getPriorityList(Long connectId);
-
-    public ResolutionSearchDTO getResolutionList(Long connectId);
 }
