@@ -40,6 +40,7 @@ public class ProductSearchService {
 
 	private ElasticsearchOperations elasticsearchOperations;
 
+
 	@Autowired
 	public ProductSearchService(final ElasticsearchOperations elasticsearchOperations) {
 		super();
@@ -51,7 +52,6 @@ public class ProductSearchService {
 		List<IndexQuery> queries = products.stream()
 				.map(product -> new IndexQueryBuilder().withId(product.getId().toString()).withObject(product).build())
 				.collect(Collectors.toList());
-		;
 
 		return elasticsearchOperations.bulkIndex(queries, IndexCoordinates.of(PRODUCT_INDEX));
 

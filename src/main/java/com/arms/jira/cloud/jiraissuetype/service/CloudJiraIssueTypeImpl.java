@@ -7,13 +7,14 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.arms.elasticsearch.models.EsJiraIssueType;
-import com.arms.elasticsearch.services.EsJiraIssueTypeService;
+import com.arms.elasticsearch.services.JiraIssueTypeService;
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
@@ -22,11 +23,10 @@ import com.arms.jira.info.model.JiraInfoEntity;
 import com.arms.jira.info.service.JiraInfo;
 
 import lombok.AllArgsConstructor;
-import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
-@AllArgsConstructor
 @Service("cloudJiraIssueType")
+@AllArgsConstructor
 public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -38,7 +38,8 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     private JiraInfo jiraInfo;
 
     @Autowired
-    private final EsJiraIssueTypeService esJiraIssueTypeService;
+    @Qualifier("JiraIssueTypeService")
+    private JiraIssueTypeService jiraIssueTypeService;
 
     @Override
     public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(Long connectId) throws Exception {
@@ -144,7 +145,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
                         logger.error(error.getMessage());
                     },
                     () -> {
-                        esJiraIssueTypeService.createProductIndexBulk(result);
+                        jiraIssueTypeService.createJiraIssueTypeIndexBulk(result);
                     }
                 );
 
