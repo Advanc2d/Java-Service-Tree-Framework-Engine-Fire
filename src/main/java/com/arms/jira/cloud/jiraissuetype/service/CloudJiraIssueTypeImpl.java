@@ -23,6 +23,7 @@ import com.arms.jira.info.service.JiraInfo;
 
 import lombok.AllArgsConstructor;
 import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Service("cloudJiraIssueType")
@@ -53,6 +54,17 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         return issueTypes;
     }
+
+    public Mono<List<CloudJiraIssueTypeDTO>> getNonBlockIssueTypeListAll(Long connectId) throws Exception {
+
+        String endpoint = "/rest/api/3/issuetype";
+
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        return CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<>() {
+        });
+    }
+
 
     @Override
     public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(Long connectId, String projectId) throws Exception {
@@ -116,13 +128,16 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
             List<EsJiraIssueType> result = new ArrayList<>();
 
-            Disposable subscribe = CloudJiraUtils.get(webClient, endpoint,
-                    new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {
-                    })
+            CloudJiraUtils.get(webClient, endpoint,
+                    new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {})
                 .subscribe(cloudJiraIssueTypes -> {
                         cloudJiraIssueTypes.stream()
                             .forEach(cloudJiraIssueType ->
-                                result.add(modelMapper.map(cloudJiraIssueType, EsJiraIssueType.class))
+                                {
+                                    EsJiraIssueType esJiraIssueType = modelMapper.map(cloudJiraIssueType, EsJiraIssueType.class);
+                                    esJiraIssueType.generateIdByUrl(found.getUri());
+                                    result.add(esJiraIssueType);
+                                }
                             );
                     },
                     error -> {

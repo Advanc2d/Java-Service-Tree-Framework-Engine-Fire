@@ -17,6 +17,9 @@ import lombok.Setter;
 public class EsJiraIssueType {
 
 	@Id
+	private String idByUrl;
+
+	@Field(type = FieldType.Keyword, name = "id")
 	private String id;
 
 	@Field(type = FieldType.Keyword, name = "self")
@@ -36,6 +39,10 @@ public class EsJiraIssueType {
 
 	@Field(type = FieldType.Boolean, name = "hierarchyLevel")
 	private Integer hierarchyLevel;
+
+	public void generateIdByUrl(String url){
+		this.idByUrl = url+"/"+id;
+	}
 
 
 }

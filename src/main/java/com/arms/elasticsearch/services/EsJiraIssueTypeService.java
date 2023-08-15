@@ -28,7 +28,7 @@ public class EsJiraIssueTypeService {
 
 	public List<IndexedObjectInformation> createProductIndexBulk(final List<EsJiraIssueType> esJiraIssueTypes){
 		List<IndexQuery> queries = esJiraIssueTypes.stream()
-			.map(esJiraIssueType -> new IndexQueryBuilder().withId(String.valueOf(esJiraIssueType.getId()))
+			.map(esJiraIssueType -> new IndexQueryBuilder().withId(String.valueOf(esJiraIssueType.getIdByUrl()))
 				.withObject(esJiraIssueType).build())
 			.collect(Collectors.toList());
 		return elasticsearchOperations.bulkIndex(queries, IndexCoordinates.of(JIRA_ISSUE_TYPE_INDEX));

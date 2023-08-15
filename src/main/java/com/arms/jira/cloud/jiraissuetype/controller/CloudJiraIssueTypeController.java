@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import reactor.core.publisher.Mono;
+
 @Controller
 @RequestMapping(value = {"/{connectId}/cloud/jira/issuetype"})
 public class CloudJiraIssueTypeController {
@@ -33,6 +35,18 @@ public class CloudJiraIssueTypeController {
         logger.info("Jira Cloud ALL ISSUE TYPE GET API 호출");
         return cloudJiraIssueType.getIssueTypeListAll(connectId);
     }
+
+    @ResponseBody
+    @RequestMapping(
+        value = {"/sample/list"},
+        method = {RequestMethod.GET}
+    )
+    public Mono<List<CloudJiraIssueTypeDTO>> getNonBlockIssueTypeList(@PathVariable("connectId") Long connectId,
+        ModelMap model, HttpServletRequest request) throws Exception {
+        logger.info("Jira Cloud ALL ISSUE TYPE GET API 호출");
+        return cloudJiraIssueType.getNonBlockIssueTypeListAll(connectId);
+    }
+
 
     @ResponseBody
     @RequestMapping(
