@@ -14,7 +14,7 @@ public class OnPremiseJiraStatusDTO {
 
     private  String self;
 
-    private Long id;
+    private String id;
 
     private String name;
 

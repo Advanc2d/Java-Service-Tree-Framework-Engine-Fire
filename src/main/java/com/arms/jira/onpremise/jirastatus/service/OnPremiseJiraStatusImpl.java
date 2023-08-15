@@ -47,7 +47,7 @@ public class OnPremiseJiraStatusImpl implements OnPremiseJiraStatus{
         for (Status status : statuses) {
             OnPremiseJiraStatusDTO onPremiseJiraStatusDTO = new OnPremiseJiraStatusDTO();
             onPremiseJiraStatusDTO.setSelf(status.getSelf().toString());
-            onPremiseJiraStatusDTO.setId(status.getId());
+            onPremiseJiraStatusDTO.setId(status.getId().toString());
             onPremiseJiraStatusDTO.setName(status.getName());
             onPremiseJiraStatusDTO.setDescription(status.getDescription());
             onPremiseJiraStatusDTOList.add(onPremiseJiraStatusDTO);
