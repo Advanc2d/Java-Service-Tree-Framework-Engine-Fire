@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.arms.config;
 
@@ -25,9 +25,10 @@ public class ElasticsearchClientConfig extends AbstractElasticsearchConfiguratio
 
 	@Override
 	@Bean
+	@SuppressWarnings("deprecation")
 	public RestHighLevelClient elasticsearchClient() {
 
-		final ClientConfiguration clientConfiguration = 
+		final ClientConfiguration clientConfiguration =
 				ClientConfiguration
 				.builder()
 				.connectedTo("313.co.kr:9200")
@@ -39,6 +40,6 @@ public class ElasticsearchClientConfig extends AbstractElasticsearchConfiguratio
 				.create(clientConfiguration)
 				.rest();
 	}
-	
+
 
 }
