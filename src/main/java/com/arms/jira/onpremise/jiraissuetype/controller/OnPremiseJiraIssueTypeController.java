@@ -1,7 +1,7 @@
 package com.arms.jira.onpremise.jiraissuetype.controller;
 
+import com.arms.jira.onpremise.jiraissuetype.model.OnPremiseJiraIssueTypeDTO;
 import com.arms.jira.onpremise.jiraissuetype.service.OnPremiseJiraIssueType;
-import com.atlassian.jira.rest.client.api.domain.IssueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class OnPremiseJiraIssueTypeController {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<IssueType> getIssueTypeList(@PathVariable("connectId") Long connectId,
+    public List<OnPremiseJiraIssueTypeDTO> getIssueTypeList(@PathVariable("connectId") Long connectId,
                                                   ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira OnPremise ALL ISSUE TYPE GET API 호출");
         return onPremiseJiraIssueType.getOnPremiseIssueTypeListAll(connectId);
@@ -40,7 +40,7 @@ public class OnPremiseJiraIssueTypeController {
             value = {"/{issueTypeId}"},
             method = {RequestMethod.GET}
     )
-    public IssueType getIssueTypeListByIssueTypeId(@PathVariable("connectId") Long connectId,
+    public OnPremiseJiraIssueTypeDTO getIssueTypeListByIssueTypeId(@PathVariable("connectId") Long connectId,
                                                         @PathVariable("issueTypeId") String issueTypeId,
                                                         ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira OnPremise "+ issueTypeId +" issueTypeId ISSUE TYPE GET API 호출");
