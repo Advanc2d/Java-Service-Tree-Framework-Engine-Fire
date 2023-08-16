@@ -3,15 +3,16 @@ package com.arms.jira.onpremise.jiraissuetype.service;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
+import com.arms.jira.onpremise.jiraissuetype.model.OnPremiseJiraIssueTypeDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,28 +28,38 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
     @Autowired
     private JiraInfo jiraInfo;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     @Override
-    public List<IssueType> getOnPremiseIssueTypeListAll(Long connectId) throws Exception {
+    public List<OnPremiseJiraIssueTypeDTO> getOnPremiseIssueTypeListAll(Long connectId) throws Exception {
         JiraInfoDTO jiraInfoDTO = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(jiraInfoDTO.getUri(),
                                                                 jiraInfoDTO.getUserId(),
                                                                 jiraInfoDTO.getPasswordOrToken());
 
-        List<IssueType> issueTypes = (List<IssueType>) restClient.getMetadataClient().getIssueTypes().get();
+        Iterable<IssueType> issueTypes = restClient.getMetadataClient().getIssueTypes().get();
+        List<OnPremiseJiraIssueTypeDTO> issueTypeList = new ArrayList<>();
 
-        logger.info(issueTypes.toString());
+        for (IssueType issueType : issueTypes) {
+            OnPremiseJiraIssueTypeDTO onPremiseJiraIssueTypeDTO = new OnPremiseJiraIssueTypeDTO();
 
-        return issueTypes;
+            onPremiseJiraIssueTypeDTO.setId(issueType.getId().toString());
+            onPremiseJiraIssueTypeDTO.setName(issueType.getName());
+            onPremiseJiraIssueTypeDTO.setSelf(issueType.getName());
+            onPremiseJiraIssueTypeDTO.setSubtask(issueType.isSubtask());
+            onPremiseJiraIssueTypeDTO.setDescription(issueType.getDescription());
+
+            issueTypeList.add(onPremiseJiraIssueTypeDTO);
+        }
+
+        logger.info(issueTypeList.toString());
+
+        return issueTypeList;
     }
 
-    public IssueType getIssueTypeListByIssueTypeId(Long connectId, String issueTypeId) throws Exception {
-        List<IssueType> issueTypes = getOnPremiseIssueTypeListAll(connectId);
+    public OnPremiseJiraIssueTypeDTO getIssueTypeListByIssueTypeId(Long connectId, String issueTypeId) throws Exception {
+        List<OnPremiseJiraIssueTypeDTO> issueTypes = getOnPremiseIssueTypeListAll(connectId);
 
-        IssueType result = issueTypes.stream()
-                .filter(it -> it.getId() == Integer.parseInt(issueTypeId)) // 주어진 ID와 일치하는 IssueType을 찾습니다.
+        OnPremiseJiraIssueTypeDTO result = issueTypes.stream()
+                .filter(it -> it.getId().equals(issueTypeId)) // 주어진 ID와 일치하는 IssueType을 찾습니다.
                 .findFirst().orElse(null); // 결과가 없으면 null을 반환합니다.
 
         if (result != null) {
@@ -63,11 +74,11 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
     }
 
     public Map<String, Object> checkReqIssueType(Long connectId) throws Exception {
-        List<IssueType> issueTypes = getOnPremiseIssueTypeListAll(connectId);
+        List<OnPremiseJiraIssueTypeDTO> issueTypes = getOnPremiseIssueTypeListAll(connectId);
 
         List<String> searchTerms = Arrays.asList("요구사항", "Requirement");
 
-        List<IssueType> issueTypeResult = issueTypes.stream()
+        List<OnPremiseJiraIssueTypeDTO> issueTypeResult = issueTypes.stream()
                 .filter(it -> searchTerms.stream()
                                         .anyMatch(term -> term.equalsIgnoreCase(it.getName())))
                 .collect(Collectors.toList());
