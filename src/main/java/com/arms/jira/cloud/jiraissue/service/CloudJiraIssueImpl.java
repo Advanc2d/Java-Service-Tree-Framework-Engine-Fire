@@ -137,6 +137,41 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     }
 
+    /* ***
+    * CloseLabel 처리를 위한 메소드 구현 But 이 메소드는 update Issue를 기반으로 함(업데이트 api 호출 시 처리할 수 있는 방법을 생각중)
+    *** */
+    @Transactional
+    public Map<String,Object> updateIssueCloseLabel(Long connectId, String issueKeyOrId) throws Exception {
+
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        String closedLabel = "closeLabel";
+
+        FieldsDTO fieldsDTO = new FieldsDTO();
+        fieldsDTO.setLabels(List.of(closedLabel));
+
+        CloudJiraIssueInputDTO cloudJiraIssueInputDTO = new CloudJiraIssueInputDTO();
+        cloudJiraIssueInputDTO.setFields(fieldsDTO);
+
+        Map<String, Object> addLabelResult = updateIssue(connectId,issueKeyOrId, cloudJiraIssueInputDTO);
+
+        if (!((Boolean) addLabelResult.get("success"))) {
+            result.put("success", false);
+            result.put("message", "이슈 라벨 닫기 처리 실패");
+
+            return result;
+        }
+        else {
+            result.put("success", true);
+            result.put("message", "이슈 라벨 닫기 처리 성공");
+
+            return result;
+        }
+    }
+
+    /* ***
+     * 현재 미사용 (서브테스크 유무로 삭제 or 라벨 및 닫기 처리 작업) deleteIssueCloseLabelAndClosedIssue
+     *** */
     @Transactional
     @Override
     public Map<String,Object> deleteIssue(Long connectId, String issueKeyOrId) throws Exception {
@@ -152,9 +187,6 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 //                convertSubtaskToIssue(connectId, String.valueOf(getSubTask(connectId, issueKeyOrId).get(i).getId()), issueKeyOrId);
 //            }
 
-            /* ***
-                반장님에게 확인 후 수정사항 (Label 덮어씌기로 반영됨)
-            *** */
             String closedLabel = "closeLabel";
 
             FieldsDTO fieldsDTO = new FieldsDTO();
@@ -168,17 +200,14 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
             if (!((Boolean) addLabelResult.get("success"))) {
                 result.put("success", false);
                 result.put("message", "이슈 라벨 추가 실패");
-                
+
                 return result;
             }
 
-            /* ***
-                반장님에게 확인 후 수정사항(서브테스크 있을 시 닫기로 변경해야하는데 그 값은 모두 다름)
-            *** */
             String transitionsId = "2";
             IssueStatusUpdateRequestDTO.TransitionInputDTO transitionInputDTO = new IssueStatusUpdateRequestDTO.TransitionInputDTO();
             transitionInputDTO.setId(transitionsId);
-        
+
             IssueStatusUpdateRequestDTO issueStatusUpdateRequestDTO = new IssueStatusUpdateRequestDTO();
             issueStatusUpdateRequestDTO.setTransition(transitionInputDTO);
 
@@ -233,8 +262,8 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     }
 
     /* ***
-    * 현재 미사용
-    *** */
+     * 현재 미사용
+     *** */
     public void convertSubtaskToIssue(Long connectId, String subTaskKeyOrId,String issueKeyOrId) throws Exception {
 
         CloudJiraIssueDTO issue = getIssue(connectId, subTaskKeyOrId);
@@ -267,7 +296,6 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     @Override
     public Map<String,Object> collectLinkAndSubtask(Long connectId) {
         List<CloudJiraIssueEntity> list = cloudJiraIssueJpaRepository.findByOutwardIdAndParentIdisNullAndConnectId(connectId);
-        List<CloudJiraIssueEntity> saveList = new ArrayList<>();
 
         for (CloudJiraIssueEntity item : list) {
             CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(item.getConnectId(), item.getId());
@@ -297,20 +325,23 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return result;
     }
 
+    /* ***
+    * 현재 미사용 스케줄러 호출 시 어떻게 반영할지 고민
+    * 1안 -> DB에 저장된 정보 중 가장 최근에 저장된 parent_id 와 issuelink_id가 없는 즉 부모 노드인 "요구사항" 이슈의 하위들만 조회하여 저장
+    * 2안 -> api를 호출하여 지라 서버에서 "요구사항" 이슈를 가지고 하위 이슈 링크와 서브테스크를 조회하여 저장
+    *** */
     @Transactional
     public Map<String,Object> collectLinkAndSubtaskByIssueTypeName(Long connectId) {
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = getIssueListByIssueTypeName(connectId, "요구사항");
         List<CloudJiraIssueDTO> cloudJiraIssueList = cloudJiraIssueSearchDTO.getIssues();
 
-        List<CloudJiraIssueEntity> saveList = new ArrayList<>();
-
         for (CloudJiraIssueDTO item : cloudJiraIssueList) {
             CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(connectId, item.getId());
 
             if (cloudJiraIssueDTO.getFields().getIssuelinks().size() > 0) {
-                  CloudJiraIssueDTO saveChildIssueList = fetchLinkedIssues(connectId, item.getId());
-                  saveLinkedIssues(connectId, null, saveChildIssueList, 0);
+                CloudJiraIssueDTO saveChildIssueList = fetchLinkedIssues(connectId, item.getId());
+                saveLinkedIssues(connectId, null, saveChildIssueList, 0);
             }
 
             if(cloudJiraIssueDTO.getFields().getSubtasks().size() > 0) {
@@ -324,14 +355,6 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
                 }
             }
-
-            if (saveList.size() > 100) {
-                cloudJiraIssueJpaRepository.saveAll(saveList);
-            }
-        }
-
-        if (saveList.size() > 0 && saveList.size() <= 100) {
-            cloudJiraIssueJpaRepository.saveAll(saveList);
         }
 
         Map<String, Object> result = new HashMap<String, Object>();
@@ -377,7 +400,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(connectId, issueKeyOrId);
 
         CloudJiraIssueDTO childLinkDTO = new CloudJiraIssueDTO(cloudJiraIssueDTO.getId(),
-                                                        cloudJiraIssueDTO.getKey(), cloudJiraIssueDTO.getSelf());
+                cloudJiraIssueDTO.getKey(), cloudJiraIssueDTO.getSelf());
 
         List<FieldsDTO.IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
 
