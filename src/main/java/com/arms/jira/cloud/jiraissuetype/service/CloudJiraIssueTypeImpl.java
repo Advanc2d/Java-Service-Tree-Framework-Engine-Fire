@@ -58,12 +58,13 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
     public Mono<List<CloudJiraIssueTypeDTO>> getNonBlockIssueTypeListAll(Long connectId) throws Exception {
 
-        String endpoint = "/rest/api/3/issuetype";
+//        String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-        return CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<>() {
-        });
+//        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+//        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+//        return CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<>() {
+//        });
+        return null;
     }
 
 
@@ -75,7 +76,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint, List.class).block();
+        List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {}).block();
 
         logger.info(issueTypes.toString());
 
@@ -145,7 +146,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
                         logger.error(error.getMessage());
                     },
                     () -> {
-                        jiraIssueTypeService.createJiraIssueTypeIndexBulk(result);
+                        // jiraIssueTypeService.createJiraIssueTypeIndexBulk(result);
                     }
                 );
 
