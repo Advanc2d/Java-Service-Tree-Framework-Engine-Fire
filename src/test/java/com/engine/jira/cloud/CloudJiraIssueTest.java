@@ -30,7 +30,7 @@ public class CloudJiraIssueTest {
     public String id = "gkfn185@gmail.com";
     public String pass = "ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F";
     public String projectKeyOrId = "ADVANC2D";
-    public String issueKeyOrId = projectKeyOrId + "-1";
+    public String issueKeyOrId = projectKeyOrId + "-46";
 
     @BeforeEach
     void setUp () {
@@ -94,6 +94,56 @@ public class CloudJiraIssueTest {
     }
 
     @Test
+    @DisplayName("이슈 라벨로 닫기 처리 테스트")
+    public void IssueClosedLabelTest() {
+        String closedLabel = "closeLabel";
+
+        FieldsDTO fieldsDTO = new FieldsDTO();
+        fieldsDTO.setLabels(List.of(closedLabel));
+
+        CloudJiraIssueInputDTO cloudJiraIssueInputDTO = new CloudJiraIssueInputDTO();
+        cloudJiraIssueInputDTO.setFields(fieldsDTO);
+
+        Map<String, Object> addLabelResult = updateIssue(issueKeyOrId, cloudJiraIssueInputDTO);
+
+        Assertions.assertThat(addLabelResult.get("success")).isEqualTo(true);
+
+    }
+
+    public Map<String,Object> updateIssue(String issueKeyOrId, CloudJiraIssueInputDTO cloudJiraIssueInputDTO) {
+
+        String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
+
+        Mono<ResponseEntity<Void>> response = webClient.put()
+                .uri(endpoint)
+                .body(BodyInserters.fromValue(cloudJiraIssueInputDTO))
+                .retrieve()
+                .toEntity(Void.class);
+
+        Optional<Boolean> responseResult = response.map(entity -> entity.getStatusCode() == HttpStatus.NO_CONTENT) // 결과가 204인가 확인
+                .blockOptional();
+        Map<String,Object> result = new HashMap<String,Object>();
+        boolean isSuccess = false;
+
+        if (responseResult.isPresent()) {
+            if (responseResult.get()) {
+                // PUT 호출이 HTTP 204로 성공했습니다.
+                isSuccess = true;
+                result.put("success", isSuccess);
+                result.put("message", "이슈 수정 성공");
+
+                return result;
+            }
+        }
+
+        result.put("success", isSuccess);
+        result.put("message", "이슈 수정 실패");
+
+        return result;
+
+    }
+
+    @Test
     @DisplayName("이슈 타입이 요구사항인 이슈를 전체 조회하고 이슈 링크 내용을 전부 가져오는 스케줄러")
     public void test() {
         CloudJiraIssueSearchDTO issues = getIssueListByIssueTypeName("요구사항");
@@ -121,7 +171,7 @@ public class CloudJiraIssueTest {
         CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(issueKeyOrId);
 
         CloudJiraIssueDTO childLinkDTO = new CloudJiraIssueDTO(cloudJiraIssueDTO.getId(),
-                                                cloudJiraIssueDTO.getKey(), cloudJiraIssueDTO.getSelf());
+                cloudJiraIssueDTO.getKey(), cloudJiraIssueDTO.getSelf());
         List<IssueLink> issueLinks = cloudJiraIssueDTO.getFields().getIssuelinks();
 
         for (int i = 0; i < issueLinks.size(); i++) {
@@ -175,8 +225,8 @@ public class CloudJiraIssueTest {
         System.out.println(indent + "Issue: " + issueDTO.toString());
 
         /***
-        * DB에 저장 로직 구성
-        *** */
+         * DB에 저장 로직 구성
+         *** */
 
         for (CloudJiraIssueDTO linkedIssue : issueDTO.getIssues()) {
             printLinkedIssues(linkedIssue, depth + 1);
@@ -247,9 +297,9 @@ public class CloudJiraIssueTest {
     @DisplayName("전체 우선순위 조회 테스트")
     public void IssuePriorityCallTest() {
         PrioritySearchDTO priorities = getPriority();
-        
+
         System.out.println(priorities.toString());
-        
+
         Assertions.assertThat(priorities.getTotal()).isEqualTo(5);
     }
 
@@ -267,9 +317,9 @@ public class CloudJiraIssueTest {
             String endpoint = "/rest/api/3/priority/search?maxResults="+ maxResult + "&startAt=" + startAt;
 
             PrioritySearchDTO priorities = webClient.get()
-                .uri(endpoint)
-                .retrieve()
-                .bodyToMono(PrioritySearchDTO.class).block();
+                    .uri(endpoint)
+                    .retrieve()
+                    .bodyToMono(PrioritySearchDTO.class).block();
 
             values.addAll(priorities.getValues());
 
@@ -294,9 +344,9 @@ public class CloudJiraIssueTest {
     @DisplayName("전체 해결책 조회 테스트")
     public void IssueResolutionCallTest() {
         ResolutionSearchDTO resolutions = getResoltuionList();
-        
+
         System.out.println(resolutions.toString());
-        
+
         Assertions.assertThat(resolutions.getTotal()).isEqualTo(5);
     }
 
@@ -314,9 +364,9 @@ public class CloudJiraIssueTest {
             String endpoint = "/rest/api/3/resolution/search?maxResults="+ maxResult + "&startAt=" + startAt;
 
             ResolutionSearchDTO resolutions = webClient.get()
-                .uri(endpoint)
-                .retrieve()
-                .bodyToMono(ResolutionSearchDTO.class).block();
+                    .uri(endpoint)
+                    .retrieve()
+                    .bodyToMono(ResolutionSearchDTO.class).block();
 
             values.addAll(resolutions.getValues());
 
