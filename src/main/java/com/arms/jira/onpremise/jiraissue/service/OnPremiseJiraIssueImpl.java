@@ -12,10 +12,10 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueEntity;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
-import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.TransitionInput;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -29,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -47,6 +48,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
     @Autowired
     private OnPremiseJiraIssueJpaRepository onPremiseJiraIssueJpaRepository;
+
+
 
     @Transactional
     @Override
@@ -162,38 +165,37 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
                                                                              info.getPasswordOrToken());
 
             FieldsDTO fields = onPremiseJiraIssueInputDTO.getFields();
+            // summary,description,label 수정 가능 이외 값 수정시 오류
+            if (fields.getProject() != null || fields.getIssuetype() != null || fields.getReporter() != null ||
+                    fields.getAssignee() != null || fields.getIssuelinks() != null || fields.getPriority() != null ||
+                    fields.getSubtasks() != null || fields.getStatus() != null || fields.getResolution() != null) {
+                throw new IllegalArgumentException("수정이 허용되지 않은 필드가 포함되어 있습니다.");
+            }
 
             IssueInputBuilder issueInputBuilder = new IssueInputBuilder();
 
-            // summary,description,Priority 업데이트 개발 완료
+
             if (fields.getSummary() != null) { //요약
                 issueInputBuilder.setSummary(fields.getSummary());
             }
             if (fields.getDescription() != null) { // 설명
                 issueInputBuilder.setDescription(fields.getDescription());
             }
-
-            if (fields.getPriority() != null && fields.getPriority().getId() != null) {//우선순위
-                issueInputBuilder.setFieldValue("priority", ComplexIssueInputFieldValue.with("id", fields.getPriority().getId()));
-            }
-
-            if (fields.getLabels().size() != 0) {
+            if (fields.getLabels() != null) { //라벨
                 issueInputBuilder.setFieldValue("labels", fields.getLabels());
             }
 
-    //        if (fields.getAssignee() != null && fields.getAssignee().getName() != null) { //담당자
-    //            issueInputBuilder.setAssigneeName(fields.getAssignee().getName());
-    //        }
-    //        if (fields.getReporter() != null && fields.getReporter().getName() != null) { //보고자
-    //            issueInputBuilder.setReporterName(fields.getReporter().getName());
-    //        }
             IssueInput issueInput = issueInputBuilder.build();
 
             // 이슈 업데이트 실행
             restClient.getIssueClient().updateIssue(issueKeyOrId, issueInput).claim();
             resultMap.put("updateStatus", "success");
             return resultMap;
-        } catch (Exception e) { // 업데이트 실패한 경우
+        }  catch (JsonMappingException e) { // JSON 관련 오류 처리
+            resultMap.put("updateStatus", "failed");
+            resultMap.put("errorMessage", "Invalid JSON input: " + e.getMessage());
+
+        }  catch (Exception e) { // 업데이트 실패한 경우
             resultMap.put("updateStatus", "failed");
             resultMap.put("errorMessage", e.getMessage());
         }
@@ -403,4 +405,6 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+
 }
