@@ -11,6 +11,7 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueEntity;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -101,6 +102,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     }
     @Override
     public JsonNode  getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
+
         JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -142,17 +144,31 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         return issuesAsJson;
     }
 
+    public JiraInfoDTO checkInfo(Long connectId){
+        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+
+        if (info == null) {
+            logger.info("올바른 사용자가 아닙니다.");
+            throw new IllegalArgumentException("올바른 사용자가 아닙니다.");
+        }
+        return info;
+    }
+
     @Override
     public Issue getIssue(Long connectId, String issueKeyOrId) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
-
-        Issue issue = restClient.getIssueClient().getIssue(issueKeyOrId).claim();
-        
-        return issue;
+        try {
+            Issue issue = restClient.getIssueClient().getIssue(issueKeyOrId).claim();
+            return issue;
+        }catch (RestClientException e){
+            logger.info("존재하지 않는 이슈입니다.");
+            throw new RuntimeException("존재하지 않는 이슈입니다.");
+        }
     }
 
     @Override
