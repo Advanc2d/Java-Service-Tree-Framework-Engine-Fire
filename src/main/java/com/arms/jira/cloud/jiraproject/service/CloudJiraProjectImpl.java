@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -54,7 +55,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 		// String response = CloudJiraUtils.get(webClient, endpoint, String.class).block();
 		// List<CloudJiraProjectDTO> projects = objectMapper.readValue(response, new TypeReference<List<CloudJiraProjectDTO>>() {});
 
-		List<CloudJiraProjectDTO> projects = CloudJiraUtils.get(webClient, endpoint, List.class).block();
+		List<CloudJiraProjectDTO> projects = CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<List<CloudJiraProjectDTO>>() {}).block();
 
         logger.info(projects.toString());
 
