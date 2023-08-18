@@ -5,6 +5,8 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 public interface OnPremiseJiraIssue {
 
@@ -25,4 +27,6 @@ public interface OnPremiseJiraIssue {
     Map<String, Object> deleteIssue(Long connectId, String issueKey) throws Exception;
 
     public Map<String,Object> collectLinkAndSubtask(Long connectId) throws Exception;
+
+
 }

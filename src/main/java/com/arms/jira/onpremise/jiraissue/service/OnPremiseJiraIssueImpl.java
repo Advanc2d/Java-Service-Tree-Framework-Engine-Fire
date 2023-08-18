@@ -11,6 +11,7 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueEntity;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -55,7 +56,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public OnPremiseJiraIssueDTO createIssue(Long connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                          info.getUserId(),
                                                                          info.getPasswordOrToken());
@@ -101,7 +103,9 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     }
     @Override
     public JsonNode  getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
@@ -145,21 +149,26 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public Issue getIssue(Long connectId, String issueKeyOrId) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
-
-        Issue issue = restClient.getIssueClient().getIssue(issueKeyOrId).claim();
-        
-        return issue;
+        try {
+            Issue issue = restClient.getIssueClient().getIssue(issueKeyOrId).claim();
+            return issue;
+        }catch (RestClientException e){
+            logger.info("이슈 조회시 오류가 발생하였습니다.");
+            throw new RuntimeException("이슈 조회시 오류가 발생하였습니다.");
+        }
     }
 
     @Override
     public Map<String, Object> updateIssue(Long connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+            JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
             JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                              info.getUserId(),
                                                                              info.getPasswordOrToken());

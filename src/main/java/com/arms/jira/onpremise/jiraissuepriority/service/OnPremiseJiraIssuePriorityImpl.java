@@ -25,7 +25,8 @@ public class OnPremiseJiraIssuePriorityImpl implements OnPremiseJiraIssuePriorit
 
     @Override
     public List<OnPremiseJiraIssuePriorityDTO> getPriorityList(Long connectId) throws Exception {
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                          info.getUserId(),
                                                                          info.getPasswordOrToken());

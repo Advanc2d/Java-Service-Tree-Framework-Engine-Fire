@@ -16,4 +16,6 @@ public interface JiraInfo {
     public JiraInfoEntity saveConnectInfo(JiraInfoDTO jiraInfoDTO);
 
     public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity);
+
+    public JiraInfoDTO checkInfo(Long connectId);
 }
