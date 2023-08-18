@@ -34,7 +34,7 @@ public class OnPremiseJiraIssueStatusImpl implements OnPremiseJiraIssueStatus {
 
     @Override
     public List<OnPremiseJiraIssueStatusDTO> getStatusList(Long connectId) throws Exception {
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());

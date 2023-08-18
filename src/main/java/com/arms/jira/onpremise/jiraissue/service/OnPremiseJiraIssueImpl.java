@@ -56,7 +56,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public OnPremiseJiraIssueDTO createIssue(Long connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                          info.getUserId(),
                                                                          info.getPasswordOrToken());
@@ -103,7 +104,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public JsonNode  getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
@@ -144,20 +146,10 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         return issuesAsJson;
     }
 
-    public JiraInfoDTO checkInfo(Long connectId){
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
-
-        if (info == null) {
-            logger.info("올바른 사용자가 아닙니다.");
-            throw new IllegalArgumentException("올바른 사용자가 아닙니다.");
-        }
-        return info;
-    }
-
     @Override
     public Issue getIssue(Long connectId, String issueKeyOrId) throws Exception {
 
-        JiraInfoDTO info = checkInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -166,8 +158,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
             Issue issue = restClient.getIssueClient().getIssue(issueKeyOrId).claim();
             return issue;
         }catch (RestClientException e){
-            logger.info("존재하지 않는 이슈입니다.");
-            throw new RuntimeException("존재하지 않는 이슈입니다.");
+            logger.info("이슈 조회시 오류가 발생하였습니다.");
+            throw new RuntimeException("이슈 조회시 오류가 발생하였습니다.");
         }
     }
 
@@ -175,7 +167,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     public Map<String, Object> updateIssue(Long connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+            JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+
             JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                              info.getUserId(),
                                                                              info.getPasswordOrToken());

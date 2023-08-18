@@ -26,7 +26,7 @@ public class OnPremiseOnPremiseJiraProjectImpl implements OnPremiseJiraProject {
     @Override
     public List<OnPremiseJiraProjectDTO> getProjectList(Long connectId) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                 info.getUserId(),
                                                                 info.getPasswordOrToken());
@@ -50,7 +50,7 @@ public class OnPremiseOnPremiseJiraProjectImpl implements OnPremiseJiraProject {
 
     @Override
     public OnPremiseJiraProjectDTO getProject(Long connectId, String projectKey) throws Exception {
-        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                 info.getUserId(),
                                                                 info.getPasswordOrToken());

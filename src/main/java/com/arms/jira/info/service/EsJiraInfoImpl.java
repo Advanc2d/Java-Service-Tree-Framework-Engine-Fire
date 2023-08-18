@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -27,7 +29,7 @@ public class EsJiraInfoImpl implements JiraInfo {
 
     @Autowired
     private JiraInfoJpaRepository jiraInfoJpaRepository;
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     @Qualifier("JiraIssueTypeService")
     private JiraIssueTypeService jiraIssueTypeService;
@@ -36,7 +38,7 @@ public class EsJiraInfoImpl implements JiraInfo {
         Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
-            return null;
+            throw new RuntimeException(connectId+"는 등록된 connectId가 아닙니다.");
         }
 
         JiraInfoEntity jiraInfoEntity = optionalEntity.get();
@@ -99,5 +101,30 @@ public class EsJiraInfoImpl implements JiraInfo {
 
     public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity) {
         return jiraInfoJpaRepository.save(jiraInfoEntity);
+    }
+
+    /*
+     *  DB에서 조회 한 후 데이터 오류 처리
+     *  임시로 checkInfo 메서드 위치 시킴
+     * */
+    public JiraInfoDTO checkInfo(Long connectId){
+
+        JiraInfoDTO info = loadConnectInfo(connectId);
+
+//        if (info.getConnectId() == null) {
+//            logger.info("비정상적이 정보가 조회되었습니다.");
+//            throw new IllegalArgumentException("비정상적이 정보가 조회되었습니다.");
+//        }
+
+        if(info.getUserId() == null){
+            logger.info("사용자 아이디 조회에 실패했습니다.");
+            throw new IllegalArgumentException("사용자 아이디 조회에 실패했습니다.");
+        }
+
+        if(info.getPasswordOrToken()== null){
+            logger.info("비밀 번호 및 토큰 정보 조회에 실패했습니다.");
+            throw new IllegalArgumentException("비밀 번호 및 토큰 정보 조회에 실패했습니다.");
+        }
+        return info;
     }
 }
