@@ -38,7 +38,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     public CloudJiraIssueSearchDTO getIssueSearch(Long connectId, String projectKeyOrId) {
 
         int startAt = 0;
-        int maxResults = 10;
+        int maxResults = 50;
         boolean isLast = false;
 
         JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
@@ -337,15 +337,14 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         List<CloudJiraIssueDTO> cloudJiraIssueList = cloudJiraIssueSearchDTO.getIssues();
 
         for (CloudJiraIssueDTO item : cloudJiraIssueList) {
-            CloudJiraIssueDTO cloudJiraIssueDTO = getIssue(connectId, item.getId());
 
-            if (cloudJiraIssueDTO.getFields().getIssuelinks().size() > 0) {
+            if (item.getFields().getIssuelinks().size() > 0) {
                 CloudJiraIssueDTO saveChildIssueList = fetchLinkedIssues(connectId, item.getId());
                 saveLinkedIssues(connectId, null, saveChildIssueList, 0);
             }
 
-            if(cloudJiraIssueDTO.getFields().getSubtasks().size() > 0) {
-                List<CloudJiraIssueDTO> subtaskList = cloudJiraIssueDTO.getFields().getSubtasks();
+            if(item.getFields().getSubtasks().size() > 0) {
+                List<CloudJiraIssueDTO> subtaskList = item.getFields().getSubtasks();
 
                 for(CloudJiraIssueDTO subtaskItem : subtaskList) {
                     CloudJiraIssueDTO saveIssueDTO = getIssue(connectId, subtaskItem.getId());
@@ -517,4 +516,71 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         return result;
     }
 
+    /* ***
+    * 스케줄러 방식 변경
+    *** */
+    public void cloudJiraIssueScheduler(Long connectId) {
+        CloudJiraIssueSearchDTO issues = getIssueListByIssueTypeName(connectId,"Requirement");
+        List<CloudJiraIssueDTO> cloudJiraIssueList = issues.getIssues();
+
+        List<CloudJiraIssueEntity> allDtos = new ArrayList<>();
+        try {
+            for (CloudJiraIssueDTO issue : cloudJiraIssueList) {
+                List<CloudJiraIssueEntity> issueLinkDTOs = findAllLinkedDtos(connectId, issue, new ArrayList<>(), null, null);
+
+                allDtos.addAll(issueLinkDTOs);
+                // printLinkedIssues(issueLinkDTO, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("allDtos = " + allDtos.size());
+        for (CloudJiraIssueEntity dto : allDtos) {
+            System.out.println(dto.getKey() +"/"+ dto.getOutwardId() +"/"+ dto.getParentId());
+        }
+
+        cloudJiraIssueJpaRepository.saveAll(allDtos);
+        System.out.println("Save allDtos Complete " + allDtos);
+    }
+
+    public List<CloudJiraIssueEntity> findAllLinkedDtos(Long connectId, CloudJiraIssueDTO dto, List<CloudJiraIssueEntity> allDtos,
+                                                               String outwardId, String parentId) {
+        // 현재 DTO의 하위에 연결된 DTO들을 allDtos에 추가
+        CloudJiraIssueEntity entity = modelMapper.map(dto, CloudJiraIssueEntity.class);
+
+        if (outwardId != null) {
+            entity.setOutwardId(outwardId);
+        }
+
+        if(parentId != null) {
+            entity.setParentId(parentId);
+        }
+
+        allDtos.add(entity);
+
+        System.out.println("dto.getKey() = " + dto.getKey());
+        // 현재 DTO와 연결된 모든 하위 DTO를 탐색
+        if (dto.getFields().getIssuelinks() != null) {
+            for (FieldsDTO.IssueLink issueLink : dto.getFields().getIssuelinks()) {
+                if (issueLink.getInwardIssue() == null) {
+                    continue;
+                }
+
+                System.out.println("issueLink.getInwardIssue().getKey() = " + issueLink.getInwardIssue().getKey());
+                CloudJiraIssueDTO linkedDto = getIssue(connectId, issueLink.getInwardIssue().getKey());
+                findAllLinkedDtos(connectId, linkedDto, allDtos, dto.getId(), null);
+            }
+        }
+
+        if (dto.getFields().getSubtasks() != null ) {
+            for (CloudJiraIssueDTO subtask : dto.getFields().getSubtasks()) {
+                System.out.println("subtask.getKey() = " + subtask.getKey());
+                CloudJiraIssueDTO subtaskDTO = getIssue(connectId, subtask.getKey());
+                findAllLinkedDtos(connectId, subtaskDTO, allDtos, null, dto.getId());
+            }
+        }
+
+        return allDtos;
+    }
 }

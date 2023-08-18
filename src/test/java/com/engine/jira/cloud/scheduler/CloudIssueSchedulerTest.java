@@ -17,9 +17,9 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Stack;
 
-public class SchedulerIssueTest {
+public class CloudIssueSchedulerTest {
     static WebClient webClient;
-    public static ModelMapper modelMapper = new ModelMapper();
+    public ModelMapper modelMapper = new ModelMapper();
 
     public String baseUrl = "https://advanc2d.atlassian.net";
     public String id = "gkfn185@gmail.com";
@@ -55,11 +55,12 @@ public class SchedulerIssueTest {
     @DisplayName("이슈 타입이 요구사항인 이슈를 전체 조회하고 이슈 링크 내용을 전부 가져오는 스케줄러")
     public void test() {
         CloudJiraIssueSearchDTO issues = getIssueListByIssueTypeName("Requirement");
+        List<CloudJiraIssueDTO> cloudJiraIssueList = issues.getIssues();
 
         List<CloudJiraIssueEntity> allDtos = new ArrayList<>();
         try {
-            for (CloudJiraIssueDTO issue : issues.getIssues()) {
-                List<CloudJiraIssueEntity> issueLinkDTOs = findAllLinkedDtos(issue, new ArrayList<>(), null);
+            for (CloudJiraIssueDTO issue : cloudJiraIssueList) {
+                List<CloudJiraIssueEntity> issueLinkDTOs = findAllLinkedDtos(issue, new ArrayList<>(), null, null);
 
                 allDtos.addAll(issueLinkDTOs);
                 // printLinkedIssues(issueLinkDTO, 0);
@@ -68,30 +69,48 @@ public class SchedulerIssueTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(allDtos.toString());
+        System.out.println("allDtos = " + allDtos.size());
+        for (CloudJiraIssueEntity dto : allDtos) {
+            System.out.println(dto.getKey() +"/"+ dto.getOutwardId() +"/"+ dto.getParentId());
+        }
     }
 
-    public static List<CloudJiraIssueEntity> findAllLinkedDtos(CloudJiraIssueDTO dto, List<CloudJiraIssueEntity> allDtos, String parentId) {
+    public List<CloudJiraIssueEntity> findAllLinkedDtos(CloudJiraIssueDTO dto, List<CloudJiraIssueEntity> allDtos,
+                                                               String outwardId, String parentId) {
         // 현재 DTO의 하위에 연결된 DTO들을 allDtos에 추가
         CloudJiraIssueEntity entity = modelMapper.map(dto, CloudJiraIssueEntity.class);
 
-        if (parentId != null) {
-            entity.setOutwardId(parentId);
+        if (outwardId != null) {
+            entity.setOutwardId(outwardId);
+        }
+
+        if(parentId != null) {
+            entity.setParentId(parentId);
         }
 
         allDtos.add(entity);
-
+        System.out.println("dto.getKey() = " + dto.getKey());
         // 현재 DTO와 연결된 모든 하위 DTO를 탐색
-        for(IssueLink issueLink : dto.getFields().getIssuelinks()) {
-            if (issueLink.getInwardIssue() == null) {
-                continue;
-            }
+        if (dto.getFields().getIssuelinks() != null) {
+                for (IssueLink issueLink : dto.getFields().getIssuelinks()) {
+                    if (issueLink.getInwardIssue() == null) {
+                        continue;
+                    }
 
-            CloudJiraIssueDTO linkedDto = getIssue(issueLink.getInwardIssue().getKey());
-            if(linkedDto != null) {
-                findAllLinkedDtos(linkedDto, allDtos, dto.getId());
+                System.out.println("issueLink.getInwardIssue().getKey() = " + issueLink.getInwardIssue().getKey());
+                CloudJiraIssueDTO linkedDto = getIssue(issueLink.getInwardIssue().getKey());
+                findAllLinkedDtos(linkedDto, allDtos, dto.getId(), null);
             }
         }
+
+        if (dto.getFields().getSubtasks() != null ) {
+            for (CloudJiraIssueDTO subtask : dto.getFields().getSubtasks()) {
+                System.out.println("subtask.getKey() = " + subtask.getKey());
+                CloudJiraIssueDTO subtaskDTO = getIssue(subtask.getKey());
+                findAllLinkedDtos(subtaskDTO, allDtos, null, dto.getId());
+            }
+        }
+
         return allDtos;
     }
 
