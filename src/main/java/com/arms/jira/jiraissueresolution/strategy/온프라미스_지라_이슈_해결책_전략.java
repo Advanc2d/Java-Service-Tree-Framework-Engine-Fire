@@ -2,7 +2,7 @@ package com.arms.jira.jiraissueresolution.strategy;
 
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
-import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책;
+import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Resolution;
@@ -25,7 +25,7 @@ public class 온프라미스_지라_이슈_해결책_전략 implements 지라_�
     private JiraInfo jiraInfo;
 
     @Override
-    public List<지라_이슈_해결책> 이슈_해결책_전체_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
+    public List<지라_이슈_해결책_데이터_전송_객체> 이슈_해결책_전체_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
 
         로그.info("온프라미스 지라 이슈_해결책_전체_목록_가져오기");
 
@@ -35,14 +35,14 @@ public class 온프라미스_지라_이슈_해결책_전략 implements 지라_�
                                                                         연결정보.getPasswordOrToken());
 
         Iterable<Resolution> 온프라미스_이슈_해결책_목록 = restClient.getMetadataClient().getResolutions().claim();
-        List<지라_이슈_해결책> 반환할_이슈_해결책_목록 = new ArrayList<>();
+        List<지라_이슈_해결책_데이터_전송_객체> 반환할_이슈_해결책_목록 = new ArrayList<>();
 
         for (Resolution 온프라미스_이슈_해결책 : 온프라미스_이슈_해결책_목록) {
             로그.info("id: " + String.valueOf(온프라미스_이슈_해결책.getId()));
             로그.info("name:" + 온프라미스_이슈_해결책.getName());
             로그.info("desc:" + 온프라미스_이슈_해결책.getDescription());
 
-            지라_이슈_해결책 반환할_이슈_해결책 = new 지라_이슈_해결책();
+            지라_이슈_해결책_데이터_전송_객체 반환할_이슈_해결책 = new 지라_이슈_해결책_데이터_전송_객체();
 
             반환할_이슈_해결책.setSelf(온프라미스_이슈_해결책.getSelf().toString());
             반환할_이슈_해결책.setId(온프라미스_이슈_해결책.getId().toString());

@@ -3,7 +3,7 @@ package com.arms.jira.jiraissueresolution.strategy;
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
-import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책;
+import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
 import com.arms.jira.jiraissueresolution.model.클라우드_지라_이슈_해결책_전체_데이터_전송_객체;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class 클라우드_지라_이슈_해결책_전략 implements 지라_이�
     private JiraInfo jiraInfo;
 
     @Override
-    public List<지라_이슈_해결책> 이슈_해결책_전체_목록_가져오기(Long 연결_아이디) {
+    public List<지라_이슈_해결책_데이터_전송_객체> 이슈_해결책_전체_목록_가져오기(Long 연결_아이디) {
         로그.info("클라우드 지라 이슈_해결책_전체_목록_가져오기");
 
         JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
@@ -33,7 +33,7 @@ public class 클라우드_지라_이슈_해결책_전략 implements 지라_이�
         int startAt = 0;
         boolean checkLast = false;
 
-        List<지라_이슈_해결책> 반환할_지라_이슈_해결책_목록 = new ArrayList<지라_이슈_해결책>();
+        List<지라_이슈_해결책_데이터_전송_객체> 반환할_지라_이슈_해결책_데이터전송객체_목록 = new ArrayList<지라_이슈_해결책_데이터_전송_객체>();
 
         while(!checkLast) {
             String endpoint = "/rest/api/3/resolution/search?maxResults="+ maxResult + "&startAt=" + startAt;
@@ -41,9 +41,9 @@ public class 클라우드_지라_이슈_해결책_전략 implements 지라_이�
                                                         = CloudJiraUtils.get(webClient, endpoint,
                                                         클라우드_지라_이슈_해결책_전체_데이터_전송_객체.class).block();
 
-            반환할_지라_이슈_해결책_목록.addAll(resolutions.getValues());
+            반환할_지라_이슈_해결책_데이터전송객체_목록.addAll(resolutions.getValues());
 
-            if (resolutions.getTotal() == 반환할_지라_이슈_해결책_목록.size()) {
+            if (resolutions.getTotal() == 반환할_지라_이슈_해결책_데이터전송객체_목록.size()) {
                 checkLast = true;
             }
             else {
@@ -51,7 +51,7 @@ public class 클라우드_지라_이슈_해결책_전략 implements 지라_이�
             }
         }
 
-        return 반환할_지라_이슈_해결책_목록;
+        return 반환할_지라_이슈_해결책_데이터전송객체_목록;
     }
 
 }
