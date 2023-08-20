@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/{connectId}/jira/issuetype")
 public class 지라_이슈_유형_컨트롤러 {
-    private final Logger 로그 = 쿨LoggerFactory.getLogger(this.getClass());
+    private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     지라_이슈_유형_전략_호출 지라_이슈_유형_전략_호출;
