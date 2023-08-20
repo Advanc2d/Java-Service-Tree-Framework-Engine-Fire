@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/{connectId}/onpremise/jira/issue")
 public class OnPremiseJiraIssueController {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

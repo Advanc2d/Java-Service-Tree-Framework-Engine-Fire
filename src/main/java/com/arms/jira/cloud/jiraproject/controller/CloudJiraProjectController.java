@@ -14,11 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/{connectId}/cloud/jira/project")
 public class CloudJiraProjectController {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	private CloudJiraProject cloudJiraProject;
-    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private CloudJiraProject cloudJiraProject;
+
     @ResponseBody
     @RequestMapping(
             value = {"/{projectKeyOrId}"},
@@ -37,7 +37,7 @@ public class CloudJiraProjectController {
             method = {RequestMethod.GET}
     )
     public List<CloudJiraProjectDTO> getProjectList(@PathVariable("connectId") Long connectId,
-                                                ModelMap model, HttpServletRequest request) throws Exception {
+                                                    ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("Jira Cloud ALL PROJECT GET API 호출");
         return cloudJiraProject.getProjectList(connectId);
     }

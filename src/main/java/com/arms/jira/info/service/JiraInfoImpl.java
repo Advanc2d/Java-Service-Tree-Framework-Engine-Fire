@@ -32,7 +32,7 @@ public class JiraInfoImpl implements JiraInfo {
         Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
-            throw new RuntimeException(connectId+"는 등록된 connectId가 아닙니다.");
+            return null;
         }
 
         JiraInfoEntity jiraInfoEntity = optionalEntity.get();
@@ -79,6 +79,9 @@ public class JiraInfoImpl implements JiraInfo {
         else if (StringUtils.isBlank(jiraInfoDTO.getPasswordOrToken())) {
             throw new IllegalArgumentException("JiraInfo의 비밀번호나 토큰 정보가 없습니다.");
         }
+        else if (StringUtils.isBlank(jiraInfoDTO.getType())) {
+            throw new IllegalArgumentException("JiraInfo의 타입 정보가 없습니다.");
+        }
 
         JiraInfoDTO loadJiraInfoDTO = loadConnectInfo(jiraInfoDTO.getConnectId());
         JiraInfoEntity jiraInfoEntity;
@@ -105,10 +108,10 @@ public class JiraInfoImpl implements JiraInfo {
 
         JiraInfoDTO info = loadConnectInfo(connectId);
 
-//        if (info.getConnectId() == null) {
-//            logger.info("비정상적이 정보가 조회되었습니다.");
-//            throw new IllegalArgumentException("비정상적이 정보가 조회되었습니다.");
-//        }
+        if (info == null) {
+            logger.info("비정상적이 정보가 조회되었습니다.");
+            throw new IllegalArgumentException("비정상적이 정보가 조회되었습니다.");
+        }
 
         if(info.getUserId() == null){
             logger.info("사용자 아이디 조회에 실패했습니다.");
