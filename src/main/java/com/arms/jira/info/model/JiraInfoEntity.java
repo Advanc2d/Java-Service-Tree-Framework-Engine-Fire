@@ -21,6 +21,10 @@ public class JiraInfoEntity {
     @Column(name = "connect_id")
     private Long connectId;
 
+    @Column(name = "type")
+    @Type(type="text")
+    private String type;
+
     @Column(name = "userId")
     @Type(type="text")
     private String userId;

@@ -1,4 +1,4 @@
-package com.arms.jira.cloud.jiraproject.model;
+package com.arms.jira.jiraproject.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -10,13 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ComponentDTO {
-
-    // non use
-    // 컴포넌트는 관리 대상이 아닙니다.
+public class 지라_프로젝트_데이터_전송_객체 {
     private String self;
     private String id;
+    private String key;
     private String name;
-    private String description;
-    private boolean isAssigneeTypeValid;
 }
