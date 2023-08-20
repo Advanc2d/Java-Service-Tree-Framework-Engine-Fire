@@ -38,7 +38,7 @@ public class EsJiraInfoImpl implements JiraInfo {
         Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
-            throw new RuntimeException(connectId+"는 등록된 connectId가 아닙니다.");
+            return null;
         }
 
         JiraInfoEntity jiraInfoEntity = optionalEntity.get();
