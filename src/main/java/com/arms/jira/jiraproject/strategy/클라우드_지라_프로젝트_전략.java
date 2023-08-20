@@ -44,7 +44,7 @@ public class 클라우드_지라_프로젝트_전략 implements 지라_프로젝
 
         String endpoint = "/rest/api/3/project";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
 
         if (found == null) {
             // throw Exception e; ControllerAdvice 오류 처리
