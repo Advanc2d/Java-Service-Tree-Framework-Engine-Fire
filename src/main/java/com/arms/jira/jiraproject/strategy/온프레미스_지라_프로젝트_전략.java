@@ -4,7 +4,6 @@ import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.jiraproject.model.지라_프로젝트_데이터_전송_객체;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
-import com.arms.jira.onpremise.jiraproject.model.OnPremiseJiraProjectDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import org.slf4j.Logger;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class 온프라미스_지라_프로젝트_전략 implements 지라_프로젝트_전략 {
+public class 온프레미스_지라_프로젝트_전략 implements 지라_프로젝트_전략 {
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
@@ -27,7 +26,7 @@ public class 온프라미스_지라_프로젝트_전략 implements 지라_프로
 
     @Override
     public 지라_프로젝트_데이터_전송_객체 프로젝트_상세정보_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws URISyntaxException, IOException {
-        로그.info("온프라미스 지라 프로젝트 "+ 프로젝트_키_또는_아이디 +" 상세정보 가져오기");
+        로그.info("온프레미스 지라 프로젝트 "+ 프로젝트_키_또는_아이디 +" 상세정보 가져오기");
 
         JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
@@ -49,7 +48,7 @@ public class 온프라미스_지라_프로젝트_전략 implements 지라_프로
     @Override
     public List<지라_프로젝트_데이터_전송_객체> 프로젝트_전체_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
 
-        로그.info("온프라미스 지라 프로젝트 전체목록 가져오기");
+        로그.info("온프레미스 지라 프로젝트 전체목록 가져오기");
 
         JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),

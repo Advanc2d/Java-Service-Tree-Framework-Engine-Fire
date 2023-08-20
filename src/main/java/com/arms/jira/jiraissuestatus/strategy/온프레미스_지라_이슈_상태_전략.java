@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class 온프라미스_지라_이슈_상태_전략 implements 지라_이슈_상태_전략 {
+public class 온프레미스_지라_이슈_상태_전략 implements 지라_이슈_상태_전략 {
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
