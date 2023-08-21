@@ -5,6 +5,7 @@ import com.arms.jira.info.model.지라_유형_정보;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
 import com.arms.jira.jiraissue.model.지라_이슈_생성_데이터_전송_객체;
+import com.arms.jira.jiraissue.strategy.클라우드_지라_이슈_전략;
 import com.arms.jira.jiraissue.strategy.온프레미스_지라_이슈_전략;
 import com.arms.jira.jiraissue.strategy.지라_이슈_전략_등록_및_실행;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class 지라_이슈_전략_호출 {
 
     지라_이슈_전략_등록_및_실행 지라_이슈_전략_등록_및_실행;
 
-    com.arms.jira.jiraissue.strategy.클라우드_지라_이슈_전략 클라우드_지라_이슈_전략;
+    클라우드_지라_이슈_전략 클라우드_지라_이슈_전략;
 
     온프레미스_지라_이슈_전략 온프레미스_지라_이슈_전략;
 
@@ -28,9 +29,9 @@ public class 지라_이슈_전략_호출 {
 
     @Autowired
     public 지라_이슈_전략_호출(지라_이슈_전략_등록_및_실행 지라_이슈_전략_등록_및_실행,
-                       com.arms.jira.jiraissue.strategy.클라우드_지라_이슈_전략 클라우드_지라_이슈_전략,
-                       온프레미스_지라_이슈_전략 온프레미스_지라_이슈_전략,
-                       JiraInfo jiraInfo) {
+                            클라우드_지라_이슈_전략 클라우드_지라_이슈_전략,
+                            온프레미스_지라_이슈_전략 온프레미스_지라_이슈_전략,
+                            JiraInfo jiraInfo) {
 
         this.지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_등록_및_실행;
         this.클라우드_지라_이슈_전략 = 클라우드_지라_이슈_전략;
@@ -83,7 +84,7 @@ public class 지라_이슈_전략_호출 {
     }
 
     public 지라_이슈_데이터_전송_객체 이슈_생성하기(Long 연결_아이디,
-                                   지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) {
+                                   지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws Exception {
 
         JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
 

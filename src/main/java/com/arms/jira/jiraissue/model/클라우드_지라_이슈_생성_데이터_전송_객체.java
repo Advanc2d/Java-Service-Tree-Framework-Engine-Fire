@@ -10,8 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class 지라_이슈_생성_데이터_전송_객체 {
+public class 클라우드_지라_이슈_생성_데이터_전송_객체 {
 
-    private 지라_이슈_필드_데이터_전송_객체 fields;
+    private 클라우드_지라_이슈_필드_데이터_전송_객체 fields;
 
 }
