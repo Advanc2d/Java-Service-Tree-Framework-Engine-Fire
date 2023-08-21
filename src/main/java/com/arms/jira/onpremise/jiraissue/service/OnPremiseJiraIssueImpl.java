@@ -102,7 +102,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         return onPremiseJiraIssueDTO;
     }
     @Override
-    public JsonNode  getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
+    public JsonNode getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
 
         JiraInfoDTO info = jiraInfo.checkInfo(connectId);
 
@@ -148,20 +148,143 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
     @Override
     public Issue getIssue(Long connectId, String issueKeyOrId) throws Exception {
-
         JiraInfoDTO info = jiraInfo.checkInfo(connectId);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
         try {
+            OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = new OnPremiseJiraIssueDTO();
+            FieldsDTO fieldsDTO = new FieldsDTO();
+
+            // 필드 객체 생성 및 초기화
+            FieldsDTO.Project project = FieldsDTO.Project.builder().build();
+
+            // Initialize IssueType
+            FieldsDTO.IssueType issueType = FieldsDTO.IssueType.builder().build();
+
+            // Initialize Reporter
+            FieldsDTO.Reporter reporter = FieldsDTO.Reporter.builder().build();
+
+            // Initialize Assignee
+            FieldsDTO.Assignee assignee = FieldsDTO.Assignee.builder().build();
+
+            // Initialize IssueLink
+            OnPremiseJiraIssueDTO inwardIssue = new OnPremiseJiraIssueDTO();
+            OnPremiseJiraIssueDTO outwardIssue = new OnPremiseJiraIssueDTO();
+            FieldsDTO.IssueLink IssueLink = new FieldsDTO.IssueLink();
+            IssueLink.setInwardIssue(inwardIssue);
+            IssueLink.setOutwardIssue(outwardIssue);
+            List<FieldsDTO.IssueLink> IssueLinkList = new ArrayList<>();
+
+            // Set Initialized Objects
+            fieldsDTO.setProject(project);
+            fieldsDTO.setIssuetype(issueType);
+            fieldsDTO.setReporter(reporter);
+            fieldsDTO.setAssignee(assignee);
+            fieldsDTO.setIssuelinks(IssueLinkList);
+
+            onPremiseJiraIssueDTO.setFields(fieldsDTO);
+
             Issue issue = restClient.getIssueClient().getIssue(issueKeyOrId).claim();
+
+            onPremiseJiraIssueDTO.setId(issue.getId().toString());
+            onPremiseJiraIssueDTO.setKey(issue.getKey());
+            onPremiseJiraIssueDTO.setSelf(issue.getSelf().toString());
+
+            // 필드 하위 프로젝트
+            onPremiseJiraIssueDTO.getFields().getProject().setSelf(issue.getProject().getSelf().toString());
+            onPremiseJiraIssueDTO.getFields().getProject().setId(String.valueOf(issue.getProject().getId()));
+            onPremiseJiraIssueDTO.getFields().getProject().setKey(issue.getProject().getKey());
+            onPremiseJiraIssueDTO.getFields().getProject().setName(issue.getProject().getName());
+
+            // 필드 하위 이슈 타입
+            onPremiseJiraIssueDTO.getFields().getIssuetype().setSelf(String.valueOf(issue.getIssueType().getSelf()));
+            onPremiseJiraIssueDTO.getFields().getIssuetype().setId(String.valueOf(issue.getIssueType().getId()));
+            onPremiseJiraIssueDTO.getFields().getIssuetype().setName(issue.getIssueType().getName());
+            // 이슈 summary
+            onPremiseJiraIssueDTO.getFields().setSummary(issue.getSummary());
+
+            // 이슈 description
+            onPremiseJiraIssueDTO.getFields().setDescription(issue.getDescription());
+
+            // 이슈 보고자
+            onPremiseJiraIssueDTO.getFields().getReporter().setName(issue.getReporter().getName());
+            onPremiseJiraIssueDTO.getFields().getReporter().setEmailAddress(issue.getReporter().getEmailAddress());
+
+            // 이슈 담당자
+            onPremiseJiraIssueDTO.getFields().getAssignee().setName(issue.getAssignee().getName());
+            onPremiseJiraIssueDTO.getFields().getAssignee().setEmailAddress(issue.getAssignee().getEmailAddress());
+
+            // 이슈 라벨
+            Set<String> labelsSet = issue.getLabels(); //HashSet 반환
+            if (labelsSet != null) {
+                List<String> labelsList = new ArrayList<>(labelsSet);
+                onPremiseJiraIssueDTO.getFields().setLabels(labelsList);
+            } else {
+                onPremiseJiraIssueDTO.getFields().setLabels(Collections.emptyList());
+            }
+
+
+            // 이슈 링크
+            List<IssueLink> issueLinksList = new ArrayList<>((Collection) issue.getIssueLinks());
+            for (IssueLink issueLink : issueLinksList) {
+
+                String direction = String.valueOf(issueLink.getIssueLinkType().getDirection());
+                String targetIssueKey = issueLink.getTargetIssueKey();
+                String self = String.valueOf(issueLink.getTargetIssueUri());
+                String[] parts = self.split("/");
+                String id = parts[parts.length - 1];
+
+                FieldsDTO.IssueLink fieldsIssueLink = new FieldsDTO.IssueLink();
+                OnPremiseJiraIssueDTO inwardIssue_for_object = new OnPremiseJiraIssueDTO();
+                OnPremiseJiraIssueDTO outwardIssue_for_object  = new OnPremiseJiraIssueDTO();
+
+                fieldsIssueLink.setInwardIssue(inwardIssue_for_object);
+                fieldsIssueLink.setOutwardIssue(outwardIssue_for_object);
+
+
+                if(direction.equals("INBOUND")){
+                    logger.info("direction   "+direction+"   targetIssueKey   "+targetIssueKey);
+                    inwardIssue_for_object.setKey(targetIssueKey);
+                    inwardIssue_for_object.setSelf(self);
+                    inwardIssue_for_object.setId(id);
+                }
+                else if(direction.equals("OUTBOUND")){
+                    logger.info("direction   "+direction+"   targetIssueKey   "+targetIssueKey);
+                    outwardIssue_for_object.setKey(targetIssueKey);
+                    outwardIssue_for_object.setSelf(self);
+                    outwardIssue_for_object.setId(id);
+                }
+
+                onPremiseJiraIssueDTO.getFields().getIssuelinks().add(fieldsIssueLink);
+
+            }
+
+            // 서브 테스크
+            List<OnPremiseJiraIssueDTO> subtaskLists= new ArrayList<>((Collection) issue.getSubtasks());
+            for(OnPremiseJiraIssueDTO subtask : subtaskLists){
+                OnPremiseJiraIssueDTO subtask_for_object = new OnPremiseJiraIssueDTO();
+                
+
+            }
+
+            // 우선 순위
+
+            // 상태 값
+
+            // 해결 책
+
+
+
+            System.out.println("onPremiseJiraIssueDTO : "+onPremiseJiraIssueDTO.toString());
             return issue;
-        }catch (RestClientException e){
+        }catch (RestClientException e) {
             logger.info("이슈 조회시 오류가 발생하였습니다.");
             throw new RuntimeException("이슈 조회시 오류가 발생하였습니다.");
         }
     }
+
 
     @Override
     public Map<String, Object> updateIssue(Long connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
