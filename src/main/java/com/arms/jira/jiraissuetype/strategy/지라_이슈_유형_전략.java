@@ -11,4 +11,5 @@ public interface 지라_이슈_유형_전략 {
 
     List<지라_이슈_유형_데이터_전송_객체> 이슈_유형_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException, ExecutionException, InterruptedException;
 
+    List<지라_이슈_유형_데이터_전송_객체> 프로젝트별_이슈_유형_목록_가져오기(Long 연결_아이디, String 프로젝트_아이디) throws URISyntaxException, IOException, ExecutionException, InterruptedException;
 }
