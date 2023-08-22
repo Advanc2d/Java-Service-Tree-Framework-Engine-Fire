@@ -25,10 +25,10 @@ public class 지라_이슈_상태_컨트롤러 {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_전체_목록_가져오기(@PathVariable("connectId") Long 연결_아이디,
+    public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_목록_가져오기(@PathVariable("connectId") Long 연결_아이디,
                                                      ModelMap model, HttpServletRequest request) throws Exception {
         로그.info("이슈 상태 리스트 조회");
-        return 지라_이슈_상태_전략_호출.이슈_상태_전체_목록_가져오기(연결_아이디);
+        return 지라_이슈_상태_전략_호출.이슈_상태_목록_가져오기(연결_아이디);
     }
 
 

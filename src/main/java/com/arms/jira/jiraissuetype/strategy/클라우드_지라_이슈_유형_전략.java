@@ -22,8 +22,8 @@ public class 클라우드_지라_이슈_유형_전략 implements 지라_이슈_�
     private JiraInfo jiraInfo;
 
     @Override
-    public List<지라_이슈_유형_데이터_전송_객체> 이슈_유형_전체_목록_가져오기(Long 연결_아이디) {
-        로그.info("클라우드 지라 이슈_유형_전체_목록_가져오기");
+    public List<지라_이슈_유형_데이터_전송_객체> 이슈_유형_목록_가져오기(Long 연결_아이디) {
+        로그.info("클라우드 지라 이슈_유형_목록_가져오기");
 
         String endpoint = "/rest/api/3/issuetype";
 

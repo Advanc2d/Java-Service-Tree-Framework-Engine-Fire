@@ -25,9 +25,9 @@ public class 온프레미스_지라_이슈_해결책_전략 implements 지라_�
     private JiraInfo jiraInfo;
 
     @Override
-    public List<지라_이슈_해결책_데이터_전송_객체> 이슈_해결책_전체_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
+    public List<지라_이슈_해결책_데이터_전송_객체> 이슈_해결책_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
 
-        로그.info("온프레미스 지라 이슈_해결책_전체_목록_가져오기");
+        로그.info("온프레미스 지라 이슈_해결책_목록_가져오기");
 
         JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
