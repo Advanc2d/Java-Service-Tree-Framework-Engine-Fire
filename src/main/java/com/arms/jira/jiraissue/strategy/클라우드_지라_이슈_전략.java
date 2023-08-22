@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
@@ -81,29 +79,9 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
             클라우드_필드_데이터.setSummary(필드_데이터.getSummary());
         }
 
-        클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠_아이템 콘텐츠_아이템 = 클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠_아이템.builder()
-                                                                                                                .text(필드_데이터.getDescription())
-                                                                                                                .type("text")
-                                                                                                                .build();
-
-        List<클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠_아이템> 콘텐츠_아이템_리스트 = new ArrayList<>();
-        콘텐츠_아이템_리스트.add(콘텐츠_아이템);
-
-        클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠 콘텐츠 = 클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠.builder()
-                                                                                               .content(콘텐츠_아이템_리스트)
-                                                                                               .type("paragraph")
-                                                                                               .build();
-
-        List<클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠> 콘텐츠_리스트 = new ArrayList<>();
-        콘텐츠_리스트.add(콘텐츠);
-
-        클라우드_지라_이슈_필드_데이터_전송_객체.내용 내용 = 클라우드_지라_이슈_필드_데이터_전송_객체.내용.builder()
-                                                                                          .content(콘텐츠_리스트)
-                                                                                          .type("doc")
-                                                                                          .version(1)
-                                                                                          .build();
-
-        클라우드_필드_데이터.setDescription(내용);
+        if (필드_데이터.getDescription() != null) {
+            클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
+        }
 
         if (필드_데이터.getReporter() != null) {
             클라우드_지라_이슈_필드_데이터_전송_객체.보고자 보고자 = 클라우드_지라_이슈_필드_데이터_전송_객체.보고자.builder()
@@ -149,7 +127,57 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
 
     @Override
     public Map<String, Object> 이슈_수정하기(Long 연결_아이디, String 이슈_키_또는_아이디, 지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) {
-        return null;
+
+        로그.info("클라우드 지라 이슈 수정하기");
+
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
+
+        String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디;
+        Map<String, Object> 결과 = new HashMap<>();
+
+        지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+        if (필드_데이터.getProject() != null || 필드_데이터.getIssuetype() != null || 필드_데이터.getReporter() != null ||
+            필드_데이터.getAssignee() != null || 필드_데이터.getIssuelinks() != null || 필드_데이터.getSubtasks() != null ||
+            필드_데이터.getPriority() != null || 필드_데이터.getStatus() != null || 필드_데이터.getResolution() != null) {
+
+            로그.info("입력 값에 수정할 수 없는 필드가 있습니다.");
+
+            결과.put("이슈 수정", "실패");
+            결과.put("에러 메시지", "수정할 수 없는 필드가 포함");
+
+            return 결과;
+        }
+
+        클라우드_지라_이슈_생성_데이터_전송_객체 수정_데이터 = new 클라우드_지라_이슈_생성_데이터_전송_객체();
+        클라우드_지라_이슈_필드_데이터_전송_객체 클라우드_필드_데이터 = new 클라우드_지라_이슈_필드_데이터_전송_객체();
+
+        if (필드_데이터.getSummary() != null) {
+            클라우드_필드_데이터.setSummary(필드_데이터.getSummary());
+        }
+
+        if (필드_데이터.getDescription() != null) {
+            클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
+        }
+
+        if (필드_데이터.getLabels() != null) {
+            클라우드_필드_데이터.setLabels(필드_데이터.getLabels());
+        }
+
+        수정_데이터.setFields(클라우드_필드_데이터);
+        Optional<Boolean> 응답_결과 = CloudJiraUtils.executePut(webClient, endpoint, 수정_데이터);
+
+        if (응답_결과.isPresent()) {
+            if (응답_결과.get()) {
+
+                결과.put("이슈 수정", "성공");
+
+                return 결과;
+            }
+        }
+        결과.put("이슈 수정", "실패");
+
+        return 결과;
     }
 
     @Override
@@ -161,4 +189,32 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
     public Map<String, Object> 이슈_연결_링크_및_서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
         return null;
     }
+
+    public 클라우드_지라_이슈_필드_데이터_전송_객체.내용 내용_변환(String 입력_데이터) {
+
+        클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠_아이템 콘텐츠_아이템 = 클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠_아이템.builder()
+                .text(입력_데이터)
+                .type("text")
+                .build();
+
+        List<클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠_아이템> 콘텐츠_아이템_리스트 = new ArrayList<>();
+        콘텐츠_아이템_리스트.add(콘텐츠_아이템);
+
+        클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠 콘텐츠 = 클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠.builder()
+                .content(콘텐츠_아이템_리스트)
+                .type("paragraph")
+                .build();
+
+        List<클라우드_지라_이슈_필드_데이터_전송_객체.콘텐츠> 콘텐츠_리스트 = new ArrayList<>();
+        콘텐츠_리스트.add(콘텐츠);
+
+        클라우드_지라_이슈_필드_데이터_전송_객체.내용 내용 = 클라우드_지라_이슈_필드_데이터_전송_객체.내용.builder()
+                .content(콘텐츠_리스트)
+                .type("doc")
+                .version(1)
+                .build();
+
+        return 내용;
+    }
+
 }
