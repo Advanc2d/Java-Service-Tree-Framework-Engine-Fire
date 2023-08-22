@@ -33,13 +33,13 @@ public class 온프레미스_지라_프로젝트_전략 implements 지라_프로
                                                                             연결정보.getUserId(),
                                                                             연결정보.getPasswordOrToken());
 
-        BasicProject 온프라미스_지라_프로젝트 = restClient.getProjectClient().getProject(프로젝트_키_또는_아이디).claim();
+        BasicProject 온프레미스_지라_프로젝트 = restClient.getProjectClient().getProject(프로젝트_키_또는_아이디).claim();
 
         지라_프로젝트_데이터_전송_객체 반환할_지라_프로젝트_상세정보 = new 지라_프로젝트_데이터_전송_객체();
-        반환할_지라_프로젝트_상세정보.setSelf(온프라미스_지라_프로젝트.getSelf().toString());
-        반환할_지라_프로젝트_상세정보.setId(온프라미스_지라_프로젝트.getId().toString());
-        반환할_지라_프로젝트_상세정보.setKey(온프라미스_지라_프로젝트.getKey());
-        반환할_지라_프로젝트_상세정보.setName(온프라미스_지라_프로젝트.getName());
+        반환할_지라_프로젝트_상세정보.setSelf(온프레미스_지라_프로젝트.getSelf().toString());
+        반환할_지라_프로젝트_상세정보.setId(온프레미스_지라_프로젝트.getId().toString());
+        반환할_지라_프로젝트_상세정보.setKey(온프레미스_지라_프로젝트.getKey());
+        반환할_지라_프로젝트_상세정보.setName(온프레미스_지라_프로젝트.getName());
 
         return 반환할_지라_프로젝트_상세정보;
 
@@ -55,18 +55,18 @@ public class 온프레미스_지라_프로젝트_전략 implements 지라_프로
                                                                         연결정보.getUserId(),
                                                                         연결정보.getPasswordOrToken());
 
-        Iterable<BasicProject> 모든_온프라미스_프로젝트 = restClient.getProjectClient().getAllProjects().claim();
+        Iterable<BasicProject> 모든_온프레미스_프로젝트 = restClient.getProjectClient().getAllProjects().claim();
         List<지라_프로젝트_데이터_전송_객체> 반환할_지라_프로젝트_목록 = new ArrayList<>();
 
-        for (BasicProject project : 모든_온프라미스_프로젝트) {
+        for (BasicProject project : 모든_온프레미스_프로젝트) {
 
-            지라_프로젝트_데이터_전송_객체 온프라미스_지라_프로젝트 = new 지라_프로젝트_데이터_전송_객체();
-            온프라미스_지라_프로젝트.setSelf(project.getSelf().toString());
-            온프라미스_지라_프로젝트.setId(project.getId().toString());
-            온프라미스_지라_프로젝트.setKey(project.getKey());
-            온프라미스_지라_프로젝트.setName(project.getName());
+            지라_프로젝트_데이터_전송_객체 온프레미스_지라_프로젝트 = new 지라_프로젝트_데이터_전송_객체();
+            온프레미스_지라_프로젝트.setSelf(project.getSelf().toString());
+            온프레미스_지라_프로젝트.setId(project.getId().toString());
+            온프레미스_지라_프로젝트.setKey(project.getKey());
+            온프레미스_지라_프로젝트.setName(project.getName());
 
-            반환할_지라_프로젝트_목록.add(온프라미스_지라_프로젝트);
+            반환할_지라_프로젝트_목록.add(온프레미스_지라_프로젝트);
         }
 
         return 반환할_지라_프로젝트_목록;

@@ -37,13 +37,13 @@ public class 온프레미스_지라_이슈_우선순위_전략 implements 지라
 
         for (Priority priority : 모든_지라_이슈_우선순위) {
 
-            지라_이슈_우선순위_데이터_전송_객체 온프라미스_지라_이슈_우선순위데이터전송객체 = new 지라_이슈_우선순위_데이터_전송_객체();
-            온프라미스_지라_이슈_우선순위데이터전송객체.setSelf(priority.getSelf().toString());
-            온프라미스_지라_이슈_우선순위데이터전송객체.setId(priority.getId().toString());
-            온프라미스_지라_이슈_우선순위데이터전송객체.setName(priority.getName());
-            온프라미스_지라_이슈_우선순위데이터전송객체.setDescription(priority.getDescription());
+            지라_이슈_우선순위_데이터_전송_객체 온프레미스_지라_이슈_우선순위데이터전송객체 = new 지라_이슈_우선순위_데이터_전송_객체();
+            온프레미스_지라_이슈_우선순위데이터전송객체.setSelf(priority.getSelf().toString());
+            온프레미스_지라_이슈_우선순위데이터전송객체.setId(priority.getId().toString());
+            온프레미스_지라_이슈_우선순위데이터전송객체.setName(priority.getName());
+            온프레미스_지라_이슈_우선순위데이터전송객체.setDescription(priority.getDescription());
 
-            반환할_지라_이슈_우선순위_데이터전송객체_목록.add(온프라미스_지라_이슈_우선순위데이터전송객체);
+            반환할_지라_이슈_우선순위_데이터전송객체_목록.add(온프레미스_지라_이슈_우선순위데이터전송객체);
         }
 
         return 반환할_지라_이슈_우선순위_데이터전송객체_목록;
