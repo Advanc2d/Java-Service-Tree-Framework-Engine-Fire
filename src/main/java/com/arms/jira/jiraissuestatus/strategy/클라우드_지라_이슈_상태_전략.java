@@ -63,6 +63,40 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
     }
 
 
+    @Override
+    public List<지라_이슈_상태_데이터_전송_객체> 프로젝트별_이슈_상태_목록_가져오기(Long 연결_아이디, String 프로젝트_아이디) throws Exception{
 
+        로그.info("클라우드 프로젝트별_이슈_상태_목록_가져오기 실행");
+
+        JiraInfoDTO found = jiraInfo.loadConnectInfo(연결_아이디);
+        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+
+        int maxResult = 200;
+        int startAt = 0;
+        boolean checkLast = false;
+
+        List<지라_이슈_상태_데이터_전송_객체> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<지라_이슈_상태_데이터_전송_객체>();
+
+        while(!checkLast) {
+            String endpoint = "/rest/api/3/statuses/search?maxResults="+ maxResult + "&startAt=" + startAt + "&projectId="+프로젝트_아이디;
+            클라우드_지라_이슈_상태_전체_데이터_전송_객체 지라_이슈_상태_조회_결과 = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_상태_전체_데이터_전송_객체.class).block();
+
+            반환할_지라_이슈_상태_데이터전송객체_목록.addAll(지라_이슈_상태_조회_결과.getValues());
+
+            for (지라_이슈_상태_데이터_전송_객체 이슈_상태 : 반환할_지라_이슈_상태_데이터전송객체_목록) {
+                String self = found.getUri() + "/rest/api/3/statuses?id=" + 이슈_상태.getId();
+                이슈_상태.setSelf(self);
+            }
+
+            if (지라_이슈_상태_조회_결과.getTotal() == 반환할_지라_이슈_상태_데이터전송객체_목록.size()) {
+                checkLast = true;
+            }
+            else {
+                startAt += maxResult;
+            }
+        }
+
+        return 반환할_지라_이슈_상태_데이터전송객체_목록;
+    }
 
 }
