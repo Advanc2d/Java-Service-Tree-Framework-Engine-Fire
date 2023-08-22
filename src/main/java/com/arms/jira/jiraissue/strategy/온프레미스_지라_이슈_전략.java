@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -146,8 +147,57 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
     }
 
     @Override
-    public Map<String, Object> 이슈_수정하기(Long 연결_아이디, String 이슈_키_또는_아이디, 지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) {
-        return null;
+    public Map<String, Object> 이슈_수정하기(Long 연결_아이디, String 이슈_키_또는_아이디, 지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws Exception {
+
+        로그.info("온프레미스 지라 이슈 수정하기");
+
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+                                                                         연결정보.getUserId(),
+                                                                         연결정보.getPasswordOrToken());
+
+        Map<String, Object> 결과 = new HashMap<>();
+
+        try {
+            지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+            if (필드_데이터.getProject() != null || 필드_데이터.getIssuetype() != null || 필드_데이터.getReporter() != null ||
+                필드_데이터.getAssignee() != null || 필드_데이터.getIssuelinks() != null || 필드_데이터.getSubtasks() != null ||
+                필드_데이터.getPriority() != null || 필드_데이터.getStatus() != null || 필드_데이터.getResolution() != null) {
+
+                로그.info("입력 값에 수정할 수 없는 필드가 있습니다.");
+
+                결과.put("이슈 수정", "실패");
+                결과.put("에러 메시지", "수정할 수 없는 필드가 포함됨");
+
+                return 결과;
+            }
+
+            IssueInputBuilder 입력_생성 = new IssueInputBuilder();
+
+            if (필드_데이터.getSummary() != null) {
+                입력_생성.setSummary(필드_데이터.getSummary());
+            }
+
+            if (필드_데이터.getDescription() != null) {
+                입력_생성.setDescription(필드_데이터.getDescription());
+            }
+
+            if (필드_데이터.getLabels() != null) {
+                입력_생성.setFieldValue("labels", 필드_데이터.getLabels());
+            }
+
+            IssueInput 수정_데이터 = 입력_생성.build();
+            restClient.getIssueClient().updateIssue(이슈_키_또는_아이디, 수정_데이터).claim();
+            결과.put("이슈 수정", "성공");
+
+            return 결과;
+
+        } catch (Exception e) {
+            결과.put("이슈 수정", "실패");
+            결과.put("에러 메시지", e.getMessage());
+        }
+
+        return 결과;
     }
 
     @Override
