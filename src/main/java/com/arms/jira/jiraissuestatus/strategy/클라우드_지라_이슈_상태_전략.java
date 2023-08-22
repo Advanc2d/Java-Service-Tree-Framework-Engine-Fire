@@ -27,7 +27,7 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
     private JiraInfo jiraInfo;
 
     @Override
-    public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_전체_목록_가져오기(Long 연결_아이디) throws Exception{
+    public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_목록_가져오기(Long 연결_아이디) throws Exception{
 
         로그.info("getStatusList 비즈니스 로직 실행");
 
