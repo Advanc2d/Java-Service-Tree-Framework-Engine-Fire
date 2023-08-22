@@ -34,20 +34,20 @@ public class 온프레미스_지라_이슈_해결책_전략 implements 지라_�
                                                                         연결정보.getUserId(),
                                                                         연결정보.getPasswordOrToken());
 
-        Iterable<Resolution> 온프라미스_이슈_해결책_목록 = restClient.getMetadataClient().getResolutions().claim();
+        Iterable<Resolution> 온프레미스_이슈_해결책_목록 = restClient.getMetadataClient().getResolutions().claim();
         List<지라_이슈_해결책_데이터_전송_객체> 반환할_이슈_해결책_목록 = new ArrayList<>();
 
-        for (Resolution 온프라미스_이슈_해결책 : 온프라미스_이슈_해결책_목록) {
-            로그.info("id: " + String.valueOf(온프라미스_이슈_해결책.getId()));
-            로그.info("name:" + 온프라미스_이슈_해결책.getName());
-            로그.info("desc:" + 온프라미스_이슈_해결책.getDescription());
+        for (Resolution 온프레미스_이슈_해결책 : 온프레미스_이슈_해결책_목록) {
+            로그.info("id: " + String.valueOf(온프레미스_이슈_해결책.getId()));
+            로그.info("name:" + 온프레미스_이슈_해결책.getName());
+            로그.info("desc:" + 온프레미스_이슈_해결책.getDescription());
 
             지라_이슈_해결책_데이터_전송_객체 반환할_이슈_해결책 = new 지라_이슈_해결책_데이터_전송_객체();
 
-            반환할_이슈_해결책.setSelf(온프라미스_이슈_해결책.getSelf().toString());
-            반환할_이슈_해결책.setId(온프라미스_이슈_해결책.getId().toString());
-            반환할_이슈_해결책.setName(온프라미스_이슈_해결책.getName());
-            반환할_이슈_해결책.setDescription(온프라미스_이슈_해결책.getDescription());
+            반환할_이슈_해결책.setSelf(온프레미스_이슈_해결책.getSelf().toString());
+            반환할_이슈_해결책.setId(온프레미스_이슈_해결책.getId().toString());
+            반환할_이슈_해결책.setName(온프레미스_이슈_해결책.getName());
+            반환할_이슈_해결책.setDescription(온프레미스_이슈_해결책.getDescription());
 
             반환할_이슈_해결책_목록.add(반환할_이슈_해결책);
         }

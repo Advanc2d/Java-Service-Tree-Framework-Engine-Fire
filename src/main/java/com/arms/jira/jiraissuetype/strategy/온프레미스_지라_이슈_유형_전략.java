@@ -35,17 +35,17 @@ public class 온프레미스_지라_이슈_유형_전략 implements 지라_이�
                                                                         연결정보.getUserId(),
                                                                         연결정보.getPasswordOrToken());
 
-        Iterable<IssueType> 온프라미스_이슈_유형_목록 = restClient.getMetadataClient().getIssueTypes().get();
+        Iterable<IssueType> 온프레미스_이슈_유형_목록 = restClient.getMetadataClient().getIssueTypes().get();
         List<지라_이슈_유형_데이터_전송_객체> 반환할_이슈_유형_목록 = new ArrayList<>();
 
-        for (IssueType 온프라미스_이슈_유형 : 온프라미스_이슈_유형_목록) {
+        for (IssueType 온프레미스_이슈_유형 : 온프레미스_이슈_유형_목록) {
             지라_이슈_유형_데이터_전송_객체 지라_이슈_유형_데이터_전송_객체 = new 지라_이슈_유형_데이터_전송_객체();
 
-            지라_이슈_유형_데이터_전송_객체.setId(온프라미스_이슈_유형.getId().toString());
-            지라_이슈_유형_데이터_전송_객체.setName(온프라미스_이슈_유형.getName());
-            지라_이슈_유형_데이터_전송_객체.setSelf(온프라미스_이슈_유형.getName());
-            지라_이슈_유형_데이터_전송_객체.setSubtask(온프라미스_이슈_유형.isSubtask());
-            지라_이슈_유형_데이터_전송_객체.setDescription(온프라미스_이슈_유형.getDescription());
+            지라_이슈_유형_데이터_전송_객체.setId(온프레미스_이슈_유형.getId().toString());
+            지라_이슈_유형_데이터_전송_객체.setName(온프레미스_이슈_유형.getName());
+            지라_이슈_유형_데이터_전송_객체.setSelf(온프레미스_이슈_유형.getName());
+            지라_이슈_유형_데이터_전송_객체.setSubtask(온프레미스_이슈_유형.isSubtask());
+            지라_이슈_유형_데이터_전송_객체.setDescription(온프레미스_이슈_유형.getDescription());
 
             반환할_이슈_유형_목록.add(지라_이슈_유형_데이터_전송_객체);
         }
@@ -65,17 +65,17 @@ public class 온프레미스_지라_이슈_유형_전략 implements 지라_이�
                                                                         연결정보.getUserId(),
                                                                         연결정보.getPasswordOrToken());
 
-        Iterable<IssueType> 온프라미스_이슈_유형_목록 = restClient.getMetadataClient().getIssueTypes().get();
+        Iterable<IssueType> 온프레미스_이슈_유형_목록 = restClient.getMetadataClient().getIssueTypes().get();
         List<지라_이슈_유형_데이터_전송_객체> 반환할_이슈_유형_목록 = new ArrayList<>();
 
-        for (IssueType 온프라미스_이슈_유형 : 온프라미스_이슈_유형_목록) {
+        for (IssueType 온프레미스_이슈_유형 : 온프레미스_이슈_유형_목록) {
             지라_이슈_유형_데이터_전송_객체 지라_이슈_유형_데이터_전송_객체 = new 지라_이슈_유형_데이터_전송_객체();
 
-            지라_이슈_유형_데이터_전송_객체.setId(온프라미스_이슈_유형.getId().toString());
-            지라_이슈_유형_데이터_전송_객체.setName(온프라미스_이슈_유형.getName());
-            지라_이슈_유형_데이터_전송_객체.setSelf(온프라미스_이슈_유형.getName());
-            지라_이슈_유형_데이터_전송_객체.setSubtask(온프라미스_이슈_유형.isSubtask());
-            지라_이슈_유형_데이터_전송_객체.setDescription(온프라미스_이슈_유형.getDescription());
+            지라_이슈_유형_데이터_전송_객체.setId(온프레미스_이슈_유형.getId().toString());
+            지라_이슈_유형_데이터_전송_객체.setName(온프레미스_이슈_유형.getName());
+            지라_이슈_유형_데이터_전송_객체.setSelf(온프레미스_이슈_유형.getName());
+            지라_이슈_유형_데이터_전송_객체.setSubtask(온프레미스_이슈_유형.isSubtask());
+            지라_이슈_유형_데이터_전송_객체.setDescription(온프레미스_이슈_유형.getDescription());
 
             반환할_이슈_유형_목록.add(지라_이슈_유형_데이터_전송_객체);
         }
