@@ -29,7 +29,7 @@ public class CloudJiraIssueResolutionImpl implements CloudJiraIssueResolution {
     @Override
     public ResolutionSearchDTO getResolutionList(Long connectId) {
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 1048576;

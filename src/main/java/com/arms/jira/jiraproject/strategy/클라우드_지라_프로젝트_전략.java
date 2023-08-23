@@ -28,7 +28,7 @@ public class 클라우드_지라_프로젝트_전략 implements 지라_프로젝
 
         String endpoint = "/rest/api/3/project/"+ 프로젝트_키_또는_아이디;
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         지라_프로젝트_데이터_전송_객체 반환할_지라_프로젝트_상세정보 = CloudJiraUtils.get(webClient, endpoint, 지라_프로젝트_데이터_전송_객체.class).block();

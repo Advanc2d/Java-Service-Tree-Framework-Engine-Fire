@@ -57,7 +57,7 @@ public class 지라_이슈_해결책_전략_호출 {
 
     public List<지라_이슈_해결책_데이터_전송_객체> 이슈_해결책_목록_가져오기(Long 연결_아이디) throws Exception {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_해결책_전략_등록_및_실행 = 지라_이슈_해결책_전략_확인(연결정보);
 

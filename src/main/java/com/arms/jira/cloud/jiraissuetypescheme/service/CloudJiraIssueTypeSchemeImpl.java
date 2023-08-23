@@ -38,7 +38,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values
                 = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
@@ -120,7 +120,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         IssueTypeIdsDTO dto = new IssueTypeIdsDTO();
         dto.setIssueTypeIds(issueTypeIds);
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> result = CloudJiraUtils.executePut(webClient, endpoint, dto);
