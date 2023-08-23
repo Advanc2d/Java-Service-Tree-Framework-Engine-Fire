@@ -54,7 +54,7 @@ public class OnPremiseJiraIssueController {
             value = {"/{issueKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public Issue getIssueDetail(@PathVariable("connectId") Long connectId,
+    public OnPremiseJiraIssueDTO getIssueDetail(@PathVariable("connectId") Long connectId,
                                   @PathVariable String issueKeyOrId,
                                   ModelMap model, HttpServletRequest request) throws Exception {
         logger.info("이슈 상세 조회 API 호출");
@@ -62,40 +62,40 @@ public class OnPremiseJiraIssueController {
     }
 
     //업데이트
-    @ResponseBody
-    @RequestMapping(
-            value = {"/{issueKeyOrId}"},
-            method = {RequestMethod.PUT}
-    )
-    public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") Long connectId,
-                                                   @PathVariable String issueKeyOrId,
-                                                   @RequestBody  OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception{
-        logger.info("이슈 업데이트 API 호출");
-        return onPremiseJiraIssue.updateIssue(connectId, issueKeyOrId, onPremiseJiraIssueInputDTO);
-    }
+//    @ResponseBody
+//    @RequestMapping(
+//            value = {"/{issueKeyOrId}"},
+//            method = {RequestMethod.PUT}
+//    )
+//    public Map<String,Object> updateIssueForReqAdd(@PathVariable("connectId") Long connectId,
+//                                                   @PathVariable String issueKeyOrId,
+//                                                   @RequestBody  OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception{
+//        logger.info("이슈 업데이트 API 호출");
+//        return onPremiseJiraIssue.updateIssue(connectId, issueKeyOrId, onPremiseJiraIssueInputDTO);
+//    }
 
     // 이슈 삭제
-    @ResponseBody
-    @RequestMapping(
-            value = {"/{issueKey}"},
-            method = {RequestMethod.DELETE}
-    )
-    public Map<String, Object> deleteIssue(@PathVariable("connectId") Long connectId,
-                                           @PathVariable String issueKey) throws Exception {
-        logger.info("이슈 삭제 API 호출");
-        return onPremiseJiraIssue.deleteIssue(connectId, issueKey);
-    }
+//    @ResponseBody
+//    @RequestMapping(
+//            value = {"/{issueKey}"},
+//            method = {RequestMethod.DELETE}
+//    )
+//    public Map<String, Object> deleteIssue(@PathVariable("connectId") Long connectId,
+//                                           @PathVariable String issueKey) throws Exception {
+//        logger.info("이슈 삭제 API 호출");
+//        return onPremiseJiraIssue.deleteIssue(connectId, issueKey);
+//    }
 
-    @ResponseBody
-    @RequestMapping(
-            value = {"/collection/scheduler"},
-            method = {RequestMethod.PUT}
-    )
-    public Map<String,Object> collectLinkAndSubtask(@PathVariable("connectId") Long connectId,
-                                                    ModelMap model, HttpServletRequest request) throws Exception {
-        Map<String,Object> result = onPremiseJiraIssue.collectLinkAndSubtask(connectId);
-
-        return result;
-    }
+//    @ResponseBody
+//    @RequestMapping(
+//            value = {"/collection/scheduler"},
+//            method = {RequestMethod.PUT}
+//    )
+//    public Map<String,Object> collectLinkAndSubtask(@PathVariable("connectId") Long connectId,
+//                                                    ModelMap model, HttpServletRequest request) throws Exception {
+//        Map<String,Object> result = onPremiseJiraIssue.collectLinkAndSubtask(connectId);
+//
+//        return result;
+//    }
 
 }

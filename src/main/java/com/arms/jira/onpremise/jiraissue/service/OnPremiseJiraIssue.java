@@ -18,15 +18,15 @@ public interface OnPremiseJiraIssue {
     JsonNode getIssueSearch(Long connectId, String projectKeyOrId) throws Exception;
 
     // 이슈 정보 상세 조회
-    Issue getIssue(Long connectId, String issueKeyOrId) throws Exception;
+    OnPremiseJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) throws Exception;
 
     // 이슈 업데이트
-    Map<String, Object> updateIssue(Long connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception;
+    //Map<String, Object> updateIssue(Long connectId, String issueKeyOrId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception;
 
     // 이슈 삭제
-    Map<String, Object> deleteIssue(Long connectId, String issueKey) throws Exception;
+    //Map<String, Object> deleteIssue(Long connectId, String issueKey) throws Exception;
 
-    public Map<String,Object> collectLinkAndSubtask(Long connectId) throws Exception;
+    //public Map<String,Object> collectLinkAndSubtask(Long connectId) throws Exception;
 
 
 }
