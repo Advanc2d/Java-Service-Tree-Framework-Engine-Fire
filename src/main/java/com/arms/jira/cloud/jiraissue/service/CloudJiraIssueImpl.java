@@ -41,7 +41,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         int maxResults = 50;
         boolean isLast = false;
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
@@ -71,7 +71,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     public CloudJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) {
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueDTO response = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueDTO.class).block();
@@ -88,7 +88,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueDTO response = CloudJiraUtils.post(webClient, endpoint, cloudJiraIssueInputDTO, CloudJiraIssueDTO.class).block();
@@ -110,7 +110,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
         HttpStatus statusCode = null;
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> response = CloudJiraUtils.executePut(webClient, endpoint, cloudJiraIssueInputDTO);
@@ -179,7 +179,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         Map<String, Object> result = new HashMap<String, Object>();
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=false";
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         if (checkSubTask(connectId, issueKeyOrId)){ //서브테스크가 있을 경유
@@ -368,7 +368,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         int maxResults = 10;
         boolean isLast = false;
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
@@ -471,7 +471,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         TransitionsDTO transitions = CloudJiraUtils.get(webClient, endpoint, TransitionsDTO.class).block();
@@ -484,7 +484,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
 //        IssueStatusUpdateRequestDTO.TransitionInputDTO transitionInputDTO = new IssueStatusUpdateRequestDTO.TransitionInputDTO();

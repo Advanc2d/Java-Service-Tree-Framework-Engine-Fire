@@ -28,7 +28,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	public CloudJiraProjectDTO getProjectData(Long connectId, String projectKey) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;
 
-		JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+		JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraProjectDTO project = CloudJiraUtils.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
@@ -43,7 +43,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 
 		String endpoint = "/rest/api/3/project";
 
-		JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+		JiraInfoDTO found = jiraInfo.checkInfo(connectId);
 
 		if (found == null) {
 			// throw Exception e; ControllerAdvice 오류 처리

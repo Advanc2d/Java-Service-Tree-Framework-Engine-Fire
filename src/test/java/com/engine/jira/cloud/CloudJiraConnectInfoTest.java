@@ -22,7 +22,7 @@
 //    @DisplayName("Cloud Jira Connect Info Load Test")
 //    public void cloudJiraConnectInfoGetTest() {
 //
-//        CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.loadConnectInfo("1");
+//        CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.checkInfo("1");
 //        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
 //
 //        CloudJiraProjectDTO cloudJiraProjectDTO

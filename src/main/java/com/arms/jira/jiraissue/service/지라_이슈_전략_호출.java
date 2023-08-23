@@ -59,7 +59,7 @@ public class 지라_이슈_전략_호출 {
 
     public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(연결정보);
 
@@ -72,7 +72,7 @@ public class 지라_이슈_전략_호출 {
 
     public 지라_이슈_데이터_전송_객체 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(연결정보);
 
@@ -86,7 +86,7 @@ public class 지라_이슈_전략_호출 {
     public 지라_이슈_데이터_전송_객체 이슈_생성하기(Long 연결_아이디,
                                    지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws Exception {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(연결정보);
 
@@ -100,7 +100,7 @@ public class 지라_이슈_전략_호출 {
     public Map<String,Object> 이슈_수정하기(Long 연결_아이디, String 이슈키,
                                       지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws Exception {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(연결정보);
 
@@ -111,14 +111,14 @@ public class 지라_이슈_전략_호출 {
 
     }
 
-    public Map<String,Object> 이슈_삭제하기(Long 연결_아이디, String 이슈_키_또는_아이디) {
+    public Map<String,Object> 이슈_삭제_라벨_처리하기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(연결정보);
 
         Map<String,Object> 반환할_지라_이슈_데이터_전송_객체
-                = 지라_이슈_전략_등록_및_실행.이슈_삭제하기(연결_아이디, 이슈_키_또는_아이디);
+                = 지라_이슈_전략_등록_및_실행.이슈_삭제_라벨_처리하기(연결_아이디, 이슈_키_또는_아이디);
 
         return 반환할_지라_이슈_데이터_전송_객체;
 
@@ -126,7 +126,7 @@ public class 지라_이슈_전략_호출 {
 
     public Map<String,Object> 이슈_연결_링크_및_서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
 
-        JiraInfoDTO 연결정보 = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
         지라_이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(연결정보);
 

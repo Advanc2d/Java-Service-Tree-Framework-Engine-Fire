@@ -29,7 +29,7 @@ public class CloudJiraIssuePriorityImpl implements CloudJiraIssuePriority {
     @Override
     public PrioritySearchDTO getPriorityList(Long connectId) {
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 1048576;

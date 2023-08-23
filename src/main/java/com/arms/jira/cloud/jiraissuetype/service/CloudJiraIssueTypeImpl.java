@@ -44,7 +44,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint,
@@ -59,7 +59,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
 //        String endpoint = "/rest/api/3/issuetype";
 
-//        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+//        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
 //        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 //        return CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<>() {
 //        });
@@ -72,7 +72,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint,
@@ -91,7 +91,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint,

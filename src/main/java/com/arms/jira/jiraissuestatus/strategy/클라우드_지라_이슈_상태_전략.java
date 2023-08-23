@@ -31,7 +31,7 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
 
         로그.info("getStatusList 비즈니스 로직 실행");
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 200;
@@ -68,7 +68,7 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
 
         로그.info("클라우드 프로젝트별_이슈_상태_목록_가져오기 실행");
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(연결_아이디);
+        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 200;
