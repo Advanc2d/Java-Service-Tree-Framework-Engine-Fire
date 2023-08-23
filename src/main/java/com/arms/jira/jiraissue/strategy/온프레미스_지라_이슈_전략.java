@@ -7,9 +7,14 @@ import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
 import com.arms.jira.jiraissue.model.지라_이슈_생성_데이터_전송_객체;
 import com.arms.jira.jiraissue.model.지라_이슈_엔티티;
 import com.arms.jira.jiraissue.model.지라_이슈_필드_데이터_전송_객체;
+import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
+import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
+import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
+import com.arms.jira.jirapriority.model.지라_이슈_우선순위_데이터_전송_객체;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
+import com.atlassian.jira.rest.client.api.RestClientException;
+import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.modelmapper.ModelMapper;
@@ -18,9 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전략 {
@@ -37,13 +40,55 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
     private 지라_이슈_저장소 지라_이슈_저장소;
 
     @Override
-    public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
-        return null;
+    public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
+        JiraInfoDTO info = jiraInfo.checkInfo(연결_아이디);
+
+        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+                info.getUserId(),
+                info.getPasswordOrToken());
+
+        String 조회대상_프로젝트 = "project = " + 프로젝트_키_또는_아이디;
+        int 검색_끝_지점 = 50;
+        int 검색_시작_지점 = 0;
+        Set<String> 필드 = new HashSet<>(Arrays.asList("*all")); // 검색 필드
+
+        // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
+        List<지라_이슈_데이터_전송_객체> 프로젝트_이슈_목록 = new ArrayList<>();
+        while (true) {
+            SearchResult 프로젝트_이슈_검색결과 = restClient.getSearchClient()
+                    .searchJql(조회대상_프로젝트, 검색_끝_지점, 검색_시작_지점, 필드)
+                    .claim();
+
+            for (Issue 지라_이슈 : 프로젝트_이슈_검색결과.getIssues()) {
+                프로젝트_이슈_목록.add(지라_이슈_데이터_전송_객체로_변환(지라_이슈));
+            }
+
+            if (프로젝트_이슈_목록.size() >= 프로젝트_이슈_검색결과.getTotal()) {
+                break;
+            }
+
+            검색_시작_지점 += 검색_끝_지점;
+        }
+        return 프로젝트_이슈_목록;
+
     }
 
     @Override
-    public 지라_이슈_데이터_전송_객체 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
-        return null;
+    public 지라_이슈_데이터_전송_객체 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception {
+
+        로그.info("온프레미스 지라 이슈 생성하기");
+
+        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+                연결정보.getUserId(),
+                연결정보.getPasswordOrToken());
+        try {
+            Issue 지라_이슈 = restClient.getIssueClient().getIssue(이슈_키_또는_아이디).claim();
+            return 지라_이슈_데이터_전송_객체로_변환(지라_이슈);
+        }catch (RestClientException e) {
+            로그.info("이슈 조회시 오류가 발생하였습니다.");
+            throw new RuntimeException("이슈 조회시 오류가 발생하였습니다.");
+        }
     }
 
     /* ***
@@ -233,5 +278,229 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
     @Override
     public Map<String, Object> 이슈_연결_링크_및_서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
         return null;
+    }
+
+
+    private 지라_이슈_데이터_전송_객체 지라_이슈_데이터_전송_객체로_변환(Issue 지라_이슈) {
+
+        지라_이슈_데이터_전송_객체 반환할_지라_이슈_데이터= new 지라_이슈_데이터_전송_객체();
+        지라_이슈_필드_데이터_전송_객체 지라_이슈_필드_데이터 = new 지라_이슈_필드_데이터_전송_객체();
+
+        // 프로젝트 초기화
+        지라_이슈_필드_데이터_전송_객체.프로젝트 프로젝트 = 지라_이슈_필드_데이터_전송_객체.프로젝트.builder().build();
+
+        // 보고자 초기화
+        지라_이슈_필드_데이터_전송_객체.보고자 보고자 = 지라_이슈_필드_데이터_전송_객체.보고자.builder().build();
+
+        // 담당자 초기화
+        지라_이슈_필드_데이터_전송_객체.담당자 담당자 = 지라_이슈_필드_데이터_전송_객체.담당자.builder().build();
+
+        // 연결된 이슈 초기화
+        지라_이슈_데이터_전송_객체 내부_연결_이슈 = new 지라_이슈_데이터_전송_객체();
+        지라_이슈_데이터_전송_객체 외부_연결_이슈 = new 지라_이슈_데이터_전송_객체();
+
+        지라_이슈_필드_데이터_전송_객체.연결된_이슈 연결된_이슈 = new 지라_이슈_필드_데이터_전송_객체.연결된_이슈();
+        연결된_이슈.setInwardIssue(내부_연결_이슈);
+        연결된_이슈.setOutwardIssue(외부_연결_이슈);
+        List<지라_이슈_필드_데이터_전송_객체.연결된_이슈> 연결된_이슈_목록 = new ArrayList<>();
+
+        지라_이슈_필드_데이터.setProject(프로젝트);
+        지라_이슈_필드_데이터.setReporter(보고자);
+        지라_이슈_필드_데이터.setAssignee(담당자);
+        지라_이슈_필드_데이터.setIssuelinks(연결된_이슈_목록);
+
+
+        반환할_지라_이슈_데이터.setFields(지라_이슈_필드_데이터);
+
+
+
+        반환할_지라_이슈_데이터.setId(지라_이슈.getId().toString());
+        반환할_지라_이슈_데이터.setKey(지라_이슈.getKey());
+        반환할_지라_이슈_데이터.setSelf(지라_이슈.getSelf().toString());
+
+        // 필드 하위 프로젝트
+        반환할_지라_이슈_데이터.getFields().getProject().setSelf(지라_이슈.getProject().getSelf().toString());
+        반환할_지라_이슈_데이터.getFields().getProject().setId(String.valueOf(지라_이슈.getProject().getId()));
+        반환할_지라_이슈_데이터.getFields().getProject().setKey(지라_이슈.getProject().getKey());
+        반환할_지라_이슈_데이터.getFields().getProject().setName(지라_이슈.getProject().getName());
+
+        // 필드 하위 이슈 타입   지라_이슈_유형_데이터_전송_객체
+        if(지라_이슈.getIssueType()!= null){
+            지라_이슈_유형_데이터_전송_객체 이슈_유형 =new 지라_이슈_유형_데이터_전송_객체();
+            지라_이슈_필드_데이터.setIssuetype(이슈_유형);
+            반환할_지라_이슈_데이터.setFields(지라_이슈_필드_데이터);
+
+            String 이슈_유형_주소 = String.valueOf(지라_이슈.getIssueType().getSelf());
+            String 이슈_유형_아이디 = String.valueOf(지라_이슈.getIssueType().getId());
+            String 이슈_유형_이름 =지라_이슈.getIssueType().getName();
+
+            반환할_지라_이슈_데이터.getFields().getIssuetype().setId(이슈_유형_아이디);
+            반환할_지라_이슈_데이터.getFields().getIssuetype().setName(이슈_유형_이름);
+            반환할_지라_이슈_데이터.getFields().getIssuetype().setSelf(이슈_유형_주소);
+        }
+
+
+        // 이슈 summary
+        반환할_지라_이슈_데이터.getFields().setSummary(지라_이슈.getSummary());
+
+        // 이슈 description
+        반환할_지라_이슈_데이터.getFields().setDescription(지라_이슈.getDescription());
+
+        // 이슈 보고자
+        반환할_지라_이슈_데이터.getFields().getReporter().setName(지라_이슈.getReporter().getName());
+        반환할_지라_이슈_데이터.getFields().getReporter().setEmailAddress(지라_이슈.getReporter().getEmailAddress());
+
+        // 이슈 담당자
+        반환할_지라_이슈_데이터.getFields().getAssignee().setName(지라_이슈.getAssignee().getName());
+        반환할_지라_이슈_데이터.getFields().getAssignee().setEmailAddress(지라_이슈.getAssignee().getEmailAddress());
+
+        // 이슈 라벨
+        Set<String> 지라_라벨 = 지라_이슈.getLabels(); //HashSet 반환
+        if (지라_라벨 != null) {
+            List<String> 라벨_목록 = new ArrayList<>(지라_라벨);
+            반환할_지라_이슈_데이터.getFields().setLabels(라벨_목록);
+        } else {
+            반환할_지라_이슈_데이터.getFields().setLabels(Collections.emptyList());
+        }
+
+
+        // 이슈 링크
+        List<IssueLink> 연결된_이슈_리스트= new ArrayList<>((Collection) 지라_이슈.getIssueLinks());
+        for (IssueLink 연결된_이슈_항목: 연결된_이슈_리스트) {
+
+            String direction = String.valueOf(연결된_이슈_항목.getIssueLinkType().getDirection());
+            String targetIssueKey = 연결된_이슈_항목.getTargetIssueKey();
+            String self = String.valueOf(연결된_이슈_항목.getTargetIssueUri());
+            String[] parts = self.split("/");
+            String id = parts[parts.length - 1];
+
+            지라_이슈_필드_데이터_전송_객체.연결된_이슈 연결된_이슈_필드 = new 지라_이슈_필드_데이터_전송_객체.연결된_이슈();
+            지라_이슈_데이터_전송_객체 내부_연결_이슈_객체 = new 지라_이슈_데이터_전송_객체();
+            지라_이슈_데이터_전송_객체 외부_연결_이슈_객체  = new 지라_이슈_데이터_전송_객체();
+
+            연결된_이슈_필드.setInwardIssue(내부_연결_이슈_객체);
+            연결된_이슈_필드.setOutwardIssue(외부_연결_이슈_객체);
+
+
+            if(direction.equals("INBOUND")){
+                //로그.info("direction   "+direction+"   targetIssueKey   "+targetIssueKey);
+                내부_연결_이슈_객체.setKey(targetIssueKey);
+                내부_연결_이슈_객체.setSelf(self);
+                내부_연결_이슈_객체.setId(id);
+            }
+            else if(direction.equals("OUTBOUND")){
+                //로그.info("direction   "+direction+"   targetIssueKey   "+targetIssueKey);
+                외부_연결_이슈_객체.setKey(targetIssueKey);
+                외부_연결_이슈_객체.setSelf(self);
+                외부_연결_이슈_객체.setId(id);
+            }
+
+            반환할_지라_이슈_데이터.getFields().getIssuelinks().add(연결된_이슈_필드);
+
+        }
+
+        // 서브 테스크
+        Iterable<Subtask> 지라_서버_서브테스크_목록 = 지라_이슈.getSubtasks();
+        List<Subtask> 서브테스크_목록 = new ArrayList<>();
+        for (Subtask 지라_서버_서브테스크 : 지라_서버_서브테스크_목록) {
+            서브테스크_목록.add(지라_서버_서브테스크);
+        }
+        for(Subtask 서브테스크 : 서브테스크_목록){
+
+            String 서브테스크_키 = 서브테스크.getIssueKey();
+            String 서브테스크_주소 = String.valueOf(서브테스크.getIssueUri());
+            String[] 서브테스크_주소_배열= 서브테스크_주소.split("/");
+            String 서브테스크_아이디 = 서브테스크_주소_배열[서브테스크_주소_배열.length - 1];
+
+            String 서브테스크_이슈타입_주소 = String.valueOf(서브테스크.getIssueType().getSelf());
+            String[] 서브테스크_이슈타입_주소_배열 = 서브테스크_이슈타입_주소.split("/");
+            String 서브테스크_이슈타입_아이디 = 서브테스크_이슈타입_주소_배열[서브테스크_이슈타입_주소_배열.length - 1];
+            String 서브테스크_이슈타입_이름 = 서브테스크.getIssueType().getName();
+
+            String 서브테스크_요약 = 서브테스크.getSummary();
+
+            String 서브테스크_상태_주소 = String.valueOf(서브테스크.getStatus().getSelf());
+            String 서브테스크_상태_이름 = 서브테스크.getStatus().getName();
+            String[] 서브테스크_상태_주소_목록 = 서브테스크_상태_주소.split("/");
+            String 서브테스크_상태_아이디 = 서브테스크_상태_주소_목록[서브테스크_상태_주소_목록.length - 1];
+            String 서브테스크_상태_설명 = 서브테스크.getStatus().getDescription();
+
+            지라_이슈_데이터_전송_객체 서브테스크_객체 = new 지라_이슈_데이터_전송_객체();
+            지라_이슈_필드_데이터_전송_객체 서브테스크_필드_객체 = new 지라_이슈_필드_데이터_전송_객체();
+
+            서브테스크_객체.setFields(서브테스크_필드_객체);
+            서브테스크_객체.getFields().setIssuetype(new 지라_이슈_유형_데이터_전송_객체());
+            서브테스크_객체.getFields().setPriority(new 지라_이슈_우선순위_데이터_전송_객체());
+            서브테스크_객체.getFields().setStatus(new 지라_이슈_상태_데이터_전송_객체());
+
+            서브테스크_객체.setId(서브테스크_아이디);
+            서브테스크_객체.setKey(서브테스크_키);
+            서브테스크_객체.setSelf(서브테스크_주소);
+
+            서브테스크_객체.getFields().getIssuetype().setSelf(서브테스크_이슈타입_주소);
+            서브테스크_객체.getFields().getIssuetype().setId(서브테스크_이슈타입_아이디);
+            서브테스크_객체.getFields().getIssuetype().setName(서브테스크_이슈타입_이름);
+
+            서브테스크_객체.getFields().setSummary(서브테스크_요약);
+
+            서브테스크_객체.getFields().getStatus().setId(서브테스크_상태_아이디);
+            서브테스크_객체.getFields().getStatus().setName(서브테스크_상태_이름);
+            서브테스크_객체.getFields().getStatus().setDescription(서브테스크_상태_설명);
+            서브테스크_객체.getFields().getStatus().setSelf(서브테스크_상태_주소);
+
+            if (반환할_지라_이슈_데이터.getFields().getSubtasks() == null) {
+                반환할_지라_이슈_데이터.getFields().setSubtasks(new ArrayList<>());
+            }
+            반환할_지라_이슈_데이터.getFields().getSubtasks().add(서브테스크_객체);
+        }
+
+        // 우선 순위
+        if(지라_이슈.getPriority() != null) {
+            지라_이슈_우선순위_데이터_전송_객체 이슈_우선순위 = new 지라_이슈_우선순위_데이터_전송_객체();
+            지라_이슈_필드_데이터.setPriority(이슈_우선순위);
+            반환할_지라_이슈_데이터.setFields(지라_이슈_필드_데이터);
+
+            String 이슈_우선순위_이이디 = String.valueOf(지라_이슈.getPriority().getId());
+            String 이슈_우선순위_이름 = 지라_이슈.getPriority().getName();
+            String 이슈_우선순위_주소 = String.valueOf(지라_이슈.getPriority().getSelf());
+
+            반환할_지라_이슈_데이터.getFields().getPriority().setSelf(이슈_우선순위_주소);
+            반환할_지라_이슈_데이터.getFields().getPriority().setId(이슈_우선순위_이이디);
+            반환할_지라_이슈_데이터.getFields().getPriority().setName(이슈_우선순위_이름);
+        }
+        // 상태 값
+        if(지라_이슈.getStatus() != null){
+            지라_이슈_상태_데이터_전송_객체 이슈_상태 =new 지라_이슈_상태_데이터_전송_객체();
+            지라_이슈_필드_데이터.setStatus(이슈_상태);
+            반환할_지라_이슈_데이터.setFields(지라_이슈_필드_데이터);
+
+            String 이슈_상태_아이디 = String.valueOf(지라_이슈.getStatus().getId());
+            String 이슈_상태_이름 = 지라_이슈.getStatus().getName();
+            String 이슈_상태_설명 =  지라_이슈.getStatus().getDescription();
+            String 이슈_상태_주소 = String.valueOf(지라_이슈.getStatus().getSelf());
+
+            반환할_지라_이슈_데이터.getFields().getStatus().setId(이슈_상태_아이디);
+            반환할_지라_이슈_데이터.getFields().getStatus().setName(이슈_상태_이름);
+            반환할_지라_이슈_데이터.getFields().getStatus().setDescription(이슈_상태_설명);
+            반환할_지라_이슈_데이터.getFields().getStatus().setSelf(이슈_상태_주소);
+        }
+        // 해결책
+        if(지라_이슈.getResolution()!= null){
+            지라_이슈_해결책_데이터_전송_객체 이슈_해결책 =new 지라_이슈_해결책_데이터_전송_객체();
+            지라_이슈_필드_데이터.setResolution(이슈_해결책);
+            반환할_지라_이슈_데이터.setFields(지라_이슈_필드_데이터);
+
+            String 이슈_해결책_아이디 = String.valueOf(지라_이슈.getResolution().getId());
+            String 이슈_해결책_주소 = String.valueOf(지라_이슈.getResolution().getSelf());
+            String 이슈_해결책_이름 =지라_이슈.getResolution().getName();
+            String 이슈_해결책_설명 = 지라_이슈.getResolution().getDescription();
+
+            반환할_지라_이슈_데이터.getFields().getResolution().setDescription(이슈_해결책_설명);
+            반환할_지라_이슈_데이터.getFields().getResolution().setId(이슈_해결책_아이디);
+            반환할_지라_이슈_데이터.getFields().getResolution().setName(이슈_해결책_이름);
+            반환할_지라_이슈_데이터.getFields().getResolution().setSelf(이슈_해결책_주소);
+        }
+
+        return 반환할_지라_이슈_데이터;
     }
 }

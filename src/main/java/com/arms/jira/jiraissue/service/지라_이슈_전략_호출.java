@@ -57,7 +57,7 @@ public class 지라_이슈_전략_호출 {
         return 지라_이슈_전략_등록_및_실행;
     }
 
-    public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
+    public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception{
 
         JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
@@ -70,7 +70,7 @@ public class 지라_이슈_전략_호출 {
 
     }
 
-    public 지라_이슈_데이터_전송_객체 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
+    public 지라_이슈_데이터_전송_객체 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception{
 
         JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
 
