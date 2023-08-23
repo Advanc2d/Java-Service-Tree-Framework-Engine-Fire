@@ -170,19 +170,46 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
         if (응답_결과.isPresent()) {
             if (응답_결과.get()) {
 
-                결과.put("이슈 수정", "성공");
+                결과.put("success", true);
+                결과.put("message", "이슈 수정 성공");
 
                 return 결과;
             }
         }
-        결과.put("이슈 수정", "실패");
+        결과.put("success", false);
+        결과.put("message", "이슈 수정 실패");
 
         return 결과;
     }
 
     @Override
-    public Map<String, Object> 이슈_삭제하기(Long 연결_아이디, String 이슈_키_또는_아이디) {
-        return null;
+    public Map<String, Object> 이슈_삭제_라벨_처리하기(Long 연결_아이디, String 이슈_키_또는_아이디) {
+
+        로그.info("지라 이슈 삭제 라벨 처리하기");
+
+        Map<String, Object> 반환할_결과맵 = new HashMap<String, Object>();
+
+        String 삭제_라벨링 = "이슈_삭제_라벨_처리";
+
+        지라_이슈_필드_데이터_전송_객체 필드_데이터_전송_객체 = new 지라_이슈_필드_데이터_전송_객체();
+        필드_데이터_전송_객체.setLabels(List.of(삭제_라벨링));
+
+        지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체 = new 지라_이슈_생성_데이터_전송_객체();
+        지라_이슈_생성_데이터_전송_객체.setFields(필드_데이터_전송_객체);
+
+        Map<String, Object> 라벨_처리_결과맵 = 이슈_수정하기(연결_아이디, 이슈_키_또는_아이디, 지라_이슈_생성_데이터_전송_객체);
+
+        if (!((Boolean) 라벨_처리_결과맵.get("success"))) {
+            반환할_결과맵.put("success", false);
+            반환할_결과맵.put("message", "이슈 라벨 닫기 처리 실패");
+        }
+        else {
+            반환할_결과맵.put("success", true);
+            반환할_결과맵.put("message", "이슈 라벨 닫기 처리 성공");
+        }
+
+        return 반환할_결과맵;
+
     }
 
     @Override

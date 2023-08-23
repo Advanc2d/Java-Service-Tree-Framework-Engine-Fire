@@ -30,8 +30,8 @@ public class 지라_이슈_전략_등록_및_실행 {
         return this.지라_이슈_전략.이슈_수정하기(연결_아이디, 이슈_키_또는_아이디, 지라_이슈_생성_데이터_전송_객체);
     }
 
-    public Map<String,Object> 이슈_삭제하기(Long 연결_아이디, String 이슈_키_또는_아이디) {
-        return this.지라_이슈_전략.이슈_삭제하기(연결_아이디, 이슈_키_또는_아이디);
+    public Map<String,Object> 이슈_삭제_라벨_처리하기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception {
+        return this.지라_이슈_전략.이슈_삭제_라벨_처리하기(연결_아이디, 이슈_키_또는_아이디);
     }
 
     public Map<String,Object> 이슈_연결_링크_및_서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {

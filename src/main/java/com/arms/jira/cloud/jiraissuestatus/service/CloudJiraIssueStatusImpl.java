@@ -31,7 +31,7 @@ public class CloudJiraIssueStatusImpl implements CloudJiraIssueStatus {
 
         logger.info("getStatusList 비즈니스 로직 실행");
 
-        JiraInfoDTO found = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
     
         int maxResult = 200;
