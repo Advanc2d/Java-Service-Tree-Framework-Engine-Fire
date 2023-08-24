@@ -1,8 +1,6 @@
 package com.arms.jira.jiraissue.strategy;
 
 import com.arms.jira.cloud.CloudJiraUtils;
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.jiraissue.dao.지라_이슈_저장소;
@@ -17,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.*;
 
 @Component
-public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
+public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전략<클라우드_지라_이슈_필드_데이터_전송_객체.내용> {
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
@@ -31,7 +29,7 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
     private 지라_이슈_저장소 지라_이슈_저장소;
 
     @Override
-    public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
+    public List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
         int 검색_시작_지점 = 0;
         int 검색_최대_개수 = 50;
         boolean isLast = false;
@@ -39,11 +37,11 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
         JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-         List<지라_이슈_데이터_전송_객체> 프로젝트_이슈_목록 = new ArrayList<>(); // 이슈 저장
+         List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 프로젝트_이슈_목록 = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=project=" + 프로젝트_키_또는_아이디 + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
-            클라우드_지라_이슈_조회_데이터_전송_객체 프로젝트_이슈_검색결과 = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+            클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 프로젝트_이슈_검색결과 = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
 
             프로젝트_이슈_목록.addAll(프로젝트_이슈_검색결과.getIssues());
 
@@ -65,7 +63,7 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
         JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
-        지라_이슈_데이터_전송_객체 이슈_검색_결과 = CloudJiraUtils.get(webClient, endpoint, 지라_이슈_데이터_전송_객체.class).block();
+        지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 이슈_검색_결과 = CloudJiraUtils.get(webClient, endpoint, 지라_이슈_데이터_전송_객체.class).block();
 
         String jsonResponse = 이슈_검색_결과.toString();
         로그.info(jsonResponse);
@@ -93,7 +91,7 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
 //        }
 
         String endpoint = "/rest/api/3/issue";
-        지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+        지라_이슈_필드_데이터_전송_객체<String> 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
         if (필드_데이터 == null) {
             /* ***
              * 수정사항: 에러 처리 필요
@@ -115,7 +113,6 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
         }
 
         if (필드_데이터.getDescription() != null) {
-            System.out.println("@@@@@@@@@@2"+필드_데이터.getDescription());
             클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
         }
 
@@ -158,7 +155,7 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
         String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디;
         Map<String, Object> 결과 = new HashMap<>();
 
-        지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+        지라_이슈_필드_데이터_전송_객체<String> 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
         if (필드_데이터.getProject() != null || 필드_데이터.getIssuetype() != null || 필드_데이터.getReporter() != null ||
             필드_데이터.getAssignee() != null || 필드_데이터.getIssuelinks() != null || 필드_데이터.getSubtasks() != null ||
             필드_데이터.getPriority() != null || 필드_데이터.getStatus() != null || 필드_데이터.getResolution() != null) {
@@ -232,11 +229,6 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
 
         return 반환할_결과맵;
 
-    }
-
-    @Override
-    public Map<String, Object> 이슈_연결_링크_및_서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
-        return null;
     }
 
     public 클라우드_지라_이슈_필드_데이터_전송_객체.내용 내용_변환(String 입력_데이터) {
