@@ -26,9 +26,9 @@ public class 클라우드_지라_이슈_필드_데이터_전송_객체 {
 
     private 내용 description;
 
-    private 보고자 reporter;
+    private 사용자 reporter;
 
-    private 담당자 assignee;
+    private 사용자 assignee;
 
     private List<String> labels;
 
@@ -86,19 +86,7 @@ public class 클라우드_지라_이슈_필드_데이터_전송_객체 {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class 보고자 {
-        private String accountId;
-        private String emailAddress;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class 담당자 {
+    public static class 사용자 {
         private String accountId;
         private String emailAddress;
     }
