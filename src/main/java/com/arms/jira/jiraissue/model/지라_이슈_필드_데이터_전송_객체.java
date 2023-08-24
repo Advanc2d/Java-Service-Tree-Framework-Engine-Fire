@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class 지라_이슈_필드_데이터_전송_객체 {
+public class 지라_이슈_필드_데이터_전송_객체<T> {
 
     private 프로젝트 project;
 
@@ -24,7 +24,7 @@ public class 지라_이슈_필드_데이터_전송_객체 {
 
     private String summary;
 
-    private String description;
+    private T description;
 
     private 보고자 reporter;
 
