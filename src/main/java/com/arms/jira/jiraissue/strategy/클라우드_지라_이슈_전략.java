@@ -83,23 +83,9 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
             클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
         }
 
-        if (필드_데이터.getReporter() != null) {
-            클라우드_지라_이슈_필드_데이터_전송_객체.보고자 보고자 = 클라우드_지라_이슈_필드_데이터_전송_객체.보고자.builder()
-                                                                                                   .accountId(필드_데이터.getReporter().getName())
-                                                                                                   .emailAddress(필드_데이터.getReporter().getEmailAddress())
-                                                                                                   .build();
-
-            클라우드_필드_데이터.setReporter(보고자);
-        }
-
-        if (필드_데이터.getAssignee() != null) {
-            클라우드_지라_이슈_필드_데이터_전송_객체.담당자 담당자 = 클라우드_지라_이슈_필드_데이터_전송_객체.담당자.builder()
-                                                                                                   .accountId(필드_데이터.getAssignee().getName())
-                                                                                                   .emailAddress(필드_데이터.getAssignee().getEmailAddress())
-                                                                                                   .build();
-
-            클라우드_필드_데이터.setAssignee(담당자);
-        }
+        클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자 = 사용자_정보_조회(webClient);
+        클라우드_필드_데이터.setReporter(사용자);
+        클라우드_필드_데이터.setAssignee(사용자);
 
         if (필드_데이터.getPriority() != null) {
             클라우드_필드_데이터.setPriority(필드_데이터.getPriority());
@@ -242,6 +228,25 @@ public class 클라우드_지라_이슈_전략 implements 지라_이슈_전략 {
                 .build();
 
         return 내용;
+    }
+
+    public 클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자_정보_조회(WebClient webClient) {
+
+        String endpoint = "/rest/api/3/myself";
+
+        클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자_정보 = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_필드_데이터_전송_객체.사용자.class).block();
+
+        클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자 = 사용자_정보_설정(사용자_정보);
+
+        return 사용자;
+    }
+
+    public 클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자_정보_설정(클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자_정보) {
+
+        return 클라우드_지라_이슈_필드_데이터_전송_객체.사용자.builder()
+                .accountId(사용자_정보.getAccountId())
+                .emailAddress(사용자_정보.getEmailAddress())
+                .build();
     }
 
 }
