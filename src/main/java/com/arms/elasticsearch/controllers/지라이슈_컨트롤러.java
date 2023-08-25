@@ -30,10 +30,19 @@ public class 지라이슈_컨트롤러 {
 
 
 
+
+        지라이슈.프로젝트 더미프로젝트 = 지라이슈.프로젝트.builder()
+                .id("더미테스트프로젝트")
+                .key("DUMMY-313")
+                .name("프로젝트이름")
+                .self("http://www.a-rms.net")
+                .build();
+
         지라이슈 더미이슈 = 지라이슈.builder()
                 .self("http://www.313.co.kr")
-                .key("313devgrp").build();
-
+                .key("313devgrp")
+                .project(더미프로젝트)
+                .build();
 
         return 지라이슈_검색엔진.인덱스_추가하기(더미이슈);
     }
