@@ -6,6 +6,9 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 
@@ -15,6 +18,8 @@ import java.time.format.DateTimeFormatter;
 @Data
 @Builder
 @AllArgsConstructor
+@Getter
+@Setter
 @Document(indexName = "jiraissue")
 public class 지라이슈 {
 
@@ -23,14 +28,15 @@ public class 지라이슈 {
 
     public void generateId() {
         if (timestamp == null) {
-            timestamp = LocalDateTime.now(); // timestamp가 null이면 초기화
+            this.timestamp = new Date();
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        this.id = timestamp.format(formatter);
+        this.id = this.jira_server_id + "_" + this.project.getKey() + "_" + this.key;
     }
 
-    @Field(name = "@timestamp", type = FieldType.Date)
-    private LocalDateTime timestamp;
+    private Long jira_server_id;
+
+    @Field(type = FieldType.Date, name = "@timestamp")
+    private Date timestamp;
 
     @Field(type = FieldType.Keyword, name = "key")
     private String key;

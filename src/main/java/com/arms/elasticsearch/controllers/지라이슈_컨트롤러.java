@@ -39,10 +39,13 @@ public class 지라이슈_컨트롤러 {
                 .build();
 
         지라이슈 더미이슈 = 지라이슈.builder()
+                .jira_server_id(연결_아이디)
                 .self("http://www.313.co.kr")
                 .key("313devgrp")
                 .project(더미프로젝트)
                 .build();
+
+        더미이슈.generateId();
 
         return 지라이슈_검색엔진.인덱스_추가하기(더미이슈);
     }
