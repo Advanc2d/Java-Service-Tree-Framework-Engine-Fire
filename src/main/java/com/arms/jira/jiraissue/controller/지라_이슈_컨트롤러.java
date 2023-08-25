@@ -84,16 +84,4 @@ public class 지라_이슈_컨트롤러 {
         return 지라_이슈_전략_호출.이슈_삭제_라벨_처리하기(연결_아이디, 이슈_키_또는_아이디);
     }
 
-    @ResponseBody
-    @RequestMapping(
-            value = {"/connect/{issueKeyOrId}"},
-            method = {RequestMethod.PUT}
-    )
-    public Map<String,Object> 이슈_연결_링크_및_서브테스크_가져오기(@PathVariable("connectId") Long 연결_아이디,
-                                                          @PathVariable("issueKeyOrId") String 이슈_키_또는_아이디,
-                                                          ModelMap model, HttpServletRequest request) throws Exception {
-        로그.info("지라 이슈 연결 링크와 서브테스크 가져오기");
-
-        return 지라_이슈_전략_호출.이슈_연결_링크_및_서브테스크_가져오기(연결_아이디, 이슈_키_또는_아이디);
-    }
 }

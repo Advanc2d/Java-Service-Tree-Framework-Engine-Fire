@@ -3,10 +3,7 @@ package com.arms.jira.jiraissue.strategy;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.JiraInfo;
 import com.arms.jira.jiraissue.dao.지라_이슈_저장소;
-import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
-import com.arms.jira.jiraissue.model.지라_이슈_생성_데이터_전송_객체;
-import com.arms.jira.jiraissue.model.지라_이슈_엔티티;
-import com.arms.jira.jiraissue.model.지라_이슈_필드_데이터_전송_객체;
+import com.arms.jira.jiraissue.model.*;
 import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
 import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
 import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
@@ -26,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전략 {
+public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_전략<T> {
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
@@ -40,7 +37,7 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
     private 지라_이슈_저장소 지라_이슈_저장소;
 
     @Override
-    public List<지라_이슈_데이터_전송_객체> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
+    public List<지라_이슈_데이터_전송_객체<T>> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
         JiraInfoDTO info = jiraInfo.checkInfo(연결_아이디);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
@@ -53,7 +50,7 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
         Set<String> 필드 = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
-        List<지라_이슈_데이터_전송_객체> 프로젝트_이슈_목록 = new ArrayList<>();
+        List<지라_이슈_데이터_전송_객체<T>> 프로젝트_이슈_목록 = new ArrayList<>();
         while (true) {
             SearchResult 프로젝트_이슈_검색결과 = restClient.getSearchClient()
                     .searchJql(조회대상_프로젝트, 검색_끝_지점, 검색_시작_지점, 필드)
@@ -112,7 +109,7 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
 //            return null;
 //        }
 
-        지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+        지라_이슈_필드_데이터_전송_객체<String> 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
         if (필드_데이터 == null) {
             /* ***
              * 수정사항: 에러 처리 필요
@@ -204,7 +201,7 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
         Map<String, Object> 결과 = new HashMap<>();
 
         try {
-            지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+            지라_이슈_필드_데이터_전송_객체<String> 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
             if (필드_데이터.getProject() != null || 필드_데이터.getIssuetype() != null || 필드_데이터.getReporter() != null ||
                 필드_데이터.getAssignee() != null || 필드_데이터.getIssuelinks() != null || 필드_데이터.getSubtasks() != null ||
                 필드_데이터.getPriority() != null || 필드_데이터.getStatus() != null || 필드_데이터.getResolution() != null) {
@@ -274,12 +271,6 @@ public class 온프레미스_지라_이슈_전략 implements 지라_이슈_전�
         return 반환할_결과맵;
 
     }
-
-    @Override
-    public Map<String, Object> 이슈_연결_링크_및_서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
-        return null;
-    }
-
 
     private 지라_이슈_데이터_전송_객체 지라_이슈_데이터_전송_객체로_변환(Issue 지라_이슈) {
 
