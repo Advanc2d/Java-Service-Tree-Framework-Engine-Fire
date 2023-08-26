@@ -4,6 +4,7 @@
 package com.arms.config;
 
 import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,9 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @ComponentScan(basePackages = { "com.arms.elasticsearch" })
 public class ElasticsearchClientConfig extends AbstractElasticsearchConfiguration {
 
+	@Value("${elasticsearch.url}")
+	public String elasticsearchUrl;
+
 	@Override
 	@Bean
 	@SuppressWarnings("deprecation")
@@ -31,7 +35,7 @@ public class ElasticsearchClientConfig extends AbstractElasticsearchConfiguratio
 		final ClientConfiguration clientConfiguration =
 				ClientConfiguration
 				.builder()
-				.connectedTo("313.co.kr:9200")
+				.connectedTo(elasticsearchUrl)
 				.withConnectTimeout(30000)
 				.withSocketTimeout(30000)
 				.build();

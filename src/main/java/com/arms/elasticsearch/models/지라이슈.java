@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 public class 지라이슈 {
 
     @Id
+    @Field(type = FieldType.Keyword)
     private String id; // Elasticsearch의 문서 식별자
 
     public void generateId() {
@@ -44,7 +45,16 @@ public class 지라이슈 {
     @Field(type = FieldType.Text, name = "self")
     private String self;
 
+    @Field(type = FieldType.Boolean, name = "isReq")
+    private Boolean isReq;
 
+    @Field(type = FieldType.Auto, name = "etc")
+    private Object etc;
+
+    @Field(type = FieldType.Percolator, name = "queries")
+    private List<String> percolatorQueries;
+
+    @Field(type = FieldType.Nested)
     private 지라이슈.프로젝트 project;
 
     @Getter

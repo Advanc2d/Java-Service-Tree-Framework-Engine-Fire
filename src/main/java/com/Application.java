@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -21,6 +22,7 @@ import java.util.*;
 @EnableSwagger2
 @SpringBootApplication
 @Slf4j
+@EnableAspectJAutoProxy
 public class Application {
 
 	private static final String COMMA_DELIMITER = ",";

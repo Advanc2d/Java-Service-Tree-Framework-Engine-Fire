@@ -40,3 +40,6 @@ cloud:
 
 app:
   jiraUrl: https://api.atlassian.com/ex/jira/
+
+elasticsearch:
+  url: 313.co.kr:9200

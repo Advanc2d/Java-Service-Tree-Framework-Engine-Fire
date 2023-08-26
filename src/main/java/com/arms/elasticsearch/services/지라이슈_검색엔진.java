@@ -25,7 +25,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
 
     @Override
-    public 지라이슈 인덱스_추가하기(지라이슈 지라이슈) {
+    public 지라이슈 이슈_추가하기(지라이슈 지라이슈) {
 
 
         if (지라이슈저장소 == null) {
@@ -43,5 +43,12 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
         return 결과;
     }
+
+    @Override
+    public 지라이슈 이슈_검색하기(String 검색어) {
+        return 지라이슈저장소.findById(검색어).orElse(null);
+    }
+
+
 }
 
