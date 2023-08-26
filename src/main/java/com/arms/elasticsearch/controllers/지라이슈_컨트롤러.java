@@ -1,7 +1,7 @@
 package com.arms.elasticsearch.controllers;
 
 import com.arms.elasticsearch.models.지라이슈;
-import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
+import com.arms.elasticsearch.util.SearchDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.arms.elasticsearch.services.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/engine/jira/{connectId}/issue")
@@ -49,13 +50,23 @@ public class 지라이슈_컨트롤러 {
 
     @ResponseBody
     @GetMapping("/get/{reqProjectKey}/{reqIssueKey}")
-    public 지라이슈 요구사항이슈_검색(@PathVariable("connectId") Long 지라서버_아이디, 
+    public 지라이슈 요구사항이슈_조회(@PathVariable("connectId") Long 지라서버_아이디,
                           @PathVariable final String 지라프로젝트_키, 
                           @PathVariable final String 지라이슈_키) {
 
-        String 검색어 = 지라서버_아이디 + "_" + 지라프로젝트_키 + "_" + 지라이슈_키;
+        String 조회조건_아이디 = 지라서버_아이디 + "_" + 지라프로젝트_키 + "_" + 지라이슈_키;
 
-        return 지라이슈_검색엔진.이슈_검색하기(검색어);
+        return 지라이슈_검색엔진.이슈_조회하기(조회조건_아이디);
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/search"},
+            method = {RequestMethod.POST}
+    )
+    public List<지라이슈> 요구사항이슈_검색(@RequestBody final SearchDTO 검색조건) {
+
+        return 지라이슈_검색엔진.이슈_검색하기(검색조건);
     }
 
 }

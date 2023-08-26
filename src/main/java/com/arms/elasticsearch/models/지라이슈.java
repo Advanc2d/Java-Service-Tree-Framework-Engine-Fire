@@ -1,26 +1,22 @@
 package com.arms.elasticsearch.models;
 
+import com.arms.elasticsearch.helper.인덱스자료;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Date;
 import java.util.List;
 import org.springframework.data.annotation.Id;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
 @AllArgsConstructor
 @Getter
 @Setter
-@Document(indexName = "jiraissue")
+@Document(indexName = 인덱스자료.지라이슈_인덱스명)
 public class 지라이슈 {
 
     @Id

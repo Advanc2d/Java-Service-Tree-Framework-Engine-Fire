@@ -1,6 +1,6 @@
 package com.arms.elasticsearch.util;
 
-public class PagedRequestDTO {
+public class PagedDTO {
     private static final int DEFAULT_SIZE = 100;
 
     private int page;

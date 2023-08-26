@@ -11,7 +11,7 @@ import java.util.List;
 public final  class 검색유틸 {
 
     public static SearchRequest buildSearchRequest(final String indexName,
-                                                   final SearchRequestDTO dto) {
+                                                   final SearchDTO dto) {
         try {
             final int page = dto.getPage();
             final int size = dto.getSize();
@@ -57,7 +57,7 @@ public final  class 검색유틸 {
     }
 
     public static SearchRequest buildSearchRequest(final String indexName,
-                                                   final SearchRequestDTO dto,
+                                                   final SearchDTO dto,
                                                    final Date date) {
         try {
             final QueryBuilder searchQuery = getQueryBuilder(dto);
@@ -87,7 +87,7 @@ public final  class 검색유틸 {
         }
     }
 
-    private static QueryBuilder getQueryBuilder(final SearchRequestDTO dto) {
+    private static QueryBuilder getQueryBuilder(final SearchDTO dto) {
         if (dto == null) {
             return null;
         }
