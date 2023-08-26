@@ -40,21 +40,31 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
     @Override
     public 지라이슈 이슈_추가하기(지라이슈 지라이슈) {
 
-
-        if (지라이슈저장소 == null) {
-
-            log.info("check");
-        }else{
-
-            if( 지라이슈 == null ){
-                log.info("fire");
-            }
-
-        }
-
         지라이슈 결과 = 지라이슈저장소.save(지라이슈);
-
         return 결과;
+    }
+
+    @Override
+    public 지라이슈 이슈_갱신하기(지라이슈 지라_이슈) {
+
+        지라이슈 이슈 = 이슈_조회하기(지라_이슈.getId());
+
+        지라이슈 결과 = 지라이슈저장소.save(이슈);
+        return 결과;
+    }
+
+    @Override
+    public 지라이슈 이슈_삭제하기(지라이슈 지라_이슈) {
+
+        지라이슈 이슈 = 이슈_조회하기(지라_이슈.getId());
+        log.info("왠만하면 쓰지 마시지...");
+
+        if( 이슈 == null ){
+            return null;
+        }else{
+            지라이슈저장소.delete(이슈);
+            return 이슈;
+        }
     }
 
     @Override
