@@ -14,9 +14,21 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.xcontent.XContentType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -105,6 +117,60 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Collections.emptyList();
+        }
+    }
+
+    public List<지라이슈> getAllCreatedSince(final Date date) {
+        final SearchRequest request = 검색유틸.buildSearchRequest(
+                인덱스자료.지라이슈_인덱스명,
+                "created",
+                date
+        );
+
+        return searchInternal(request);
+    }
+
+    public List<지라이슈> searchCreatedSince(final SearchDTO dto, final Date date) {
+        final SearchRequest request = 검색유틸.buildSearchRequest(
+                인덱스자료.지라이슈_인덱스명,
+                dto,
+                date
+        );
+
+        return searchInternal(request);
+    }
+
+    public Boolean index(final 지라이슈 지라_이슈) {
+        try {
+            final String vehicleAsString = MAPPER.writeValueAsString(지라_이슈);
+
+            final IndexRequest request = new IndexRequest(인덱스자료.지라이슈_인덱스명);
+            request.id(지라_이슈.getId());
+            request.source(vehicleAsString, XContentType.JSON);
+
+            final IndexResponse response = client.index(request, RequestOptions.DEFAULT);
+
+            return response != null && response.status().equals(RestStatus.OK);
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    public 지라이슈 getById(final String 이슈_아이디) {
+        try {
+            final GetResponse documentFields = client.get(
+                    new GetRequest(인덱스자료.지라이슈_인덱스명, 이슈_아이디),
+                    RequestOptions.DEFAULT
+            );
+            if (documentFields == null || documentFields.isSourceEmpty()) {
+                return null;
+            }
+
+            return MAPPER.readValue(documentFields.getSourceAsString(), 지라이슈.class);
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 
