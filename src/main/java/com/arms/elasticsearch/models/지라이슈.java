@@ -1,7 +1,7 @@
 package com.arms.elasticsearch.models;
 
 import com.arms.elasticsearch.helper.인덱스자료;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -17,11 +17,17 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Setter
 @Document(indexName = 인덱스자료.지라이슈_인덱스명)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "_class")
+@JsonTypeName("com.arms.elasticsearch.models.지라이슈")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class 지라이슈 {
 
     @Id
     @Field(type = FieldType.Keyword)
     private String id; // Elasticsearch의 문서 식별자
+
+    public 지라이슈() {
+    }
 
     public void generateId() {
         if (timestamp == null) {
@@ -62,15 +68,19 @@ public class 지라이슈 {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class 프로젝트 {
         @Field(type = FieldType.Text, name = "project_self")
+        @JsonProperty("project_self")
         private String self;
 
         @Field(type = FieldType.Text, name = "project_id")
+        @JsonProperty("project_id")
         private String id;
 
         @Field(type = FieldType.Text, name = "project_key")
+        @JsonProperty("project_key")
         private String key;
 
         @Field(type = FieldType.Text, name = "project_name")
+        @JsonProperty("project_name")
         private String name;
     }
 
