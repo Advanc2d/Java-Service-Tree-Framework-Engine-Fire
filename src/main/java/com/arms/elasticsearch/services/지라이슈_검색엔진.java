@@ -135,12 +135,12 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         return searchInternal(request);
     }
 
-    public Boolean index(final 지라이슈 지라이슈) {
+    public Boolean index(final 지라이슈 지라_이슈) {
         try {
-            final String vehicleAsString = MAPPER.writeValueAsString(지라이슈);
+            final String vehicleAsString = MAPPER.writeValueAsString(지라_이슈);
 
             final IndexRequest request = new IndexRequest(인덱스자료.지라이슈_인덱스명);
-            request.id(지라이슈.getId());
+            request.id(지라_이슈.getId());
             request.source(vehicleAsString, XContentType.JSON);
 
             final IndexResponse response = client.index(request, RequestOptions.DEFAULT);
