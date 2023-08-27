@@ -109,8 +109,8 @@ public class JiraInfoImpl implements JiraInfo {
         JiraInfoDTO info = loadConnectInfo(connectId);
 
         if (info == null) {
-            logger.info("비정상적이 정보가 조회되었습니다.");
-            throw new IllegalArgumentException("비정상적이 정보가 조회되었습니다.");
+            logger.info("비정상적인 정보가 조회되었습니다.");
+            throw new IllegalArgumentException("비정상적인 정보가 조회되었습니다.");
         }
 
         if(info.getUserId() == null){
