@@ -68,7 +68,7 @@ public class OnPremiseJiraIssueTest {
     public SearchResult getIssueListByIssueTypeName(String issueTypeName) throws Exception {
 
         String jql = "issuetype = " + issueTypeName;
-        int maxResults = 1000;
+        int maxResult = 50;
         int startAt = 0;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
@@ -78,12 +78,12 @@ public class OnPremiseJiraIssueTest {
 
         do {
             searchResult = restClient.getSearchClient()
-                    .searchJql(jql, maxResults, startAt, fields)
+                    .searchJql(jql, maxResult, startAt, fields)
                     .get();
             for (Issue issue : searchResult.getIssues()) {
                 allIssues.add(issue);
             }
-            startAt += maxResults;
+            startAt += maxResult;
         } while (searchResult.getTotal() > startAt);
 
         // 변환을 위한 ObjectMapper 생성

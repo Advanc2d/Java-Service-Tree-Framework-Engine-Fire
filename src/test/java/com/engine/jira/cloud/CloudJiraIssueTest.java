@@ -9,28 +9,48 @@ import com.arms.jira.cloud.jiraissuepriority.model.Priority;
 import com.arms.jira.cloud.jiraissuepriority.model.PrioritySearchDTO;
 import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
 import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
+import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class CloudJiraIssueTest {
+    private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
+
     WebClient webClient;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     public String baseUrl = "https://advanc2d.atlassian.net";
     public String id = "gkfn185@gmail.com";
     public String pass = "ATATT3xFfGF0OhyPJU1DlcjJmtsZBXsuXPmet-VBfz07AN6R_vGsV6rOeO6loKVV7iEBsMsmW0WPO4vpPokpcRR_QMrpHi9VJtWdLDLKrhG27j6aGFCeQh5_0sDjWjK45jcJsmQ606vB2Mt9ZYfSAdrRRjlUHceqBiU_Mq7--spJIpAOy7Wi0w4=0122341F";
-    public String projectKeyOrId = "ADVANC2D";
-    public String issueKeyOrId = projectKeyOrId + "-46";
+
+    public String projectKeyOrId = "WM";
+    public String issueKeyOrId = projectKeyOrId + "-3";
 
     @BeforeEach
     void setUp () {
@@ -304,7 +324,7 @@ public class CloudJiraIssueTest {
     }
 
     public PrioritySearchDTO getPriority() {
-        int maxResult = 1048576;
+        int maxResult = 50;
         int startAt = 0;
         int index= 1;
         boolean checkLast = false;
@@ -351,7 +371,7 @@ public class CloudJiraIssueTest {
     }
 
     public ResolutionSearchDTO getResoltuionList() {
-        int maxResult = 1048576;
+        int maxResult = 50;
         int startAt = 0;
         int index= 1;
         boolean checkLast = false;
@@ -385,5 +405,157 @@ public class CloudJiraIssueTest {
         result.setValues(values);
 
         return result;
+    }
+
+    @Test
+    @DisplayName("이슈 조회 스트림 처리 후 DTO 변경하기")
+    public void IssueCallTest() throws JsonProcessingException {
+        String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId;
+//        String endpoint = "/rest/api/3/project/" + projectKeyOrId;
+//        webClient.get()
+//                .uri(endpoint)
+//                .accept(MediaType.APPLICATION_STREAM_JSON)
+//                .retrieve()
+//                .bodyToMono(지라_이슈_데이터_전송_객체.class)
+//                .subscribe(result -> {
+//                    System.out.println("result = " + result);
+//                    // 추가적인 로직...
+//                });
+
+        String result = get(webClient, endpoint)
+                        .reduce("", (s1, s2) -> s1 + s2)
+                        .block();
+
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Object object = null;
+        try {
+            JavaType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, 지라_이슈_데이터_전송_객체.class);
+            object = objectMapper.readValue(result.trim(), javaType);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert JSON to List of DTO due to JsonProcessingException: " + e.getMessage(), e);
+        }
+
+        System.out.println("result = " + object.toString());
+    }
+
+    public Flux<String> get(WebClient webClient, String uri) {
+        return webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToFlux(DataBuffer.class)
+                .map(dataBuffer -> {
+                    System.out.println(dataBuffer.readableByteCount());
+                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                    System.out.println("bytes = " + bytes.length);
+                    dataBuffer.read(bytes);
+                    DataBufferUtils.release(dataBuffer);
+                    return new String(bytes, StandardCharsets.UTF_8);
+                });
+    }
+
+    public <T> Flux<?> callApiAndProcessResponse(String apiUrl, Class<T> dtoClass, boolean isList) {
+        return get(webClient, apiUrl)
+                .map(chunk -> convertToDtoOrListOfDto(chunk, dtoClass, isList)); // 각 청크를 DTO 또는 List<DTO>로 변환
+    }
+
+    private <T> Object convertToDtoOrListOfDto(String chunk, Class<T> dtoClass, boolean isList) {
+
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            if (isList) {
+                JavaType javaType =
+                        objectMapper.getTypeFactory().constructCollectionType(List.class,
+                                dtoClass);
+
+                // JSON 문자열을 List<DTO> 객체로 변환
+                return objectMapper.readValue(chunk.trim(), javaType);
+            } else {
+
+                // JSON 문자열을 DTO 객체로 변환
+                return objectMapper.readValue(chunk.trim(), dtoClass);
+            }
+
+        } catch (JsonProcessingException e) {
+
+            throw new RuntimeException(
+                    "Failed to convert chunk to DTO or List of DTO due to JsonProcessingException: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert chunk to DTO or List of DTO: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    @DisplayName("이슈 조회 스트림 처리 테스트")
+    public void IssueStreamCallTest() throws IOException, InterruptedException {
+
+        String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
+
+        InputStream inputStream = getResponseAsInputStream(webClient, endpoint);
+        String content = readContentFromPipedInputStream((PipedInputStream) inputStream);
+        System.out.println(content);
+        로그.info("response content: \n{}", content.replace("}", "}\n"));
+    }
+
+    public InputStream getResponseAsInputStream(WebClient client, String url) throws IOException, InterruptedException {
+
+        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+        PipedInputStream pipedInputStream = new PipedInputStream(1024 * 10);
+        pipedInputStream.connect(pipedOutputStream);
+
+        Flux<DataBuffer> body = client.get()
+                .uri(url)
+                .exchangeToFlux(clientResponse -> {
+                    return clientResponse.body(BodyExtractors.toDataBuffers());
+                })
+                .doOnError(error -> {
+                    로그.error("error occurred while reading body", error);
+                })
+                .doFinally(s -> {
+                    try {
+                        pipedOutputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .doOnCancel(() -> {
+                    로그.error("Get request is cancelled");
+                });
+
+        DataBufferUtils.write(body, pipedOutputStream)
+                .log("Writing to output buffer")
+                .subscribe();
+
+        return pipedInputStream;
+    }
+
+    private String readContentFromPipedInputStream(PipedInputStream stream) throws IOException {
+        StringBuffer contentStringBuffer = new StringBuffer();
+        try {
+            Thread pipeReader = new Thread(() -> {
+                try {
+                    contentStringBuffer.append(readContent(stream));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            pipeReader.start();
+            pipeReader.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            stream.close();
+        }
+
+        return String.valueOf(contentStringBuffer);
+    }
+
+    private String readContent(InputStream stream) throws IOException {
+        StringBuffer contentStringBuffer = new StringBuffer();
+        byte[] tmp = new byte[stream.available()];
+        int byteCount = stream.read(tmp, 0, tmp.length);
+        로그.info(String.format("read %d bytes from the stream\n", byteCount));
+        contentStringBuffer.append(new String(tmp));
+        return String.valueOf(contentStringBuffer);
     }
 }

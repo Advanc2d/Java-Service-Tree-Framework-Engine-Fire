@@ -48,7 +48,7 @@ public class CloudJiraIssueTypeSchemeTest {
     @Test
     @DisplayName("매핑된 issueTypeScheme에 따르는 issueTypeId 전체 조회 api 호출 테스트")
     public void EachIssueTypeSchemeMappingIssueTypeIdCallTest() throws Exception {
-        int maxResult = 10;
+        int maxResult = 50;
         int startAt = 0;
         int index=1;
         boolean checkLast = false;
