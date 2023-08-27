@@ -37,8 +37,7 @@ public final class 검색유틸 {
         this.client = client;
     }
 
-
-    public List<지라이슈> searchInternal(final SearchRequest request) {
+    public <T> List<T>  searchInternal(final SearchRequest request,Class<T> valueType) {
         if (request == null) {
             log.error("Failed to build search request");
             return Collections.emptyList();
@@ -48,12 +47,12 @@ public final class 검색유틸 {
             final SearchResponse response = client.search(request, RequestOptions.DEFAULT);
 
             final SearchHit[] searchHits = response.getHits().getHits();
-            final List<지라이슈> vehicles = new ArrayList<>(searchHits.length);
+            final List<T> vehicles = new ArrayList<>(searchHits.length);
 
             for (SearchHit hit : searchHits) {
 
                 vehicles.add(
-                        MAPPER.readValue(hit.getSourceAsString(), 지라이슈.class)
+                        MAPPER.readValue(hit.getSourceAsString(), valueType)
                 );
             }
 
@@ -64,24 +63,25 @@ public final class 검색유틸 {
         }
     }
 
-    public List<지라이슈> getAllCreatedSince(final Date date) {
-        final SearchRequest request = 검색유틸.buildSearchRequest(
+
+    public <T> List<T>  getAllCreatedSince(final Date date,Class<T> valueType) {
+        final SearchRequest request = this.buildSearchRequest(
                 인덱스자료.지라이슈_인덱스명,
                 "created",
                 date
         );
 
-        return searchInternal(request);
+        return searchInternal(request,valueType);
     }
 
-    public List<지라이슈> searchCreatedSince(final SearchDTO dto, final Date date) {
+    public <T> List<T>  searchCreatedSince(final SearchDTO dto, final Date date,Class<T> valueType) {
         final SearchRequest request = 검색유틸.buildSearchRequest(
                 인덱스자료.지라이슈_인덱스명,
                 dto,
                 date
         );
 
-        return searchInternal(request);
+        return searchInternal(request,valueType);
     }
 
     public Boolean index(final 지라이슈 지라_이슈) {
@@ -101,7 +101,7 @@ public final class 검색유틸 {
         }
     }
 
-    public 지라이슈 getById(final String 이슈_아이디) {
+    public <T> T getById(final String 이슈_아이디,Class<T> valueType) {
         try {
             final GetResponse documentFields = client.get(
                     new GetRequest(인덱스자료.지라이슈_인덱스명, 이슈_아이디),
@@ -111,7 +111,7 @@ public final class 검색유틸 {
                 return null;
             }
 
-            return MAPPER.readValue(documentFields.getSourceAsString(), 지라이슈.class);
+            return MAPPER.readValue(documentFields.getSourceAsString(), valueType);
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
             return null;

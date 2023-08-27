@@ -71,7 +71,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                 검색조건
         );
 
-        return 검색유틸.searchInternal(request);
+        return 검색유틸.searchInternal(request,지라이슈.class);
     }
 
 
