@@ -37,6 +37,13 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
     }
 
     @Override
+    public Iterable<지라이슈> 이슈_한꺼번에_추가하기(List<지라이슈> 지라이슈_리스트) {
+
+        Iterable<지라이슈> 결과 = 지라이슈저장소.saveAll(지라이슈_리스트);
+        return 결과;
+    }
+
+    @Override
     public 지라이슈 이슈_갱신하기(지라이슈 지라_이슈) {
 
         지라이슈 이슈 = 이슈_조회하기(지라_이슈.getId());
