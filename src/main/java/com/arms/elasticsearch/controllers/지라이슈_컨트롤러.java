@@ -2,6 +2,8 @@ package com.arms.elasticsearch.controllers;
 
 import com.arms.elasticsearch.models.지라이슈;
 import com.arms.elasticsearch.util.SearchDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/engine/jira/{connectId}/issue")
+@Slf4j
 public class 지라이슈_컨트롤러 {
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
@@ -51,10 +54,12 @@ public class 지라이슈_컨트롤러 {
     @ResponseBody
     @GetMapping("/get/{reqProjectKey}/{reqIssueKey}")
     public 지라이슈 요구사항이슈_조회(@PathVariable("connectId") Long 지라서버_아이디,
-                          @PathVariable final String 지라프로젝트_키, 
-                          @PathVariable final String 지라이슈_키) {
+                          @PathVariable("reqProjectKey") String 지라프로젝트_키,
+                          @PathVariable("reqIssueKey") String 지라이슈_키) {
 
-        String 조회조건_아이디 = 지라서버_아이디 + "_" + 지라프로젝트_키 + "_" + 지라이슈_키;
+        String 조회조건_아이디 = Long.toString(지라서버_아이디) + "_" + 지라프로젝트_키 + "_" + 지라이슈_키;
+
+        log.info("조회조건_아이디 = " + 조회조건_아이디);
 
         return 지라이슈_검색엔진.이슈_조회하기(조회조건_아이디);
     }
