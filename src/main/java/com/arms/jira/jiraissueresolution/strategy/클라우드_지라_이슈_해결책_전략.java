@@ -29,7 +29,7 @@ public class 클라우드_지라_이슈_해결책_전략 implements 지라_이�
         JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        int maxResult = 1048576;
+        int maxResult = 50;
         int startAt = 0;
         boolean checkLast = false;
 

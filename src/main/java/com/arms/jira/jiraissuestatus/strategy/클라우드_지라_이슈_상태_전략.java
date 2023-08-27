@@ -34,7 +34,7 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
         JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        int maxResult = 200;
+        int maxResult = 50;
         int startAt = 0;
         boolean checkLast = false;
 
@@ -71,7 +71,7 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
         JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        int maxResult = 200;
+        int maxResult = 50;
         int startAt = 0;
         boolean checkLast = false;
 

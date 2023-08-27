@@ -365,7 +365,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
     public CloudJiraIssueSearchDTO getIssueListByIssueTypeName(Long connectId, String issueTypName) {
         int startAt = 0;
-        int maxResults = 10;
+        int maxResults = 50;
         boolean isLast = false;
 
         JiraInfoDTO found = jiraInfo.checkInfo(connectId);

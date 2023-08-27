@@ -129,7 +129,7 @@ public class OnPremiseIssueSchedulerTest {
     public SearchResult getIssueListByIssueTypeName(String issueTypeName) throws Exception {
 
         String jql = "issuetype = " + issueTypeName;
-        int maxResults = 1000;
+        int maxResults = 50;
         int startAt = 0;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
