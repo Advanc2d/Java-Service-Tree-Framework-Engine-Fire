@@ -14,11 +14,30 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.elasticsearch.index.query.ExistsQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +50,14 @@ public final class 검색엔진_유틸 {
 
     private final RestHighLevelClient client;
 
+    private final ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    public 검색엔진_유틸(RestHighLevelClient client, ElasticsearchRestTemplate elasticsearchRestTemplate) {
+        this.client = client;
+        this.elasticsearchRestTemplate = elasticsearchRestTemplate;
+    }
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public 검색엔진_유틸(RestHighLevelClient client) {
-        this.client = client;
-    }
 
     public <T> List<T>  searchInternal(final SearchRequest request,Class<T> valueType) {
         if (request == null) {
@@ -63,6 +85,57 @@ public final class 검색엔진_유틸 {
         }
     }
 
+    public Map<String, Long> 특정필드의_값들을_그룹화하여_빈도수가져오기(String indexName, String groupByField) throws IOException {
+        SearchRequest searchRequest = new SearchRequest(indexName);
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        searchSourceBuilder.aggregation(
+                AggregationBuilders.terms("group_by")
+                        .field(groupByField)
+                        .size(100)  // Change the size as needed
+        );
+        searchRequest.source(searchSourceBuilder);
+
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+
+        ParsedStringTerms groupByAgg = searchResponse.getAggregations().get("group_by");
+        Map<String, Long> result = new HashMap<>();
+
+        for (Terms.Bucket bucket : groupByAgg.getBuckets()) {
+            String groupValue = bucket.getKeyAsString();
+            long docCount = bucket.getDocCount();
+            result.put(groupValue, docCount);
+        }
+
+        return result;
+    }
+
+    public List<검색결과> 특정필드_검색후_다른필드_그룹결과(String 인덱스이름, String 특정필드, String 특정필드검색어, String 그룹할필드) throws IOException {
+        SearchRequest searchRequest = new SearchRequest(인덱스이름);
+
+        ExistsQueryBuilder existsQuery = QueryBuilders.existsQuery(특정필드);
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(existsQuery).filter(QueryBuilders.termQuery(특정필드, 특정필드검색어));
+        searchRequest.source().query(boolQuery);
+
+        TermsAggregationBuilder termsAggregation = AggregationBuilders.terms("group_by_" + 특정필드)
+                .field(그룹할필드)
+                .size(1000); // Change the size as needed
+        searchRequest.source().aggregation(termsAggregation);
+
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+
+        List<검색결과> groupedCounts = new ArrayList<>();
+        Terms terms = searchResponse.getAggregations().get("group_by_" + 특정필드);
+        for (Terms.Bucket bucket : terms.getBuckets()) {
+            String bValue = bucket.getKeyAsString();
+            long count = bucket.getDocCount();
+            groupedCounts.add(new 검색결과(bValue, count));
+        }
+
+        return groupedCounts;
+    }
+
 
     public <T> List<T>  getAllCreatedSince(final Date date,Class<T> valueType) {
         final SearchRequest request = this.buildSearchRequest(
@@ -74,7 +147,7 @@ public final class 검색엔진_유틸 {
         return searchInternal(request,valueType);
     }
 
-    public <T> List<T>  searchCreatedSince(final SearchDTO dto, final Date date,Class<T> valueType) {
+    public <T> List<T>  searchCreatedSince(final 검색조건 dto, final Date date, Class<T> valueType) {
         final SearchRequest request = 검색엔진_유틸.buildSearchRequest(
                 인덱스자료.지라이슈_인덱스명,
                 dto,
@@ -119,7 +192,7 @@ public final class 검색엔진_유틸 {
     }
 
     public static SearchRequest buildSearchRequest(final String indexName,
-                                                   final SearchDTO dto) {
+                                                   final 검색조건 dto) {
         try {
             final int page = dto.getPage();
             final int size = dto.getSize();
@@ -165,7 +238,7 @@ public final class 검색엔진_유틸 {
     }
 
     public static SearchRequest buildSearchRequest(final String indexName,
-                                                   final SearchDTO dto,
+                                                   final 검색조건 dto,
                                                    final Date date) {
         try {
             final QueryBuilder searchQuery = getQueryBuilder(dto);
@@ -195,7 +268,7 @@ public final class 검색엔진_유틸 {
         }
     }
 
-    private static QueryBuilder getQueryBuilder(final SearchDTO dto) {
+    private static QueryBuilder getQueryBuilder(final 검색조건 dto) {
         if (dto == null) {
             return null;
         }

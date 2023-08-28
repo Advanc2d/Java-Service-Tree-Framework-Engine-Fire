@@ -1,6 +1,6 @@
 package com.arms.elasticsearch.util;
 
-public class PagedDTO {
+public class 검색조건_페이징 {
     private static final int DEFAULT_SIZE = 100;
 
     private int page;

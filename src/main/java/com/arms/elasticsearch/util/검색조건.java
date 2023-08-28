@@ -5,7 +5,7 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import java.util.List;
 
-public class SearchDTO extends PagedDTO {
+public class 검색조건 extends 검색조건_페이징 {
     private List<String> fields;
     private String searchTerm;
     private String sortBy;
