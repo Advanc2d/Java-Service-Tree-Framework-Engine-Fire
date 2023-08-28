@@ -1,5 +1,6 @@
 package com.engine.jira.cloud;
 
+import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
@@ -10,6 +11,8 @@ import com.arms.jira.cloud.jiraissuepriority.model.PrioritySearchDTO;
 import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
 import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
 import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
+import com.arms.jira.jiraissue.model.클라우드_지라_이슈_조회_데이터_전송_객체;
+import com.arms.jira.jiraissue.model.클라우드_지라_이슈_필드_데이터_전송_객체;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -51,6 +54,10 @@ public class CloudJiraIssueTest {
 
     public String projectKeyOrId = "WM";
     public String issueKeyOrId = projectKeyOrId + "-3";
+
+    // public String fieldsParam = "&fields=-subtasks,-issuelinks,-description";
+
+    public String fieldsParam = "&fields=issuetype,project,resolutiondate,watches,created,priority,labels,versions,assignee,status,creator,reporter";
 
     @BeforeEach
     void setUp () {
@@ -407,6 +414,9 @@ public class CloudJiraIssueTest {
         return result;
     }
 
+    /* ***
+    *  스트림 처리 부분
+    *** */
     @Test
     @DisplayName("이슈 조회 스트림 처리 후 DTO 변경하기")
     public void IssueCallTest() throws JsonProcessingException {
@@ -425,17 +435,10 @@ public class CloudJiraIssueTest {
         String result = get(webClient, endpoint)
                         .reduce("", (s1, s2) -> s1 + s2)
                         .block();
+        List<지라_이슈_데이터_전송_객체> list =
+                objectMapper.readValue(result, List.class);
 
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        Object object = null;
-        try {
-            JavaType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, 지라_이슈_데이터_전송_객체.class);
-            object = objectMapper.readValue(result.trim(), javaType);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to convert JSON to List of DTO due to JsonProcessingException: " + e.getMessage(), e);
-        }
-
-        System.out.println("result = " + object.toString());
+        System.out.println("result = " + list.toString());
     }
 
     public Flux<String> get(WebClient webClient, String uri) {
@@ -557,5 +560,79 @@ public class CloudJiraIssueTest {
         로그.info(String.format("read %d bytes from the stream\n", byteCount));
         contentStringBuffer.append(new String(tmp));
         return String.valueOf(contentStringBuffer);
+    }
+
+    @Test
+    @DisplayName("이슈링크_가져오기")
+    public void IssueLinkCallTest() {
+        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> result = 이슈링크_가져오기(issueKeyOrId);
+
+        System.out.println("result.toString() = " + result.toString());
+
+    }
+
+    List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_가져오기(String 이슈_키_또는_아이디) {
+        int 검색_시작_지점 = 0;
+        int 검색_최대_개수 = 50;
+        boolean isLast = false;
+
+        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_목록 = new ArrayList<>(); // 이슈 저장
+
+        while (!isLast) {
+            String endpoint = "/rest/api/3/search?jql=issue in linkedIssues(" + 이슈_키_또는_아이디 + ")" +fieldsParam
+                    + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
+
+            클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
+                    = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+
+            이슈링크_목록.addAll(서브테스크_조회결과.getIssues());
+
+            if (서브테스크_조회결과.getTotal() == 이슈링크_목록.size()) {
+                isLast = true;
+            }else{
+                검색_시작_지점 += 검색_최대_개수;
+            }
+        }
+
+        System.out.println(이슈링크_목록.toString());
+
+        return 이슈링크_목록;
+    }
+
+    @Test
+    @DisplayName("서브테스크_가져오기")
+    public void SubtaskCallTest() {
+        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> result = 서브테스크_가져오기(issueKeyOrId);
+
+        System.out.println("result.toString() = " + result.toString());
+    }
+
+    List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 서브테스크_가져오기(String 이슈_키_또는_아이디) {
+
+        int 검색_시작_지점 = 0;
+        int 검색_최대_개수 = 50;
+        boolean isLast = false;
+
+        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 서브테스크_목록 = new ArrayList<>(); // 이슈 저장
+
+        while (!isLast) {
+            String endpoint = "/rest/api/3/search?jql=parent="+ 이슈_키_또는_아이디 + fieldsParam
+                            + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
+
+            클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
+                    = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+
+            서브테스크_목록.addAll(서브테스크_조회결과.getIssues());
+
+            if (서브테스크_조회결과.getTotal() == 서브테스크_목록.size()) {
+                isLast = true;
+            }else{
+                검색_시작_지점 += 검색_최대_개수;
+            }
+        }
+
+        System.out.println(서브테스크_목록.toString());
+
+        return 서브테스크_목록;
     }
 }

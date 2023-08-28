@@ -20,4 +20,8 @@ public interface 지라_이슈_전략<T> {
 
     Map<String,Object> 이슈_삭제_라벨_처리하기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception;
 
+    List<지라_이슈_데이터_전송_객체> 이슈링크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디);
+
+    List<지라_이슈_데이터_전송_객체> 서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디);
+
 }
