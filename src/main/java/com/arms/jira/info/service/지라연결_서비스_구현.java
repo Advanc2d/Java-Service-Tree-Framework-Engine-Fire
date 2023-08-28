@@ -1,6 +1,6 @@
 package com.arms.jira.info.service;
 
-import com.arms.jira.info.dao.JiraInfoJpaRepository;
+import com.arms.jira.info.dao.지라연결_저장소;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.model.JiraInfoEntity;
 import lombok.AllArgsConstructor;
@@ -17,19 +17,19 @@ import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@Service("jiraInfo")
-public class JiraInfoImpl implements JiraInfo {
+@Service("지라연결_서비스")
+public class 지라연결_서비스_구현 implements 지라연결_서비스 {
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private JiraInfoJpaRepository jiraInfoJpaRepository;
+    private 지라연결_저장소 지라연결저장소;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Transactional
     public JiraInfoDTO loadConnectInfo(Long connectId) {
-        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
+        Optional<JiraInfoEntity> optionalEntity = 지라연결저장소.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
             return null;
@@ -44,7 +44,7 @@ public class JiraInfoImpl implements JiraInfo {
 
     @Override
     public List<JiraInfoDTO> loadConnectInfos() {
-        List<JiraInfoEntity> jiraInfoEntityList = jiraInfoJpaRepository.findAll();
+        List<JiraInfoEntity> jiraInfoEntityList = 지라연결저장소.findAll();
         List<JiraInfoDTO> result = new ArrayList<>();
         for (JiraInfoEntity jiraInfoEntity : jiraInfoEntityList) {
             result.add(modelMapper.map(jiraInfoEntity, JiraInfoDTO.class));
@@ -54,7 +54,7 @@ public class JiraInfoImpl implements JiraInfo {
 
     public String getIssueTypeId(Long connectId) {
 
-        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
+        Optional<JiraInfoEntity> optionalEntity = 지라연결저장소.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
             return null;
@@ -93,11 +93,11 @@ public class JiraInfoImpl implements JiraInfo {
             jiraInfoEntity = modelMapper.map(jiraInfoDTO, JiraInfoEntity.class);
         }
 
-        return jiraInfoJpaRepository.save(jiraInfoEntity);
+        return 지라연결저장소.save(jiraInfoEntity);
     }
 
     public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity) {
-        return jiraInfoJpaRepository.save(jiraInfoEntity);
+        return 지라연결저장소.save(jiraInfoEntity);
     }
     
     /*

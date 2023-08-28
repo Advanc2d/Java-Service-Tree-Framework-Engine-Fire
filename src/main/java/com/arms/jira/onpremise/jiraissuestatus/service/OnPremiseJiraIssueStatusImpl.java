@@ -1,7 +1,7 @@
 package com.arms.jira.onpremise.jiraissuestatus.service;
 
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 
 import com.arms.jira.onpremise.jiraissuestatus.model.OnPremiseJiraIssueStatusDTO;
@@ -26,7 +26,7 @@ public class OnPremiseJiraIssueStatusImpl implements OnPremiseJiraIssueStatus {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -34,7 +34,7 @@ public class OnPremiseJiraIssueStatusImpl implements OnPremiseJiraIssueStatus {
 
     @Override
     public List<OnPremiseJiraIssueStatusDTO> getStatusList(Long connectId) throws Exception {
-        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());

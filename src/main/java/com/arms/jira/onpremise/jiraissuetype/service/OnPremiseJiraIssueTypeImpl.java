@@ -1,7 +1,7 @@
 package com.arms.jira.onpremise.jiraissuetype.service;
 
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissuetype.model.OnPremiseJiraIssueTypeDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -26,11 +26,11 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Override
     public List<OnPremiseJiraIssueTypeDTO> getOnPremiseIssueTypeListAll(Long connectId) throws Exception {
-        JiraInfoDTO jiraInfoDTO = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO jiraInfoDTO = 지라연결_서비스.checkInfo(connectId);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(jiraInfoDTO.getUri(),
                                                                 jiraInfoDTO.getUserId(),
                                                                 jiraInfoDTO.getPasswordOrToken());

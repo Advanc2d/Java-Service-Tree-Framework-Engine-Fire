@@ -5,20 +5,17 @@ import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.model.JiraInfoEntity;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service("cloudJiraIssueType")
@@ -31,14 +28,14 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     private ModelMapper modelMapper;
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Override
     public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(Long connectId) throws Exception {
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint,
@@ -54,7 +51,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint,
@@ -73,7 +70,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint,
@@ -88,7 +85,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
             jiraInfoEntity.setSelf(addCloudJirarIssueTypeDTO.getSelf());
         }
 
-        JiraInfoEntity returnEntity = jiraInfo.saveIssueTypeInfo(jiraInfoEntity);
+        JiraInfoEntity returnEntity = 지라연결_서비스.saveIssueTypeInfo(jiraInfoEntity);
 
         if (returnEntity == null) {
             return null;

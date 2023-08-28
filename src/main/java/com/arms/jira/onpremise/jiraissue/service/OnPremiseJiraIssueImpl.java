@@ -1,9 +1,8 @@
 package com.arms.jira.onpremise.jiraissue.service;
 
 import com.arms.jira.cloud.CloudJiraUtils;
-import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueEntity;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissue.dao.OnPremiseJiraIssueJpaRepository;
 import com.arms.jira.onpremise.jiraissue.model.FieldsDTO;
@@ -18,8 +17,6 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
-import com.atlassian.jira.rest.client.api.domain.input.TransitionInput;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -45,7 +42,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -59,7 +56,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public OnPremiseJiraIssueDTO createIssue(Long connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                          info.getUserId(),
@@ -107,7 +104,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public JsonNode getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
 
-        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -167,7 +164,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
     @Override
     public OnPremiseJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) throws Exception {
-        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -617,7 +614,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     public OnPremiseJiraIssueDTO getIssueByWebClient(Long connectId, String issueKeyOrId) throws Exception {
 
         String endpoint = "/rest/api/2/issue/" + issueKeyOrId;
-        JiraInfoDTO jiraInfoDTO = jiraInfo.loadConnectInfo(connectId);
+        JiraInfoDTO jiraInfoDTO = 지라연결_서비스.loadConnectInfo(connectId);
         WebClient webClient = createJiraWebClient(jiraInfoDTO.getUri());
 
         OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = CloudJiraUtils.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();

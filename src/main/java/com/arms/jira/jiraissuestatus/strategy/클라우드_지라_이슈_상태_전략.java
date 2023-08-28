@@ -3,7 +3,7 @@ package com.arms.jira.jiraissuestatus.strategy;
 
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 
 import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
 import com.arms.jira.jiraissuestatus.model.클라우드_지라_이슈_상태_전체_데이터_전송_객체;
@@ -24,14 +24,14 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Override
     public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_목록_가져오기(Long 연결_아이디) throws Exception{
 
         로그.info("getStatusList 비즈니스 로직 실행");
 
-        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 50;
@@ -68,7 +68,7 @@ public class 클라우드_지라_이슈_상태_전략 implements 지라_이슈_�
 
         로그.info("클라우드 프로젝트별_이슈_상태_목록_가져오기 실행");
 
-        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 50;

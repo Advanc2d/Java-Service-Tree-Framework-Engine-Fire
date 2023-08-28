@@ -1,7 +1,7 @@
 package com.arms.jira.onpremise.jiraissuepriority.service;
 
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissuepriority.model.OnPremiseJiraIssuePriorityDTO;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -21,11 +21,11 @@ public class OnPremiseJiraIssuePriorityImpl implements OnPremiseJiraIssuePriorit
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Override
     public List<OnPremiseJiraIssuePriorityDTO> getPriorityList(Long connectId) throws Exception {
-        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                          info.getUserId(),

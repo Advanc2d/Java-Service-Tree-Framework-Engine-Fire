@@ -3,7 +3,7 @@ package com.engine.jira.cloud;
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class CloudJiraIssueTypeSchemeTest {
     public String issueTypeId = "10028";
 
     @Autowired
-    JiraInfo jiraInfo;
+    지라연결_서비스 지라연결_서비스;
 
     @BeforeEach
     void setUp () {
@@ -76,7 +76,7 @@ public class CloudJiraIssueTypeSchemeTest {
 
         Map<String, List<String>> issueTypeMap = getIssueTypeMapping(values);
 
-        String issueTypeId = jiraInfo.getIssueTypeId(1L);
+        String issueTypeId = 지라연결_서비스.getIssueTypeId(1L);
 
         for (Map.Entry<String, List<String>> entry : issueTypeMap.entrySet()) {
             String issueTypeSchemeId = entry.getKey();

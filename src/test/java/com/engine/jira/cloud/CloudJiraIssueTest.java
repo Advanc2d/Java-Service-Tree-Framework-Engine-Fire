@@ -260,18 +260,6 @@ public class CloudJiraIssueTest {
         }
     }
 
-    class IssueDTO {
-        String id;
-        String key;
-        String self;
-        List<IssueDTO> linkedIssues;
-
-        public IssueDTO(String key) {
-            this.key = key;
-            this.linkedIssues = new ArrayList<>();
-        }
-    }
-
     @Test
     @DisplayName("이슈 수정으로 라벨 처리 테스트")
     public void updatetIssue() {
@@ -420,7 +408,7 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("이슈 조회 스트림 처리 후 DTO 변경하기")
     public void IssueCallTest() throws JsonProcessingException {
-        String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId;
+        String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId +"&fields=issuetype,project,resolutiondate,watches,created,priority,labels,versions,assignee,status,creator,reporter";
 //        String endpoint = "/rest/api/3/project/" + projectKeyOrId;
 //        webClient.get()
 //                .uri(endpoint)
@@ -435,10 +423,13 @@ public class CloudJiraIssueTest {
         String result = get(webClient, endpoint)
                         .reduce("", (s1, s2) -> s1 + s2)
                         .block();
-        List<지라_이슈_데이터_전송_객체> list =
-                objectMapper.readValue(result, List.class);
 
-        System.out.println("result = " + list.toString());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        클라우드_지라_이슈_조회_데이터_전송_객체 sso =
+                objectMapper.readValue(result, 클라우드_지라_이슈_조회_데이터_전송_객체.class);
+
+        System.out.println("result = " + sso.getIssues().toString());
     }
 
     public Flux<String> get(WebClient webClient, String uri) {

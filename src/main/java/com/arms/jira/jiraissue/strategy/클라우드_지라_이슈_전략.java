@@ -2,7 +2,7 @@ package com.arms.jira.jiraissue.strategy;
 
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissue.dao.지라_이슈_저장소;
 import com.arms.jira.jiraissue.model.*;
 import org.modelmapper.ModelMapper;
@@ -20,7 +20,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -34,7 +34,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
         int 검색_최대_개수 = 50;
         boolean isLast = false;
 
-        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
          List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 프로젝트_이슈_목록 = new ArrayList<>(); // 이슈 저장
@@ -60,7 +60,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
 
         String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디;
 
-        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
         지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 이슈_검색_결과 = CloudJiraUtils.get(webClient, endpoint, 지라_이슈_데이터_전송_객체.class).block();
@@ -79,7 +79,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
 
         로그.info("클라우드 지라 이슈 생성하기");
 
-        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
 //        if (지라_이슈_생성_데이터_전송_객체 == null) {
@@ -91,7 +91,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
 //        }
 
         String endpoint = "/rest/api/3/issue";
-        지라_이슈_필드_데이터_전송_객체<String> 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
+        지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
         if (필드_데이터 == null) {
             /* ***
              * 수정사항: 에러 처리 필요
@@ -112,8 +112,9 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
             클라우드_필드_데이터.setSummary(필드_데이터.getSummary());
         }
 
+        System.out.println(필드_데이터.getDescription().toString());
         if (필드_데이터.getDescription() != null) {
-            클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
+            클라우드_필드_데이터.setDescription(내용_변환((String) 필드_데이터.getDescription()));
         }
 
         클라우드_지라_이슈_필드_데이터_전송_객체.사용자 사용자 = 사용자_정보_조회(webClient);
@@ -149,7 +150,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
 
         로그.info("클라우드 지라 이슈 수정하기");
 
-        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
         String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디;

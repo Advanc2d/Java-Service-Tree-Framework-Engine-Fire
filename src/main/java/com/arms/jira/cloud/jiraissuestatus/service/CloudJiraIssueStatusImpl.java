@@ -13,7 +13,7 @@ import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissuestatus.model.StatusSearchDTO;
 import com.arms.jira.cloud.jiraissuestatus.model.Status;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 
 import lombok.AllArgsConstructor;
 
@@ -24,14 +24,14 @@ public class CloudJiraIssueStatusImpl implements CloudJiraIssueStatus {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public JiraInfo jiraInfo;
+    public 지라연결_서비스 지라연결_서비스;
 
     @Override
     public StatusSearchDTO getStatusList(Long connectId) {
 
         logger.info("getStatusList 비즈니스 로직 실행");
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
     
         int maxResult = 50;
