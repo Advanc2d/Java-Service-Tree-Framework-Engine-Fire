@@ -3,3 +3,7 @@ server:
   servlet:
     session:
       timeout: 1800
+
+spring:
+  profiles:
+    active: dev
