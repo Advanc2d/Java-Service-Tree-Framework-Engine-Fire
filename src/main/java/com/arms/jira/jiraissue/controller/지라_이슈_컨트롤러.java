@@ -84,4 +84,29 @@ public class 지라_이슈_컨트롤러 {
         return 지라_이슈_전략_호출.이슈_삭제_라벨_처리하기(연결_아이디, 이슈_키_또는_아이디);
     }
 
+    @ResponseBody
+    @RequestMapping(
+            value = {"/link/{issueKeyOrId}"},
+            method = {RequestMethod.GET}
+    )
+    public List<지라_이슈_데이터_전송_객체> 이슈링크_가져오기(@PathVariable("connectId") Long 연결_아이디,
+                                                @PathVariable("issueKeyOrId") String 이슈_키_또는_아이디,
+                                                ModelMap model, HttpServletRequest request) throws Exception {
+        로그.info("이슈링크_가져오기");
+
+        return 지라_이슈_전략_호출.이슈링크_가져오기(연결_아이디, 이슈_키_또는_아이디);
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/subtask/{issueKeyOrId}"},
+            method = {RequestMethod.GET}
+    )
+    public List<지라_이슈_데이터_전송_객체> 서브테스크_가져오기(@PathVariable("connectId") Long 연결_아이디,
+                                           @PathVariable("issueKeyOrId") String 이슈_키_또는_아이디,
+                                           ModelMap model, HttpServletRequest request) throws Exception {
+        로그.info("서브테스크_가져오기");
+
+        return 지라_이슈_전략_호출.서브테스크_가져오기(연결_아이디, 이슈_키_또는_아이디);
+    }
 }
