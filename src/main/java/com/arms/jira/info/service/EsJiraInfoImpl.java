@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
-import com.arms.elasticsearch.services.JiraIssueTypeService;
 import com.arms.jira.info.dao.JiraInfoJpaRepository;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.model.JiraInfoEntity;
@@ -30,9 +29,6 @@ public class EsJiraInfoImpl implements JiraInfo {
     @Autowired
     private JiraInfoJpaRepository jiraInfoJpaRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
-    @Qualifier("JiraIssueTypeService")
-    private JiraIssueTypeService jiraIssueTypeService;
 
     public JiraInfoDTO loadConnectInfo(Long connectId) {
         Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);

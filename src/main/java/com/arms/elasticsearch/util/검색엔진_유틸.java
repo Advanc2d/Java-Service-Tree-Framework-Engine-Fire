@@ -27,13 +27,13 @@ import java.util.List;
 
 @Component
 @Slf4j
-public final class 검색유틸 {
+public final class 검색엔진_유틸 {
 
     private final RestHighLevelClient client;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public 검색유틸(RestHighLevelClient client) {
+    public 검색엔진_유틸(RestHighLevelClient client) {
         this.client = client;
     }
 
@@ -75,7 +75,7 @@ public final class 검색유틸 {
     }
 
     public <T> List<T>  searchCreatedSince(final SearchDTO dto, final Date date,Class<T> valueType) {
-        final SearchRequest request = 검색유틸.buildSearchRequest(
+        final SearchRequest request = 검색엔진_유틸.buildSearchRequest(
                 인덱스자료.지라이슈_인덱스명,
                 dto,
                 date

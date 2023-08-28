@@ -1,7 +1,5 @@
 package com.arms.jira.cloud.jiraissuetype.service;
 
-import com.arms.elasticsearch.models.EsJiraIssueType;
-import com.arms.elasticsearch.services.JiraIssueTypeService;
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
@@ -35,10 +33,6 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
     @Autowired
     private JiraInfo jiraInfo;
 
-    @Autowired
-    @Qualifier("JiraIssueTypeService")
-    private JiraIssueTypeService jiraIssueTypeService;
-
     @Override
     public List<CloudJiraIssueTypeDTO> getIssueTypeListAll(Long connectId) throws Exception {
 
@@ -54,18 +48,6 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         return issueTypes;
     }
-
-    public Mono<List<CloudJiraIssueTypeDTO>> getNonBlockIssueTypeListAll(Long connectId) throws Exception {
-
-//        String endpoint = "/rest/api/3/issuetype";
-
-//        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
-//        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-//        return CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<>() {
-//        });
-        return null;
-    }
-
 
     @Override
     public List<CloudJiraIssueTypeDTO> getIssueTypeListByProjectId(Long connectId, String projectId) throws Exception {
@@ -117,40 +99,4 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         return addCloudJirarIssueTypeDTO;
     }
 
-    @Override
-    public void saveIssueTypeByUsers() throws Exception {
-
-        String endpoint = "/rest/api/3/issuetype";
-        List<JiraInfoDTO> founds = jiraInfo.loadConnectInfos();
-
-        for (JiraInfoDTO found : founds) {
-
-
-            WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
-
-            List<EsJiraIssueType> result = new ArrayList<>();
-
-            CloudJiraUtils.get(webClient, endpoint,
-                    new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {})
-                .subscribe(cloudJiraIssueTypes -> {
-                        cloudJiraIssueTypes.stream()
-                            .forEach(cloudJiraIssueType ->
-                                {
-                                    EsJiraIssueType esJiraIssueType = modelMapper.map(cloudJiraIssueType, EsJiraIssueType.class);
-                                    esJiraIssueType.generateIdByUrl(found.getUri());
-                                    result.add(esJiraIssueType);
-                                }
-                            );
-                    },
-                    error -> {
-                        logger.error(error.getMessage());
-                    },
-                    () -> {
-                        // jiraIssueTypeService.createJiraIssueTypeIndexBulk(result);
-                    }
-                );
-
-        }
-
-    }
 }
