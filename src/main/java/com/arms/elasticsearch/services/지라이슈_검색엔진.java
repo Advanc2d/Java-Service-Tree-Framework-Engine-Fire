@@ -3,7 +3,8 @@ package com.arms.elasticsearch.services;
 import com.arms.elasticsearch.helper.인덱스자료;
 import com.arms.elasticsearch.models.지라이슈;
 import com.arms.elasticsearch.repositories.지라이슈_저장소;
-import com.arms.elasticsearch.util.SearchDTO;
+import com.arms.elasticsearch.util.검색결과;
+import com.arms.elasticsearch.util.검색조건;
 import com.arms.elasticsearch.util.검색엔진_유틸;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,9 @@ import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -84,7 +87,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
     }
 
     @Override
-    public List<지라이슈> 이슈_검색하기(SearchDTO 검색조건) {
+    public List<지라이슈> 이슈_검색하기(검색조건 검색조건) {
         final SearchRequest request = 검색엔진_유틸.buildSearchRequest(
                 인덱스자료.지라이슈_인덱스명,
                 검색조건
@@ -93,6 +96,15 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         return 검색엔진_유틸.searchInternal(request,지라이슈.class);
     }
 
+    @Override
+    public Map<String, Long> 특정필드의_값들을_그룹화하여_빈도수가져오기(String indexName, String groupByField) throws IOException {
+        return 검색엔진_유틸.특정필드의_값들을_그룹화하여_빈도수가져오기(indexName, groupByField);
+    }
+
+    @Override
+    public List<검색결과> 특정필드_검색후_다른필드_그룹결과(String 인덱스이름, String 특정필드, String 특정필드검색어, String 그룹할필드) throws IOException {
+        return 검색엔진_유틸.특정필드_검색후_다른필드_그룹결과(인덱스이름, 특정필드, 특정필드검색어, 그룹할필드 );
+    }
 
 
 }
