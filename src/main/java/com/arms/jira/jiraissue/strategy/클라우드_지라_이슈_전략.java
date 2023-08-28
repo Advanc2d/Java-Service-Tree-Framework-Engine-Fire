@@ -5,6 +5,9 @@ import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissue.dao.지라_이슈_저장소;
 import com.arms.jira.jiraissue.model.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +78,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
      * 수정사항: null 체크하여 에러 처리 필요
      *** */
     @Override
-    public 지라_이슈_데이터_전송_객체 이슈_생성하기(Long 연결_아이디, 지라_이슈_생성_데이터_전송_객체<String> 지라_이슈_생성_데이터_전송_객체) {
+    public 지라_이슈_데이터_전송_객체 이슈_생성하기(Long 연결_아이디, 지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws JsonProcessingException {
 
         로그.info("클라우드 지라 이슈 생성하기");
 
