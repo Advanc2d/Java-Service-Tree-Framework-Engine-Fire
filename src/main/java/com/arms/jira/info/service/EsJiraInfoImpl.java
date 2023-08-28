@@ -9,11 +9,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
-import com.arms.jira.info.dao.JiraInfoJpaRepository;
+import com.arms.jira.info.dao.지라연결_저장소;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.model.JiraInfoEntity;
 
@@ -21,17 +19,18 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class EsJiraInfoImpl implements JiraInfo {
+public class EsJiraInfoImpl implements 지라연결_서비스 {
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private JiraInfoJpaRepository jiraInfoJpaRepository;
+    private 지라연결_저장소 지라연결저장소;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public JiraInfoDTO loadConnectInfo(Long connectId) {
-        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
+        Optional<JiraInfoEntity> optionalEntity = 지라연결저장소.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
             return null;
@@ -46,7 +45,7 @@ public class EsJiraInfoImpl implements JiraInfo {
 
     @Override
     public List<JiraInfoDTO> loadConnectInfos() {
-        List<JiraInfoEntity> jiraInfoEntityList = jiraInfoJpaRepository.findAll();
+        List<JiraInfoEntity> jiraInfoEntityList = 지라연결저장소.findAll();
         List<JiraInfoDTO> result = new ArrayList<>();
         for (JiraInfoEntity jiraInfoEntity : jiraInfoEntityList) {
             result.add(modelMapper.map(jiraInfoEntity, JiraInfoDTO.class));
@@ -56,7 +55,7 @@ public class EsJiraInfoImpl implements JiraInfo {
 
     public String getIssueTypeId(Long connectId) {
 
-        Optional<JiraInfoEntity> optionalEntity = jiraInfoJpaRepository.findById(connectId);
+        Optional<JiraInfoEntity> optionalEntity = 지라연결저장소.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
             return null;
@@ -92,11 +91,11 @@ public class EsJiraInfoImpl implements JiraInfo {
             jiraInfoEntity = modelMapper.map(jiraInfoDTO, JiraInfoEntity.class);
         }
 
-        return jiraInfoJpaRepository.save(jiraInfoEntity);
+        return 지라연결저장소.save(jiraInfoEntity);
     }
 
     public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity) {
-        return jiraInfoJpaRepository.save(jiraInfoEntity);
+        return 지라연결저장소.save(jiraInfoEntity);
     }
 
     /*

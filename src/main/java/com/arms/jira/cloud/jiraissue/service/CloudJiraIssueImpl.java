@@ -4,13 +4,14 @@ import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
 import com.arms.jira.cloud.jiraissue.model.*;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import lombok.AllArgsConstructor;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -41,7 +42,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         int maxResults = 50;
         boolean isLast = false;
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
@@ -71,7 +72,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     public CloudJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) {
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueDTO response = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueDTO.class).block();
@@ -88,7 +89,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue";
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueDTO response = CloudJiraUtils.post(webClient, endpoint, cloudJiraIssueInputDTO, CloudJiraIssueDTO.class).block();
@@ -110,7 +111,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
         HttpStatus statusCode = null;
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> response = CloudJiraUtils.executePut(webClient, endpoint, cloudJiraIssueInputDTO);
@@ -179,7 +180,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         Map<String, Object> result = new HashMap<String, Object>();
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=false";
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         if (checkSubTask(connectId, issueKeyOrId)){ //서브테스크가 있을 경유
@@ -368,7 +369,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         int maxResults = 50;
         boolean isLast = false;
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
@@ -471,7 +472,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         TransitionsDTO transitions = CloudJiraUtils.get(webClient, endpoint, TransitionsDTO.class).block();
@@ -484,7 +485,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
 //        IssueStatusUpdateRequestDTO.TransitionInputDTO transitionInputDTO = new IssueStatusUpdateRequestDTO.TransitionInputDTO();

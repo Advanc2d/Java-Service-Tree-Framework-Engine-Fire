@@ -2,7 +2,7 @@ package com.arms.jira.jiraissuetype.strategy;
 
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class 클라우드_지라_이슈_유형_전략 implements 지라_이슈_�
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Override
     public List<지라_이슈_유형_데이터_전송_객체> 이슈_유형_목록_가져오기(Long 연결_아이디) {
@@ -27,7 +27,7 @@ public class 클라우드_지라_이슈_유형_전략 implements 지라_이슈_�
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<지라_이슈_유형_데이터_전송_객체> 반환할_이슈_유형_목록
@@ -53,7 +53,7 @@ public class 클라우드_지라_이슈_유형_전략 implements 지라_이슈_�
 
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + 프로젝트_아이디;
 
-        JiraInfoDTO found = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<지라_이슈_유형_데이터_전송_객체> 반환할_이슈_유형_목록

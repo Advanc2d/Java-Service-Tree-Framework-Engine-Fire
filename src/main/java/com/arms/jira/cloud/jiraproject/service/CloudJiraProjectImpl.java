@@ -4,7 +4,7 @@ package com.arms.jira.cloud.jiraproject.service;
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,14 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private JiraInfo jiraInfo;
+	private 지라연결_서비스 지라연결_서비스;
 
 
 	@Override
 	public CloudJiraProjectDTO getProjectData(Long connectId, String projectKey) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;
 
-		JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+		JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraProjectDTO project = CloudJiraUtils.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
@@ -43,7 +43,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 
 		String endpoint = "/rest/api/3/project";
 
-		JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+		JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
 
 		if (found == null) {
 			// throw Exception e; ControllerAdvice 오류 처리

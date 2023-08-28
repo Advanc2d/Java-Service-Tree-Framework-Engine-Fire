@@ -1,7 +1,7 @@
 package com.arms.jira.jiraissuestatus.strategy;
 
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
 
 import com.arms.jira.onpremise.OnPremiseJiraUtils;
@@ -22,11 +22,11 @@ public class 온프레미스_지라_이슈_상태_전략 implements 지라_이�
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Override
     public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_목록_가져오기(Long 연결_아이디) throws Exception {
-        JiraInfoDTO info = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
@@ -52,7 +52,7 @@ public class 온프레미스_지라_이슈_상태_전략 implements 지라_이�
 
         로그.info("온프레미스 이슈_상태_목록_가져오기 실행");
 
-        JiraInfoDTO info = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                                                                         info.getUserId(),
                                                                         info.getPasswordOrToken());

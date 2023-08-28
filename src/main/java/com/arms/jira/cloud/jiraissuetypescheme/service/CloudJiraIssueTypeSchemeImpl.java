@@ -5,7 +5,7 @@ import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMap
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.cloud.jiraissuetype.service.CloudJiraIssueType;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
     private CloudJiraIssueType cloudJiraIssueType;
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
 
     public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(Long connectId) {
@@ -38,7 +38,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values
                 = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
@@ -76,7 +76,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
 
         Map<String,Object> result = new HashMap<String,Object>();
 
-        String issueTypeId =  jiraInfo.getIssueTypeId(connectId);
+        String issueTypeId =  지라연결_서비스.getIssueTypeId(connectId);
 
         if(issueTypeId.isEmpty()) {
             result.put("success", false);
@@ -120,7 +120,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         IssueTypeIdsDTO dto = new IssueTypeIdsDTO();
         dto.setIssueTypeIds(issueTypeIds);
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> result = CloudJiraUtils.executePut(webClient, endpoint, dto);

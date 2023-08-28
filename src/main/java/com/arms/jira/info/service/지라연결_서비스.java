@@ -5,7 +5,7 @@ import java.util.List;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.model.JiraInfoEntity;
 
-public interface JiraInfo {
+public interface 지라연결_서비스 {
 
     public JiraInfoDTO loadConnectInfo(Long connectId);
 

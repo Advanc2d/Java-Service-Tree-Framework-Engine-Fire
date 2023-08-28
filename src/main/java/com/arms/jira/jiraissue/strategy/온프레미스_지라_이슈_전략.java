@@ -1,7 +1,7 @@
 package com.arms.jira.jiraissue.strategy;
 
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissue.dao.지라_이슈_저장소;
 import com.arms.jira.jiraissue.model.*;
 import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
@@ -28,7 +28,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private JiraInfo jiraInfo;
+    private 지라연결_서비스 지라연결_서비스;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -38,7 +38,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
 
     @Override
     public List<지라_이슈_데이터_전송_객체<T>> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
-        JiraInfoDTO info = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO info = 지라연결_서비스.checkInfo(연결_아이디);
 
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
                 info.getUserId(),
@@ -75,7 +75,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
 
         로그.info("온프레미스 지라 이슈 생성하기");
 
-        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
                 연결정보.getUserId(),
                 연결정보.getPasswordOrToken());
@@ -97,7 +97,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
 
         로그.info("온프레미스 지라 이슈 생성하기");
         
-        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());
@@ -194,7 +194,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
 
         로그.info("온프레미스 지라 이슈 수정하기");
 
-        JiraInfoDTO 연결정보 = jiraInfo.checkInfo(연결_아이디);
+        JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());

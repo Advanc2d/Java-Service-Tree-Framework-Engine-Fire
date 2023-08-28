@@ -13,7 +13,7 @@ import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
 import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.service.JiraInfo;
+import com.arms.jira.info.service.지라연결_서비스;
 
 import lombok.AllArgsConstructor;
 
@@ -24,12 +24,12 @@ public class CloudJiraIssueResolutionImpl implements CloudJiraIssueResolution {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public JiraInfo jiraInfo;
+    public 지라연결_서비스 지라연결_서비스;
 
     @Override
     public ResolutionSearchDTO getResolutionList(Long connectId) {
 
-        JiraInfoDTO found = jiraInfo.checkInfo(connectId);
+        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int maxResult = 50;
