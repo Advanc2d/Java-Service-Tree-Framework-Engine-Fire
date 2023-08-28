@@ -38,18 +38,6 @@ public class CloudJiraIssueTypeController {
 
     @ResponseBody
     @RequestMapping(
-        value = {"/sample/list"},
-        method = {RequestMethod.GET}
-    )
-    public Mono<List<CloudJiraIssueTypeDTO>> getNonBlockIssueTypeList(@PathVariable("connectId") Long connectId,
-        ModelMap model, HttpServletRequest request) throws Exception {
-        logger.info("Jira Cloud ALL ISSUE TYPE GET API 호출");
-        return cloudJiraIssueType.getNonBlockIssueTypeListAll(connectId);
-    }
-
-
-    @ResponseBody
-    @RequestMapping(
             value = {"/project"},
             method = {RequestMethod.GET}
     )
@@ -72,13 +60,4 @@ public class CloudJiraIssueTypeController {
         return cloudJiraIssueType.createIssueType(connectId, cloudJiraIssueTypeInputDTO);
     }
 
-    @ResponseBody
-    @RequestMapping(
-        value = {"/saveAll"},
-        method = {RequestMethod.POST}
-    )
-    public void saveIssueTypeByUsers() throws Exception {
-        logger.info("Jira Cloud ALL USER ISSUE TYPE GET API 호출 -> ELK 저장");
-        cloudJiraIssueType.saveIssueTypeByUsers();
-    }
 }
