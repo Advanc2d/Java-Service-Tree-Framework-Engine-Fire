@@ -24,16 +24,7 @@ import org.springframework.util.CollectionUtils;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,13 +41,12 @@ public final class 검색엔진_유틸 {
 
     private final RestHighLevelClient client;
 
-    private final ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    public 검색엔진_유틸(RestHighLevelClient client, ElasticsearchRestTemplate elasticsearchRestTemplate) {
-        this.client = client;
-        this.elasticsearchRestTemplate = elasticsearchRestTemplate;
-    }
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    public 검색엔진_유틸(RestHighLevelClient client) {
+        this.client = client;
+    }
 
 
     public <T> List<T>  searchInternal(final SearchRequest request,Class<T> valueType) {
