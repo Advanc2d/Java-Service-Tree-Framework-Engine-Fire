@@ -84,7 +84,7 @@ public class 지라_이슈_전략_호출 {
     }
 
     public 지라_이슈_데이터_전송_객체 이슈_생성하기(Long 연결_아이디,
-                                   지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws Exception {
+                                   지라_이슈_생성_데이터_전송_객체<String> 지라_이슈_생성_데이터_전송_객체) throws Exception {
 
         JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
 

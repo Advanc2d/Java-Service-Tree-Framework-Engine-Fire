@@ -52,7 +52,7 @@ public class 지라_이슈_컨트롤러 {
             method = {RequestMethod.POST}
     )
     public 지라_이슈_데이터_전송_객체 이슈_생성하기(@PathVariable("connectId") Long 연결_아이디,
-                                            @RequestBody 지라_이슈_생성_데이터_전송_객체 지라_이슈_생성_데이터_전송_객체) throws Exception {
+                                            @RequestBody 지라_이슈_생성_데이터_전송_객체<String> 지라_이슈_생성_데이터_전송_객체) throws Exception {
         로그.info("지라 이슈_생성하기");
 
         return 지라_이슈_전략_호출.이슈_생성하기(연결_아이디, 지라_이슈_생성_데이터_전송_객체);
