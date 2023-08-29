@@ -44,7 +44,7 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
          List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 프로젝트_이슈_목록 = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
-            String endpoint = "/rest/api/3/search?jql=project=" + 프로젝트_키_또는_아이디 + "&startAt=" + 검색_시작_지점 + "&최대_검색수=" + 최대_검색수;
+            String endpoint = "/rest/api/3/search?jql=project=" + 프로젝트_키_또는_아이디 + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수;
             클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 프로젝트_이슈_검색결과 = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
 
             프로젝트_이슈_목록.addAll(프로젝트_이슈_검색결과.getIssues());
@@ -94,7 +94,6 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
 //            return null;
 //        }
 
-        String endpoint = "/rest/api/3/issue";
         지라_이슈_필드_데이터_전송_객체 필드_데이터 = 지라_이슈_생성_데이터_전송_객체.getFields();
         if (필드_데이터 == null) {
             /* ***
@@ -125,12 +124,43 @@ public class 클라우드_지라_이슈_전략<T> implements 지라_이슈_전�
         클라우드_필드_데이터.setReporter(사용자);
         클라우드_필드_데이터.setAssignee(사용자);
 
-        if (필드_데이터.getPriority() != null) {
+        /* ***
+        * 프로젝트 와 이슈 유형에 따라 이슈 생성 시 들어가는 fields의 내용을 확인하는 부분(현재 priority만 적용)
+        *** */
+
+        String 프로젝트_아이디 = "";
+        String 이슈유형_아이디 = "";
+
+        if (지라_이슈_생성_데이터_전송_객체.getFields().getProject().getId() != null
+                    && !지라_이슈_생성_데이터_전송_객체.getFields().getProject().getId().isEmpty()) {
+            프로젝트_아이디 = 지라_이슈_생성_데이터_전송_객체.getFields().getProject().getId();
+        }
+
+        if (지라_이슈_생성_데이터_전송_객체.getFields().getIssuetype().getId() != null
+                    && !지라_이슈_생성_데이터_전송_객체.getFields().getIssuetype().getId().isEmpty()) {
+            이슈유형_아이디 = 지라_이슈_생성_데이터_전송_객체.getFields().getIssuetype().getId();
+        }
+
+        if (프로젝트_아이디.isEmpty() || 이슈유형_아이디.isEmpty()) {
+            throw new IllegalArgumentException("프로젝트 아이디, 이슈유형 아이디가 존재 하지 않습니다.");
+        }
+
+        String 이슈생성_필드확인_지점 = "/rest/api/3/issue/createmeta?expand=projects.issuetypes.fields&projectIds="+ 프로젝트_아이디 +"&issuetypeIds=" +이슈유형_아이디;
+
+        Map<String, Object> 반환할_이슈생성_필드 = 지라유틸.get(webClient, 이슈생성_필드확인_지점, Map.class).block();
+        List<Map<String, Object>> 프로젝트_목록 = (List<Map<String, Object>>) 반환할_이슈생성_필드.get("projects");
+        List<Map<String, Object>> 이슈유형 = (List<Map<String, Object>>) 프로젝트_목록.get(0).get("issuetypes");
+        Map<String, Object> 필드 = (Map<String, Object>) 이슈유형.get(0).get("fields");
+        boolean 우선순위_유무 = 필드.containsKey("priority");
+
+        if (우선순위_유무 && 필드_데이터.getPriority() != null) {
             클라우드_필드_데이터.setPriority(필드_데이터.getPriority());
         }
 
         입력_데이터.setFields(클라우드_필드_데이터);
         로그.info(String.valueOf(입력_데이터));
+
+        String endpoint = "/rest/api/3/issue";
 
         지라_이슈_데이터_전송_객체 반환할_지라_이슈_데이터_전송_객체 = 지라유틸.post(webClient, endpoint, 입력_데이터, 지라_이슈_데이터_전송_객체.class).block();
         if (반환할_지라_이슈_데이터_전송_객체 == null) {
