@@ -4,6 +4,8 @@ import com.arms.elasticsearch.helper.인덱스자료;
 import com.arms.elasticsearch.models.지라이슈;
 import com.arms.elasticsearch.util.검색결과;
 import com.arms.elasticsearch.util.검색조건;
+import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
+import com.arms.jira.jiraissue.service.지라_이슈_전략_호출;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,9 @@ public class 지라이슈_컨트롤러 {
 
     @Autowired
     private 지라이슈_서비스 지라이슈_검색엔진;
+
+    @Autowired
+    com.arms.jira.jiraissue.service.지라_이슈_전략_호출 지라_이슈_전략_호출;
 
     @ResponseBody
     @RequestMapping(
@@ -90,6 +95,40 @@ public class 지라이슈_컨트롤러 {
     public List<검색결과> 테스트2_조회(@PathVariable("searchField") String 특정필드, @PathVariable("searchTerm") String 특정필드검색어, @PathVariable("groupField") String 그룹할필드) throws IOException {
 
         return 지라이슈_검색엔진.특정필드_검색후_다른필드_그룹결과(인덱스자료.지라이슈_인덱스명, 특정필드, 특정필드검색어, 그룹할필드 );
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/loadToES/{issueKey}"},
+            method = {RequestMethod.GET}
+    )
+    public 지라이슈 이슈_검색엔진_저장(@PathVariable("connectId") Long 지라서버_아이디,
+                                        @PathVariable("issueKey") String 이슈_키,
+                                        ModelMap model, HttpServletRequest request) throws Exception {
+        로그.info("지라 이슈_상세정보_가져오기");
+
+        지라_이슈_데이터_전송_객체 받아온_이슈 = 지라_이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키);
+
+        지라이슈.프로젝트 프로젝트 = 지라이슈.프로젝트.builder()
+                .id(받아온_이슈.getFields().getProject().getId())
+                .key(받아온_이슈.getFields().getProject().getKey())
+                .name(받아온_이슈.getFields().getProject().getName())
+                .self(받아온_이슈.getFields().getProject().getSelf())
+                .build();
+
+        지라이슈 이슈 = 지라이슈.builder()
+                .jira_server_id(지라서버_아이디)
+                .self(받아온_이슈.getSelf())
+                .key(받아온_이슈.getKey())
+                .issueID(받아온_이슈.getId().toString())
+                .project(프로젝트)
+                .parentReqKey("iAmParent")
+                .isReq(true)
+                .build();
+
+        이슈.generateId();
+
+        return 지라이슈_검색엔진.이슈_추가하기(이슈);
     }
 
 }

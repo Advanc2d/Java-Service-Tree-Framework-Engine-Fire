@@ -40,9 +40,11 @@ public class 지라이슈 {
 
     private Long jira_server_id;
 
-    //////////////
     @Field(type = FieldType.Date, name = "@timestamp")
     private Date timestamp;
+
+    @Field(type = FieldType.Auto, name = "issueID")
+    private String issueID;
 
     @Field(type = FieldType.Keyword, name = "key")
     private String key;
@@ -50,14 +52,15 @@ public class 지라이슈 {
     @Field(type = FieldType.Text, name = "self")
     private String self;
 
-    //////////////
+    @Field(type = FieldType.Text, name = "parentReqKey")
+    private String parentReqKey;
+
     @Field(type = FieldType.Boolean, name = "isReq")
     private Boolean isReq;
 
     @Field(type = FieldType.Auto, name = "etc")
     private Object etc;
 
-    //////////////
     @Field(type = FieldType.Percolator, name = "queries")
     private List<String> percolatorQueries;
 
