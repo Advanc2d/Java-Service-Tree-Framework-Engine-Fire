@@ -27,3 +27,9 @@ spring:
 
 elasticsearch:
   url: 313.co.kr:9200
+
+
+jira:
+  maxResults: 50
+  issue:
+    fields: fields=issuetype,project,resolutiondate,watches,created,priority,labels,versions,assignee,status,creator,reporter,assignee,statuscategorychangedate

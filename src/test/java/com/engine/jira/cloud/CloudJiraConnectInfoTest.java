@@ -23,10 +23,10 @@
 //    public void cloudJiraConnectInfoGetTest() {
 //
 //        CloudJiraConnectInfoDTO found = cloudJiraConnectInfo.checkInfo("1");
-//        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getEmail(), found.getToken());
+//        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getEmail(), found.getToken());
 //
 //        CloudJiraProjectDTO cloudJiraProjectDTO
-//                        = CloudJiraUtils.get(webClient,
+//                        = 지라유틸.get(webClient,
 //                                        "/rest/api/3/project/ADVANC2D",
 //                                        CloudJiraProjectDTO.class).block();
 //

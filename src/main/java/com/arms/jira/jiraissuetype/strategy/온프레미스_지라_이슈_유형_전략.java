@@ -3,7 +3,7 @@ package com.arms.jira.jiraissuetype.strategy;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
-import com.arms.jira.onpremise.OnPremiseJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class 온프레미스_지라_이슈_유형_전략 implements 지라_이�
         로그.info("온프레미스 지라 이슈_유형_목록_가져오기");
 
         JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                                         연결정보.getUserId(),
                                                                         연결정보.getPasswordOrToken());
 
@@ -61,7 +61,7 @@ public class 온프레미스_지라_이슈_유형_전략 implements 지라_이�
         로그.info("온프레미스는 전역 지라 이슈_유형_목록_가져오기");
 
         JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                                         연결정보.getUserId(),
                                                                         연결정보.getPasswordOrToken());
 

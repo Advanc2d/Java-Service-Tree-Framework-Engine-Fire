@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
 import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
@@ -26,23 +26,25 @@ public class CloudJiraIssueResolutionImpl implements CloudJiraIssueResolution {
     @Autowired
     public 지라연결_서비스 지라연결_서비스;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
     @Override
     public ResolutionSearchDTO getResolutionList(Long connectId) {
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        int maxResult = 50;
         int startAt = 0;
-        int index= 1;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         boolean checkLast = false;
 
         List<Resolution> values = new ArrayList<Resolution>();
         ResolutionSearchDTO result = null;
 
         while(!checkLast) {
-            String endpoint = "/rest/api/3/resolution/search?maxResults="+ maxResult + "&startAt=" + startAt;
-            ResolutionSearchDTO resolutions = CloudJiraUtils.get(webClient, endpoint, ResolutionSearchDTO.class).block();
+            String endpoint = "/rest/api/3/resolution/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            ResolutionSearchDTO resolutions = 지라유틸.get(webClient, endpoint, ResolutionSearchDTO.class).block();
 
             values.addAll(resolutions.getValues());
 
@@ -53,8 +55,7 @@ public class CloudJiraIssueResolutionImpl implements CloudJiraIssueResolution {
                 checkLast = true;
             }
             else {
-                startAt = maxResult * index;
-                index++;
+                startAt += 최대_검색수 ;
             }
         }
 

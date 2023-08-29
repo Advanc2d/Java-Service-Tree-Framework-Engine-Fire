@@ -2,8 +2,8 @@ package com.arms.jira.onpremise.jiraissuetype.service;
 
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
-import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissuetype.model.OnPremiseJiraIssueTypeDTO;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import lombok.AllArgsConstructor;
@@ -12,11 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -31,7 +27,7 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
     @Override
     public List<OnPremiseJiraIssueTypeDTO> getOnPremiseIssueTypeListAll(Long connectId) throws Exception {
         JiraInfoDTO jiraInfoDTO = 지라연결_서비스.checkInfo(connectId);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(jiraInfoDTO.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(jiraInfoDTO.getUri(),
                                                                 jiraInfoDTO.getUserId(),
                                                                 jiraInfoDTO.getPasswordOrToken());
 

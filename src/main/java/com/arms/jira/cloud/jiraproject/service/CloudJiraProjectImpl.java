@@ -1,7 +1,7 @@
 package com.arms.jira.cloud.jiraproject.service;
 
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
@@ -23,15 +23,14 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	@Autowired
 	private 지라연결_서비스 지라연결_서비스;
 
-
 	@Override
 	public CloudJiraProjectDTO getProjectData(Long connectId, String projectKey) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;
 
 		JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        CloudJiraProjectDTO project = CloudJiraUtils.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
+        CloudJiraProjectDTO project = 지라유틸.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
 
         logger.info(project.toString());
 
@@ -49,13 +48,13 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 			// throw Exception e; ControllerAdvice 오류 처리
 		}
 
-		WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+		WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
 		// ObjectMapper objectMapper = new ObjectMapper();
-		// String response = CloudJiraUtils.get(webClient, endpoint, String.class).block();
+		// String response = 지라유틸.get(webClient, endpoint, String.class).block();
 		// List<CloudJiraProjectDTO> projects = objectMapper.readValue(response, new TypeReference<List<CloudJiraProjectDTO>>() {});
 
-		List<CloudJiraProjectDTO> projects = CloudJiraUtils.get(webClient, endpoint, new ParameterizedTypeReference<List<CloudJiraProjectDTO>>() {}).block();
+		List<CloudJiraProjectDTO> projects = 지라유틸.get(webClient, endpoint, new ParameterizedTypeReference<List<CloudJiraProjectDTO>>() {}).block();
 
         logger.info(projects.toString());
 

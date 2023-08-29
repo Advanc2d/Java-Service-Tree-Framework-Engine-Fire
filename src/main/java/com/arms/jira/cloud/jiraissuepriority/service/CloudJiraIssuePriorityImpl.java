@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissuepriority.model.Priority;
 import com.arms.jira.cloud.jiraissuepriority.model.PrioritySearchDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
@@ -26,13 +26,16 @@ public class CloudJiraIssuePriorityImpl implements CloudJiraIssuePriority {
     @Autowired
     public 지라연결_서비스 지라연결_서비스;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
     @Override
     public PrioritySearchDTO getPriorityList(Long connectId) {
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        int maxResult = 50;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         int startAt = 0;
         int index= 1;
         boolean checkLast = false;
@@ -41,8 +44,8 @@ public class CloudJiraIssuePriorityImpl implements CloudJiraIssuePriority {
         PrioritySearchDTO result = null;
 
         while(!checkLast) {
-            String endpoint = "/rest/api/3/priority/search?maxResults="+ maxResult + "&startAt=" + startAt;
-            PrioritySearchDTO priorities = CloudJiraUtils.get(webClient, endpoint, PrioritySearchDTO.class).block();
+            String endpoint = "/rest/api/3/priority/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            PrioritySearchDTO priorities = 지라유틸.get(webClient, endpoint, PrioritySearchDTO.class).block();
 
             values.addAll(priorities.getValues());
 
@@ -53,7 +56,7 @@ public class CloudJiraIssuePriorityImpl implements CloudJiraIssuePriority {
                 checkLast = true;
             }
             else {
-                startAt = maxResult * index;
+                startAt = 최대_검색수 * index;
                 index++;
             }
         }

@@ -3,8 +3,7 @@ package com.arms.jira.jiraissuestatus.strategy;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
-
-import com.arms.jira.onpremise.OnPremiseJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import io.atlassian.util.concurrent.Promise;
@@ -27,7 +26,7 @@ public class 온프레미스_지라_이슈_상태_전략 implements 지라_이�
     @Override
     public List<지라_이슈_상태_데이터_전송_객체> 이슈_상태_목록_가져오기(Long 연결_아이디) throws Exception {
         JiraInfoDTO info = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
 
@@ -53,7 +52,7 @@ public class 온프레미스_지라_이슈_상태_전략 implements 지라_이�
         로그.info("온프레미스 이슈_상태_목록_가져오기 실행");
 
         JiraInfoDTO info = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                                                                         info.getUserId(),
                                                                         info.getPasswordOrToken());
 
