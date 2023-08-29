@@ -1,6 +1,6 @@
 package com.arms.jira.jirapriority.strategy;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jirapriority.model.지라_이슈_우선순위_데이터_전송_객체;
@@ -22,15 +22,18 @@ public class 클라우드_지라_이슈_우선순위_전략 implements 지라_�
     @Autowired
     private 지라연결_서비스 지라연결_서비스;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
     @Override
     public List<지라_이슈_우선순위_데이터_전송_객체> 우선순위_전체_목록_가져오기(Long 연결_아이디) throws Exception {
 
         로그.info("클라우드 지라 이슈 우선순위 전체 목록 가져오기");
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        int maxResult = 50;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         int startAt = 0;
         boolean isLast = false;
 
@@ -38,8 +41,8 @@ public class 클라우드_지라_이슈_우선순위_전략 implements 지라_�
 
         while(!isLast) {
 
-            String endpoint = "/rest/api/3/priority/search?maxResults="+ maxResult + "&startAt=" + startAt;
-            클라우드_지라_이슈_우선순위_전체_데이터_전송_객체 클라우드_지라_이슈_우선순위_전체_데이터_전송_객체 = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_우선순위_전체_데이터_전송_객체.class).block();
+            String endpoint = "/rest/api/3/priority/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            클라우드_지라_이슈_우선순위_전체_데이터_전송_객체 클라우드_지라_이슈_우선순위_전체_데이터_전송_객체 = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_우선순위_전체_데이터_전송_객체.class).block();
 
             반환할_지라_이슈_우선순위_데이터전송객체_목록.addAll(클라우드_지라_이슈_우선순위_전체_데이터_전송_객체.getValues());
 
@@ -47,7 +50,7 @@ public class 클라우드_지라_이슈_우선순위_전략 implements 지라_�
                 isLast = true;
             }
             else {
-                startAt += maxResult;
+                startAt += 최대_검색수;
             }
         }
 

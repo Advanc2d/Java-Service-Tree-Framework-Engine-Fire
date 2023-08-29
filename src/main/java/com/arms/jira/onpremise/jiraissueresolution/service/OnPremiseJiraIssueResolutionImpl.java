@@ -2,8 +2,8 @@ package com.arms.jira.onpremise.jiraissueresolution.service;
 
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
-import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissueresolution.model.OnPremiseJiraIssueResolutionDTO;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Resolution;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class OnPremiseJiraIssueResolutionImpl implements OnPremiseJiraIssueResol
     @Override
     public List<OnPremiseJiraIssueResolutionDTO> getResolutionList(Long connectId) throws Exception {
         JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                                                                          info.getUserId(),
                                                                          info.getPasswordOrToken());
 

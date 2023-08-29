@@ -1,6 +1,6 @@
 package com.arms.jira.cloud.jiraissuetypescheme.service;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
@@ -27,10 +27,13 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
     @Autowired
     private 지라연결_서비스 지라연결_서비스;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
 
     public CloudJiraIssueTypeSchemeMappingDTO getIssueTypeSchemeMapping(Long connectId) {
 
-        int maxResult = 50;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         int startAt = 0;
         int index=1;
         boolean checkLast = false;
@@ -39,15 +42,15 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
                 = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
 
         while(!checkLast) {
 
-            String endpoint = "/rest/api/3/issuetypescheme/mapping?maxResults="+ maxResult + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/issuetypescheme/mapping?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
             CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMappingPaging 
-                    = CloudJiraUtils.get(webClient, endpoint, CloudJiraIssueTypeSchemeMappingDTO.class).block();
+                    = 지라유틸.get(webClient, endpoint, CloudJiraIssueTypeSchemeMappingDTO.class).block();
 
             values.addAll(issueTypeSchemeMappingPaging.getValues());
 
@@ -58,7 +61,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
                 checkLast = true;
             }
             else {
-                startAt = maxResult * index;
+                startAt = 최대_검색수 * index;
                 index++;
             }
         }
@@ -121,11 +124,11 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         dto.setIssueTypeIds(issueTypeIds);
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        Optional<Boolean> result = CloudJiraUtils.executePut(webClient, endpoint, dto);
+        Optional<Boolean> result = 지라유틸.executePut(webClient, endpoint, dto);
 
-        // Mono<Void> addIssueTypeScheme = CloudJiraUtils.put(webClient, endpoint, dto, Void.class);
+        // Mono<Void> addIssueTypeScheme = 지라유틸.put(webClient, endpoint, dto, Void.class);
         // try {
         //     addIssueTypeScheme
         //         .onErrorResume(e -> Mono.empty())

@@ -76,8 +76,9 @@ public class OnPremiseJiraIssueTest {
     public SearchResult getIssueListByIssueTypeName(String issueTypeName) throws Exception {
 
         String jql = "issuetype = " + issueTypeName;
-        int maxResult = 50;
+
         int startAt = 0;
+        int 최대_검색수 = 50;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
@@ -86,12 +87,12 @@ public class OnPremiseJiraIssueTest {
 
         do {
             searchResult = restClient.getSearchClient()
-                    .searchJql(jql, maxResult, startAt, fields)
+                    .searchJql(jql, 최대_검색수, startAt, fields)
                     .get();
             for (Issue issue : searchResult.getIssues()) {
                 allIssues.add(issue);
             }
-            startAt += maxResult;
+            startAt += 최대_검색수;
         } while (searchResult.getTotal() > startAt);
 
         // 변환을 위한 ObjectMapper 생성
@@ -184,8 +185,9 @@ public class OnPremiseJiraIssueTest {
     public List<지라_이슈_데이터_전송_객체<String>> 이슈링크_가져오기(String 이슈_키_또는_아이디) throws Exception {
 
         String jql = "issue in linkedIssues("+이슈_키_또는_아이디+")";
-        int maxResult = 50;
+
         int startAt = 0;
+        int 최대_검색수 = 50;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
@@ -194,13 +196,13 @@ public class OnPremiseJiraIssueTest {
 
         do {
             searchResult = restClient.getSearchClient()
-                    .searchJql(jql, maxResult, startAt, fields)
+                    .searchJql(jql, 최대_검색수, startAt, fields)
                     .get();
             for (Issue issue : searchResult.getIssues()) {
                 지라_이슈_데이터_전송_객체<String> s = 지라_이슈_데이터_전송_객체로_변환(issue);
                 allIssues.add(s);
             }
-            startAt += maxResult;
+            startAt += 최대_검색수;
         } while (searchResult.getTotal() > startAt);
 
         return allIssues;
@@ -217,8 +219,9 @@ public class OnPremiseJiraIssueTest {
     List<지라_이슈_데이터_전송_객체<String>> 서브테스크_가져오기(String 이슈_키_또는_아이디) throws ExecutionException, InterruptedException {
 
         String jql = "parent="+이슈_키_또는_아이디;
-        int maxResult = 50;
+
         int startAt = 0;
+        int 최대_검색수 = 50;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
@@ -227,13 +230,13 @@ public class OnPremiseJiraIssueTest {
 
         do {
             searchResult = restClient.getSearchClient()
-                    .searchJql(jql, maxResult, startAt, fields)
+                    .searchJql(jql, 최대_검색수, startAt, fields)
                     .get();
             for (Issue issue : searchResult.getIssues()) {
                 지라_이슈_데이터_전송_객체<String> s = 지라_이슈_데이터_전송_객체로_변환(issue);
                 allIssues.add(s);
             }
-            startAt += maxResult;
+            startAt += 최대_검색수;
         } while (searchResult.getTotal() > startAt);
 
         return allIssues;

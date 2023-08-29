@@ -48,8 +48,9 @@ public class CloudJiraIssueTypeSchemeTest {
     @Test
     @DisplayName("매핑된 issueTypeScheme에 따르는 issueTypeId 전체 조회 api 호출 테스트")
     public void EachIssueTypeSchemeMappingIssueTypeIdCallTest() throws Exception {
-        int maxResult = 50;
+
         int startAt = 0;
+        int 최대_검색수 = 50;
         int index=1;
         boolean checkLast = false;
 
@@ -57,7 +58,7 @@ public class CloudJiraIssueTypeSchemeTest {
                     = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
         while(!checkLast) {
-            String uri = "/rest/api/3/issuetypescheme/mapping?maxResults="+ maxResult + "&startAt=" + startAt;
+            String uri = "/rest/api/3/issuetypescheme/mapping?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
             CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = webClient.get()
                     .uri(uri)
                     .retrieve()
@@ -69,7 +70,7 @@ public class CloudJiraIssueTypeSchemeTest {
                 checkLast = true;
             }
             else {
-                startAt = maxResult * index;
+                startAt = 최대_검색수 * index;
                 index++;
             }
         }

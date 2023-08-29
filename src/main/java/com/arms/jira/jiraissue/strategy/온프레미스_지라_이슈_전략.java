@@ -3,12 +3,15 @@ package com.arms.jira.jiraissue.strategy;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissue.dao.지라_이슈_저장소;
-import com.arms.jira.jiraissue.model.*;
+import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
+import com.arms.jira.jiraissue.model.지라_이슈_생성_데이터_전송_객체;
+import com.arms.jira.jiraissue.model.지라_이슈_엔티티;
+import com.arms.jira.jiraissue.model.지라_이슈_필드_데이터_전송_객체;
 import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
 import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
 import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
 import com.arms.jira.jirapriority.model.지라_이슈_우선순위_데이터_전송_객체;
-import com.arms.jira.onpremise.OnPremiseJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.*;
@@ -36,24 +39,28 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
     @Autowired
     private 지라_이슈_저장소 지라_이슈_저장소;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
     @Override
     public List<지라_이슈_데이터_전송_객체<T>> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
         JiraInfoDTO info = 지라연결_서비스.checkInfo(연결_아이디);
 
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
 
         String 조회대상_프로젝트 = "project = " + 프로젝트_키_또는_아이디;
-        int 검색_끝_지점 = 50;
+
         int 검색_시작_지점 = 0;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         Set<String> 필드 = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
         List<지라_이슈_데이터_전송_객체<T>> 프로젝트_이슈_목록 = new ArrayList<>();
         while (true) {
             SearchResult 프로젝트_이슈_검색결과 = restClient.getSearchClient()
-                    .searchJql(조회대상_프로젝트, 검색_끝_지점, 검색_시작_지점, 필드)
+                    .searchJql(조회대상_프로젝트, 최대_검색수, 검색_시작_지점, 필드)
                     .claim();
 
             for (Issue 지라_이슈 : 프로젝트_이슈_검색결과.getIssues()) {
@@ -64,7 +71,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
                 break;
             }
 
-            검색_시작_지점 += 검색_끝_지점;
+            검색_시작_지점 += 최대_검색수;
         }
         return 프로젝트_이슈_목록;
 
@@ -76,7 +83,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
         로그.info("온프레미스 지라 이슈 생성하기");
 
         JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                 연결정보.getUserId(),
                 연결정보.getPasswordOrToken());
         try {
@@ -98,7 +105,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
         로그.info("온프레미스 지라 이슈 생성하기");
         
         JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());
 
@@ -195,7 +202,7 @@ public class 온프레미스_지라_이슈_전략<T> implements 지라_이슈_�
         로그.info("온프레미스 지라 이슈 수정하기");
 
         JiraInfoDTO 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(연결정보.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());
 

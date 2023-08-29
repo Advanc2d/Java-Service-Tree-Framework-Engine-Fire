@@ -1,6 +1,6 @@
 package com.arms.jira.cloud.jiraissuetype.service;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
 import com.arms.jira.info.model.JiraInfoDTO;
@@ -36,9 +36,9 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         String endpoint = "/rest/api/3/issuetype";
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint,
+        List<CloudJiraIssueTypeDTO> issueTypes = 지라유틸.get(webClient, endpoint,
                                                 new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {}).block();
 
         logger.info(issueTypes.toString());
@@ -52,9 +52,9 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        List<CloudJiraIssueTypeDTO> issueTypes = CloudJiraUtils.get(webClient, endpoint,
+        List<CloudJiraIssueTypeDTO> issueTypes = 지라유틸.get(webClient, endpoint,
                                         new ParameterizedTypeReference<List<CloudJiraIssueTypeDTO>>() {}).block();
 
         logger.info(issueTypes.toString());
@@ -71,9 +71,9 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
         String endpoint = "/rest/api/3/issuetype";
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = CloudJiraUtils.post(webClient, endpoint,
+        CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = 지라유틸.post(webClient, endpoint,
                 cloudJiraIssueTypeInputDTO, CloudJiraIssueTypeDTO.class).block();
 
         modelMapper.getConfiguration().setSkipNullEnabled(true);

@@ -1,6 +1,6 @@
 package com.engine.jira.cloud;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
@@ -319,9 +319,9 @@ public class CloudJiraIssueTest {
     }
 
     public PrioritySearchDTO getPriority() {
-        int maxResult = 50;
+
         int startAt = 0;
-        int index= 1;
+        int 최대_검색수 = 50;
         boolean checkLast = false;
 
         List<Priority> values = new ArrayList<Priority>();
@@ -329,7 +329,7 @@ public class CloudJiraIssueTest {
 
         while(!checkLast) {
 
-            String endpoint = "/rest/api/3/priority/search?maxResults="+ maxResult + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/priority/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
 
             PrioritySearchDTO priorities = webClient.get()
                     .uri(endpoint)
@@ -345,8 +345,7 @@ public class CloudJiraIssueTest {
                 checkLast = true;
             }
             else {
-                startAt = maxResult * index;
-                index++;
+                startAt += 최대_검색수 ;
             }
         }
 
@@ -366,9 +365,9 @@ public class CloudJiraIssueTest {
     }
 
     public ResolutionSearchDTO getResoltuionList() {
-        int maxResult = 50;
+
         int startAt = 0;
-        int index= 1;
+        int 최대_검색수 = 50;
         boolean checkLast = false;
 
         List<Resolution> values = new ArrayList<Resolution>();
@@ -376,7 +375,7 @@ public class CloudJiraIssueTest {
 
         while(!checkLast) {
 
-            String endpoint = "/rest/api/3/resolution/search?maxResults="+ maxResult + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/resolution/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
 
             ResolutionSearchDTO resolutions = webClient.get()
                     .uri(endpoint)
@@ -392,8 +391,7 @@ public class CloudJiraIssueTest {
                 checkLast = true;
             }
             else {
-                startAt = maxResult * index;
-                index++;
+                startAt += 최대_검색수;
             }
         }
 
@@ -565,24 +563,24 @@ public class CloudJiraIssueTest {
     List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_가져오기(String 이슈_키_또는_아이디) {
 
         int 검색_시작_지점 = 0;
-        int 검색_최대_개수 = 50;
+        int 최대_검색수 = 50;
         boolean isLast = false;
 
         List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_목록 = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=issue in linkedIssues(" + 이슈_키_또는_아이디 + ")" +fieldsParam
-                    + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
+                    + "&startAt=" + 검색_시작_지점 + "&최대_검색수=" + 최대_검색수;
 
             클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
-                    = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+                    = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
 
             이슈링크_목록.addAll(서브테스크_조회결과.getIssues());
 
             if (서브테스크_조회결과.getTotal() == 이슈링크_목록.size()) {
                 isLast = true;
             }else{
-                검색_시작_지점 += 검색_최대_개수;
+                검색_시작_지점 += 최대_검색수;
             }
         }
 
@@ -602,24 +600,24 @@ public class CloudJiraIssueTest {
     List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 서브테스크_가져오기(String 이슈_키_또는_아이디) {
 
         int 검색_시작_지점 = 0;
-        int 검색_최대_개수 = 50;
+        int 최대_검색수 = 50;
         boolean isLast = false;
 
         List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 서브테스크_목록 = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=parent="+ 이슈_키_또는_아이디 + fieldsParam
-                            + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
+                            + "&startAt=" + 검색_시작_지점 + "&최대_검색수=" + 최대_검색수;
 
             클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
-                    = CloudJiraUtils.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+                    = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
 
             서브테스크_목록.addAll(서브테스크_조회결과.getIssues());
 
             if (서브테스크_조회결과.getTotal() == 서브테스크_목록.size()) {
                 isLast = true;
             }else{
-                검색_시작_지점 += 검색_최대_개수;
+                검색_시작_지점 += 최대_검색수;
             }
         }
 

@@ -1,9 +1,7 @@
 package com.arms.jira.onpremise.jiraissue.service;
 
-import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
-import com.arms.jira.onpremise.OnPremiseJiraUtils;
 import com.arms.jira.onpremise.jiraissue.dao.OnPremiseJiraIssueJpaRepository;
 import com.arms.jira.onpremise.jiraissue.model.FieldsDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
@@ -12,6 +10,7 @@ import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueInputDTO;
 import com.arms.jira.onpremise.jiraissuepriority.model.OnPremiseJiraIssuePriorityDTO;
 import com.arms.jira.onpremise.jiraissueresolution.model.OnPremiseJiraIssueResolutionDTO;
 import com.arms.jira.onpremise.jiraissuestatus.model.OnPremiseJiraIssueStatusDTO;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.*;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -50,6 +48,9 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Autowired
     private OnPremiseJiraIssueJpaRepository onPremiseJiraIssueJpaRepository;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
 
 
     @Transactional
@@ -58,7 +59,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
         JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                                                                          info.getUserId(),
                                                                          info.getPasswordOrToken());
 
@@ -106,13 +107,14 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
         JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
 
         String jql = "project = " + projectKeyOrId;
-        int maxResult = 50;
+
         int startAt = 0;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
@@ -120,12 +122,12 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
         SearchResult searchResult;
         do {
             searchResult = restClient.getSearchClient()
-                    .searchJql(jql, maxResult, startAt, fields)
+                    .searchJql(jql, 최대_검색수, startAt, fields)
                     .get();
             for (Issue issue : searchResult.getIssues()) {
                 allIssues.add(issue);
             }
-            startAt += maxResult;
+            startAt += 최대_검색수;
         } while (searchResult.getTotal() > startAt);
 
         // 변환을 위한 ObjectMapper 생성
@@ -150,7 +152,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 //    public Issue getIssue(Long connectId, String issueKeyOrId) throws Exception {
 //        JiraInfoDTO info = jiraInfo.checkInfo(connectId);
 //
-//        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+//        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
 //                info.getUserId(),
 //                info.getPasswordOrToken());
 //        try {
@@ -166,7 +168,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     public OnPremiseJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) throws Exception {
         JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
 
-        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                 info.getUserId(),
                 info.getPasswordOrToken());
         try {
@@ -385,7 +387,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 //        try {
 //            JiraInfoDTO info = jiraInfo.checkInfo(connectId);
 //
-//            JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+//            JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
 //                                                                             info.getUserId(),
 //                                                                             info.getPasswordOrToken());
 //
@@ -430,7 +432,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 //    @Override
 //    public Map<String, Object> deleteIssue(Long connectId, String issueKey) throws Exception {
 //        JiraInfoDTO info = jiraInfo.loadConnectInfo(connectId);
-//        JiraRestClient restClient = OnPremiseJiraUtils.getJiraRestClient(info.getUri(),
+//        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
 //                                                                         info.getUserId(),
 //                                                                         info.getPasswordOrToken());
 //
@@ -615,14 +617,14 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
         String endpoint = "/rest/api/2/issue/" + issueKeyOrId;
         JiraInfoDTO jiraInfoDTO = 지라연결_서비스.loadConnectInfo(connectId);
-        WebClient webClient = createJiraWebClient(jiraInfoDTO.getUri());
+        WebClient webClient = 클라우드_통신기_생성(jiraInfoDTO.getUri());
 
-        OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = CloudJiraUtils.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();
+        OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = 지라유틸.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();
 
         return onPremiseJiraIssueDTO;
     }
 
-    public static WebClient createJiraWebClient(String uri) {
+    public static WebClient 클라우드_통신기_생성(String uri) {
 
         return WebClient.builder()
                 .baseUrl(uri)

@@ -1,6 +1,6 @@
 package com.engine.jira.onpremise.scheduler;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.onpremise.jiraissue.model.FieldsDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueDTO;
 import com.arms.jira.onpremise.jiraissue.model.OnPremiseJiraIssueEntity;
@@ -129,8 +129,9 @@ public class OnPremiseIssueSchedulerTest {
     public SearchResult getIssueListByIssueTypeName(String issueTypeName) throws Exception {
 
         String jql = "issuetype = " + issueTypeName;
-        int maxResults = 50;
+
         int startAt = 0;
+        int 최대_검색수 = 50;
         Set<String> fields = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
         // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
@@ -139,12 +140,12 @@ public class OnPremiseIssueSchedulerTest {
 
         do {
             searchResult = restClient.getSearchClient()
-                    .searchJql(jql, maxResults, startAt, fields)
+                    .searchJql(jql, 최대_검색수, startAt, fields)
                     .get();
             for (Issue issue : searchResult.getIssues()) {
                 allIssues.add(issue);
             }
-            startAt += maxResults;
+            startAt += 최대_검색수;
         } while (searchResult.getTotal() > startAt);
 
         return searchResult;
@@ -153,14 +154,14 @@ public class OnPremiseIssueSchedulerTest {
     public OnPremiseJiraIssueDTO getIssueByWebClient(String issueKeyOrId) throws Exception {
 
         String endpoint = "/rest/api/2/issue/" + issueKeyOrId;
-        WebClient webClient = createJiraWebClient(baseUrl);
+        WebClient webClient = 클라우드_통신기_생성(baseUrl);
 
-        OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = CloudJiraUtils.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();
+        OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = 지라유틸.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();
 
         return onPremiseJiraIssueDTO;
     }
 
-    public static WebClient createJiraWebClient(String uri) {
+    public static WebClient 클라우드_통신기_생성(String uri) {
 
         return WebClient.builder()
                 .baseUrl(uri)

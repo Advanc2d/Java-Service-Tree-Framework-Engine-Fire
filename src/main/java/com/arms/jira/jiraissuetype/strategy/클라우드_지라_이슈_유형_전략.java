@@ -1,6 +1,6 @@
 package com.arms.jira.jiraissuetype.strategy;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.info.model.JiraInfoDTO;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
@@ -28,10 +28,10 @@ public class 클라우드_지라_이슈_유형_전략 implements 지라_이슈_�
         String endpoint = "/rest/api/3/issuetype";
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<지라_이슈_유형_데이터_전송_객체> 반환할_이슈_유형_목록
-                                    = CloudJiraUtils.get(webClient, endpoint,
+                                    = 지라유틸.get(webClient, endpoint,
                                     new ParameterizedTypeReference<List<지라_이슈_유형_데이터_전송_객체>>() {}).block();
 
         로그.info(반환할_이슈_유형_목록.toString());
@@ -54,10 +54,10 @@ public class 클라우드_지라_이슈_유형_전략 implements 지라_이슈_�
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + 프로젝트_아이디;
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<지라_이슈_유형_데이터_전송_객체> 반환할_이슈_유형_목록
-                = CloudJiraUtils.get(webClient, endpoint,
+                = 지라유틸.get(webClient, endpoint,
                         new ParameterizedTypeReference<List<지라_이슈_유형_데이터_전송_객체>>() {}).block();
 
         로그.info(반환할_이슈_유형_목록.toString());

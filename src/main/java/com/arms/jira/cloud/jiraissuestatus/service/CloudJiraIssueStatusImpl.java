@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.arms.jira.cloud.CloudJiraUtils;
+import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissuestatus.model.StatusSearchDTO;
 import com.arms.jira.cloud.jiraissuestatus.model.Status;
 import com.arms.jira.info.model.JiraInfoDTO;
@@ -26,24 +26,27 @@ public class CloudJiraIssueStatusImpl implements CloudJiraIssueStatus {
     @Autowired
     public 지라연결_서비스 지라연결_서비스;
 
+    @Autowired
+    private 지라유틸 지라유틸;
+
     @Override
     public StatusSearchDTO getStatusList(Long connectId) {
 
         logger.info("getStatusList 비즈니스 로직 실행");
 
         JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
-        WebClient webClient = CloudJiraUtils.createJiraWebClient(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
     
-        int maxResult = 50;
         int startAt = 0;
+        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         boolean checkLast = false;
     
         List<Status> values = new ArrayList<Status>();
         StatusSearchDTO result = null;
     
         while(!checkLast) {
-            String endpoint = "/rest/api/3/statuses/search?maxResults="+ maxResult + "&startAt=" + startAt;
-            StatusSearchDTO statuses = CloudJiraUtils.get(webClient, endpoint, StatusSearchDTO.class).block();
+            String endpoint = "/rest/api/3/statuses/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            StatusSearchDTO statuses = 지라유틸.get(webClient, endpoint, StatusSearchDTO.class).block();
     
             values.addAll(statuses.getValues());
     
@@ -54,7 +57,7 @@ public class CloudJiraIssueStatusImpl implements CloudJiraIssueStatus {
                 checkLast = true;
             }
             else {
-                startAt += maxResult;
+                startAt += 최대_검색수;
             }
         }
     
