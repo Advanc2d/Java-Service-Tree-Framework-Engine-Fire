@@ -58,7 +58,7 @@ public class CloudJiraIssueTypeSchemeTest {
                     = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
         while(!checkLast) {
-            String uri = "/rest/api/3/issuetypescheme/mapping?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String uri = "/rest/api/3/issuetypescheme/mapping?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = webClient.get()
                     .uri(uri)
                     .retrieve()

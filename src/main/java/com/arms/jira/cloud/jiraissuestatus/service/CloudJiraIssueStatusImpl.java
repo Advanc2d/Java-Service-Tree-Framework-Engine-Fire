@@ -45,7 +45,7 @@ public class CloudJiraIssueStatusImpl implements CloudJiraIssueStatus {
         StatusSearchDTO result = null;
     
         while(!checkLast) {
-            String endpoint = "/rest/api/3/statuses/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/statuses/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             StatusSearchDTO statuses = 지라유틸.get(webClient, endpoint, StatusSearchDTO.class).block();
     
             values.addAll(statuses.getValues());

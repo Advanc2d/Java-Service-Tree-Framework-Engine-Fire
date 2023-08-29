@@ -44,7 +44,7 @@ public class CloudJiraIssuePriorityImpl implements CloudJiraIssuePriority {
         PrioritySearchDTO result = null;
 
         while(!checkLast) {
-            String endpoint = "/rest/api/3/priority/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/priority/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             PrioritySearchDTO priorities = 지라유틸.get(webClient, endpoint, PrioritySearchDTO.class).block();
 
             values.addAll(priorities.getValues());
