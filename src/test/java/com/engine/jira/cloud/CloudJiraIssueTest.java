@@ -57,7 +57,7 @@ public class CloudJiraIssueTest {
 
     // public String fieldsParam = "&fields=-subtasks,-issuelinks,-description";
 
-    public String fieldsParam = "&fields=issuetype,project,resolutiondate,watches,created,priority,labels,versions,assignee,status,creator,reporter,assignee";
+    public String fieldsParam = "fields=project,issuetype,creator,reporter,assignee,labels,priority,status,resolution,resolutiondate,created,worklogs,timespent,fixVersions";
 
     @BeforeEach
     void setUp () {
@@ -73,7 +73,7 @@ public class CloudJiraIssueTest {
     }
 
     public CloudJiraIssueDTO getIssue(String issueIdOrKey) {
-        String uri = "/rest/api/3/issue/" + issueIdOrKey;
+        String uri = "/rest/api/3/issue/" + issueIdOrKey + "?"+fieldsParam;
 
         CloudJiraIssueDTO issue = webClient.get()
                 .uri(uri)
@@ -92,13 +92,14 @@ public class CloudJiraIssueTest {
     }
 
     public CloudJiraIssueSearchDTO getIssueByProjectKeyOrId (String projectKeyOrId) {
-        String uri = "/rest/api/3/search?jql=project=" + projectKeyOrId;
+        String uri = "/rest/api/3/search?" +fieldsParam;
 
         CloudJiraIssueSearchDTO issues = webClient.get()
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(CloudJiraIssueSearchDTO.class).block();
 
+        System.out.println("issues = " + issues.toString());
         return issues;
     }
 
@@ -117,7 +118,8 @@ public class CloudJiraIssueTest {
     @DisplayName("이슈 상세조회 조회 테스트")
     public void IssueDetailCallTest() {
         CloudJiraIssueDTO issue = getIssue(issueKeyOrId);
-        Assertions.assertThat(issue.getSelf()).isEqualTo("https://advanc2d.atlassian.net/rest/api/3/issue/10010");
+        System.out.println("issue = " + issue.toString());
+        Assertions.assertThat(issue.getSelf()).isEqualTo("https://advanc2d.atlassian.net/rest/api/3/issue/10081");
     }
 
     @Test
@@ -329,7 +331,7 @@ public class CloudJiraIssueTest {
 
         while(!checkLast) {
 
-            String endpoint = "/rest/api/3/priority/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/priority/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
 
             PrioritySearchDTO priorities = webClient.get()
                     .uri(endpoint)
@@ -375,7 +377,7 @@ public class CloudJiraIssueTest {
 
         while(!checkLast) {
 
-            String endpoint = "/rest/api/3/resolution/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/resolution/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
 
             ResolutionSearchDTO resolutions = webClient.get()
                     .uri(endpoint)
@@ -570,7 +572,7 @@ public class CloudJiraIssueTest {
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=issue in linkedIssues(" + 이슈_키_또는_아이디 + ")" +fieldsParam
-                    + "&startAt=" + 검색_시작_지점 + "&최대_검색수=" + 최대_검색수;
+                    + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수;
 
             클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
                     = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
@@ -607,7 +609,7 @@ public class CloudJiraIssueTest {
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=parent="+ 이슈_키_또는_아이디 + fieldsParam
-                            + "&startAt=" + 검색_시작_지점 + "&최대_검색수=" + 최대_검색수;
+                            + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수;
 
             클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
                     = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();

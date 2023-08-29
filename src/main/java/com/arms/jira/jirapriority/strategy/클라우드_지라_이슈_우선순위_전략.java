@@ -41,7 +41,7 @@ public class 클라우드_지라_이슈_우선순위_전략 implements 지라_�
 
         while(!isLast) {
 
-            String endpoint = "/rest/api/3/priority/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/priority/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             클라우드_지라_이슈_우선순위_전체_데이터_전송_객체 클라우드_지라_이슈_우선순위_전체_데이터_전송_객체 = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_우선순위_전체_데이터_전송_객체.class).block();
 
             반환할_지라_이슈_우선순위_데이터전송객체_목록.addAll(클라우드_지라_이슈_우선순위_전체_데이터_전송_객체.getValues());

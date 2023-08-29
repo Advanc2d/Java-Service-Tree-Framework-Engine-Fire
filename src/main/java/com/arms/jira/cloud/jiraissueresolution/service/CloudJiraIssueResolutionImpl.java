@@ -43,7 +43,7 @@ public class CloudJiraIssueResolutionImpl implements CloudJiraIssueResolution {
         ResolutionSearchDTO result = null;
 
         while(!checkLast) {
-            String endpoint = "/rest/api/3/resolution/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/resolution/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             ResolutionSearchDTO resolutions = 지라유틸.get(webClient, endpoint, ResolutionSearchDTO.class).block();
 
             values.addAll(resolutions.getValues());

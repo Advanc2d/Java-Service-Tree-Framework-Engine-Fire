@@ -39,7 +39,7 @@ public class 클라우드_지라_이슈_해결책_전략 implements 지라_이�
         List<지라_이슈_해결책_데이터_전송_객체> 반환할_지라_이슈_해결책_데이터전송객체_목록 = new ArrayList<지라_이슈_해결책_데이터_전송_객체>();
 
         while(!checkLast) {
-            String endpoint = "/rest/api/3/resolution/search?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/resolution/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             클라우드_지라_이슈_해결책_전체_데이터_전송_객체 resolutions
                                                         = 지라유틸.get(webClient, endpoint,
                                                         클라우드_지라_이슈_해결책_전체_데이터_전송_객체.class).block();

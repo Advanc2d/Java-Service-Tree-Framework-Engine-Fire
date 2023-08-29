@@ -50,7 +50,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         List<CloudJiraIssueDTO> issueList = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
-            String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId + "&startAt=" + startAt + "&최대_검색수=" + 최대_검색수;
+            String endpoint = "/rest/api/3/search?jql=project=" + projectKeyOrId + "&startAt=" + startAt + "&maxResults=" + 최대_검색수;
             CloudJiraIssueSearchDTO cloudJiraIssuePaging = 지라유틸.get(webClient, endpoint, CloudJiraIssueSearchDTO.class).block();
 
             issueList.addAll(cloudJiraIssuePaging.getIssues());
@@ -377,7 +377,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         List<CloudJiraIssueDTO> issueList = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
-            String endpoint = "/rest/api/3/search?jql=issuetype=" + issueTypName + "&startAt=" + startAt + "&최대_검색수=" + 최대_검색수;
+            String endpoint = "/rest/api/3/search?jql=issuetype=" + issueTypName + "&startAt=" + startAt + "&maxResults=" + 최대_검색수;
             CloudJiraIssueSearchDTO cloudJiraIssuePaging = 지라유틸.get(webClient, endpoint, CloudJiraIssueSearchDTO.class).block();
 
             issueList.addAll(cloudJiraIssuePaging.getIssues());

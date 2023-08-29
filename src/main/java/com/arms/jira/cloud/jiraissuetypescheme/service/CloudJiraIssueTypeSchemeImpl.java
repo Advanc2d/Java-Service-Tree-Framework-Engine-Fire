@@ -48,7 +48,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
 
         while(!checkLast) {
 
-            String endpoint = "/rest/api/3/issuetypescheme/mapping?최대_검색수="+ 최대_검색수 + "&startAt=" + startAt;
+            String endpoint = "/rest/api/3/issuetypescheme/mapping?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
             CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMappingPaging 
                     = 지라유틸.get(webClient, endpoint, CloudJiraIssueTypeSchemeMappingDTO.class).block();
 
