@@ -89,8 +89,4 @@ public class 지라이슈 {
         private String name;
     }
 
-
-    // 특정 프로젝트의 전체 이슈 조회 시 사용
-    private List<지라이슈> issues;
-
 }

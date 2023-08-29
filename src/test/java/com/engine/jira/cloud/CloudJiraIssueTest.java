@@ -57,7 +57,7 @@ public class CloudJiraIssueTest {
 
     // public String fieldsParam = "&fields=-subtasks,-issuelinks,-description";
 
-    public String fieldsParam = "&fields=issuetype,project,resolutiondate,watches,created,priority,labels,versions,assignee,status,creator,reporter";
+    public String fieldsParam = "&fields=issuetype,project,resolutiondate,watches,created,priority,labels,versions,assignee,status,creator,reporter,assignee";
 
     @BeforeEach
     void setUp () {
@@ -563,6 +563,7 @@ public class CloudJiraIssueTest {
     }
 
     List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_가져오기(String 이슈_키_또는_아이디) {
+
         int 검색_시작_지점 = 0;
         int 검색_최대_개수 = 50;
         boolean isLast = false;
