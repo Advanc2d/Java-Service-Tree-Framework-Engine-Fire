@@ -276,13 +276,13 @@ class 통합이슈조회테스트 {
             담당자.setAccountId(이슈.getAssignee().getName());
             담당자.setEmailAddress(이슈.getAssignee().getEmailAddress());
 
-            지라이슈필드_데이터.setReporter(담당자);
+            지라이슈필드_데이터.setAssignee(담당자);
         }
 
         // 라벨
         if (이슈.getLabels() != null) {
-
-            List<String> 이슈라벨 = (List<String>) 이슈.getLabels();
+            Set<String> 라벨_목록 = 이슈.getLabels();
+            List<String> 이슈라벨 = new ArrayList<>(라벨_목록);
             지라이슈필드_데이터.setLabels(이슈라벨);
         }
 
@@ -353,13 +353,18 @@ class 통합이슈조회테스트 {
             Iterable<Worklog> 전체이슈워크로그 = 이슈.getWorklogs();
 
             for (Worklog 워크로그 : 전체이슈워크로그) {
+                지라사용자_데이터 작성자 = new 지라사용자_데이터();
+
                 String 이슈워크로그_주소 = 워크로그.getSelf().toString();
-                User 이슈워크로그_작성자 = (User) 워크로그.getAuthor();
+                BasicUser 이슈워크로그_작성자 = 워크로그.getAuthor();
                 String 이슈워크로그_작성자아이디 = 이슈워크로그_작성자.getName();
-                String 이슈워크로그_작성자이메일 = 이슈워크로그_작성자.getEmailAddress();
-                User 이슈워크로그_수정작성자 = (User) 워크로그.getUpdateAuthor();
+                //String 이슈워크로그_작성자이메일 = 이슈워크로그_작성자.getDisplayName().toString();
+//                User 이슈워크로그_수정작성자 = (User) 워크로그.getUpdateAuthor();
+//                String 이슈워크로그_수정작성자아이디 = 이슈워크로그_수정작성자.getName();
+//                String 이슈워크로그_수정작성자이메일 = 이슈워크로그_수정작성자.getEmailAddress();
+                BasicUser 이슈워크로그_수정작성자 = 워크로그.getUpdateAuthor();
                 String 이슈워크로그_수정작성자아이디 = 이슈워크로그_수정작성자.getName();
-                String 이슈워크로그_수정작성자이메일 = 이슈워크로그_수정작성자.getEmailAddress();
+                //String 이슈워크로그_수정작성자이메일 = 이슈워크로그_수정작성자.getDisplayName().toString();
                 String 이슈워크로그_생성날짜 = 워크로그.getCreationDate().toString();
                 String 이슈워크로그_수정날짜 = 워크로그.getUpdateDate().toString();
                 String 이슈워크로그_시작날짜 = 워크로그.getStartDate().toString();
@@ -367,10 +372,16 @@ class 통합이슈조회테스트 {
 
                 지라이슈워크로그_데이터 이슈워크로그 = new 지라이슈워크로그_데이터();
                 이슈워크로그.setSelf(이슈워크로그_주소);
-                이슈워크로그.getAuthor().setAccountId(이슈워크로그_작성자아이디);
-                이슈워크로그.getAuthor().setEmailAddress(이슈워크로그_작성자이메일);
-                이슈워크로그.getUpdateAuthor().setAccountId(이슈워크로그_수정작성자아이디);
-                이슈워크로그.getUpdateAuthor().setEmailAddress(이슈워크로그_수정작성자이메일);
+
+                // BasicUser 타입에서는 이메일을 받아오지 않아서 어떻게 처리할지 고민중...
+                작성자.setAccountId(이슈워크로그_작성자아이디);
+                //작성자.setEmailAddress(이슈워크로그_작성자이메일);
+                이슈워크로그.setAuthor(작성자);
+
+                작성자.setAccountId(이슈워크로그_수정작성자아이디);
+                //작성자.setEmailAddress(이슈워크로그_수정작성자이메일);
+                이슈워크로그.setUpdateAuthor(작성자);
+
                 이슈워크로그.setCreated(이슈워크로그_생성날짜);
                 이슈워크로그.setUpdated(이슈워크로그_수정날짜);
                 이슈워크로그.setStarted(이슈워크로그_시작날짜);
@@ -379,10 +390,11 @@ class 통합이슈조회테스트 {
 
                 이슈워크로그_목록.add(이슈워크로그);
             }
+            지라이슈필드_데이터.setWorklogs(이슈워크로그_목록);
         }
 
         // timespent
-        if (이슈.getTimeTracking() != null) {
+        if (이슈.getTimeTracking().getTimeSpentMinutes() != null) {
             Integer 이슈소요시간 = 이슈.getTimeTracking().getTimeSpentMinutes() * 60;
             지라이슈필드_데이터.setTimespent(이슈소요시간);
         }
@@ -414,6 +426,7 @@ class 통합이슈조회테스트 {
 
                 이슈버전_목록.add(이슈버전);
             }
+            지라이슈필드_데이터.setFixVersions(이슈버전_목록);
         }
 
         지라이슈_데이터.setFields(지라이슈필드_데이터);
