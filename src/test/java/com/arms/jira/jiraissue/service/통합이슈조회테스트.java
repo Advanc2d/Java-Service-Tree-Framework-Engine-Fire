@@ -2,10 +2,10 @@ package com.arms.jira.jiraissue.service;
 
 import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.jiraissue.model.*;
-import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
-import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
-import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
-import com.arms.jira.jirapriority.model.지라_이슈_우선순위_데이터_전송_객체;
+import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
+import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
+import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
+import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
@@ -249,7 +249,7 @@ class 통합이슈조회테스트 {
             String 이슈유형_이름 = 이슈.getIssueType().getName();
             String 이슈유형_내용 = 이슈.getIssueType().getDescription();
 
-            지라_이슈_유형_데이터_전송_객체 이슈유형 = new 지라_이슈_유형_데이터_전송_객체();
+            지라이슈유형_데이터 이슈유형 = new 지라이슈유형_데이터();
             이슈유형.setSelf(이슈유형_주소);
             이슈유형.setId(이슈유형_아이디);
             이슈유형.setName(이슈유형_이름);
@@ -293,7 +293,7 @@ class 통합이슈조회테스트 {
             String 이슈우선순위_아이디 = String.valueOf(이슈.getPriority().getId());
             String 이슈우선순위_이름 = 이슈.getPriority().getName();
 
-            지라_이슈_우선순위_데이터_전송_객체 이슈우선순위 = new 지라_이슈_우선순위_데이터_전송_객체();
+            지라이슈_우선순위_데이터 이슈우선순위 = new 지라이슈_우선순위_데이터();
             이슈우선순위.setSelf(이슈우선순위_주소);
             이슈우선순위.setId(이슈우선순위_아이디);
             이슈우선순위.setName(이슈우선순위_이름);
@@ -310,7 +310,7 @@ class 통합이슈조회테스트 {
             String 이슈상태_이름 = 이슈.getStatus().getName();
             String 이슈상태_설명 =  이슈.getStatus().getDescription();
 
-            지라_이슈_상태_데이터_전송_객체 이슈상태 = new 지라_이슈_상태_데이터_전송_객체();
+            지라이슈상태_데이터 이슈상태 = new 지라이슈상태_데이터();
             이슈상태.setSelf(이슈상태_주소);
             이슈상태.setId(이슈상태_아이디);
             이슈상태.setName(이슈상태_이름);
@@ -327,7 +327,7 @@ class 통합이슈조회테스트 {
             String 이슈해결책_이름 = 이슈.getResolution().getName();
             String 이슈해결책_설명 = 이슈.getResolution().getDescription();
 
-            지라_이슈_해결책_데이터_전송_객체 이슈해결책 = new 지라_이슈_해결책_데이터_전송_객체();
+            지라이슈_해결책_데이터 이슈해결책 = new 지라이슈_해결책_데이터();
             이슈해결책.setSelf(이슈해결책_주소);
             이슈해결책.setId(이슈해결책_아이디);
             이슈해결책.setName(이슈해결책_이름);

@@ -1,6 +1,6 @@
 package com.arms.jira.onpremise.jiraissue.service;
 
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.jiraissue.dao.OnPremiseJiraIssueJpaRepository;
 import com.arms.jira.onpremise.jiraissue.model.FieldsDTO;
@@ -57,7 +57,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public OnPremiseJiraIssueDTO createIssue(Long connectId, OnPremiseJiraIssueInputDTO onPremiseJiraIssueInputDTO) throws Exception {
 
-        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                                                                          info.getUserId(),
@@ -105,7 +105,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     @Override
     public JsonNode getIssueSearch(Long connectId, String projectKeyOrId) throws Exception {
 
-        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                 info.getUserId(),
@@ -166,7 +166,7 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
 
     @Override
     public OnPremiseJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) throws Exception {
-        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                 info.getUserId(),
@@ -616,8 +616,8 @@ public class OnPremiseJiraIssueImpl implements OnPremiseJiraIssue {
     public OnPremiseJiraIssueDTO getIssueByWebClient(Long connectId, String issueKeyOrId) throws Exception {
 
         String endpoint = "/rest/api/2/issue/" + issueKeyOrId;
-        JiraInfoDTO jiraInfoDTO = 지라연결_서비스.loadConnectInfo(connectId);
-        WebClient webClient = 클라우드_통신기_생성(jiraInfoDTO.getUri());
+        지라연결정보_데이터 지라연결정보_데이터 = 지라연결_서비스.loadConnectInfo(connectId);
+        WebClient webClient = 클라우드_통신기_생성(지라연결정보_데이터.getUri());
 
         OnPremiseJiraIssueDTO onPremiseJiraIssueDTO = 지라유틸.get(webClient, endpoint, OnPremiseJiraIssueDTO.class).block();
 

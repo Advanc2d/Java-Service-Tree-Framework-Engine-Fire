@@ -1,6 +1,6 @@
 package com.arms.jira.onpremise.jiraissuepriority.service;
 
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.jiraissuepriority.model.OnPremiseJiraIssuePriorityDTO;
 import com.arms.jira.utils.지라유틸;
@@ -25,7 +25,7 @@ public class OnPremiseJiraIssuePriorityImpl implements OnPremiseJiraIssuePriorit
 
     @Override
     public List<OnPremiseJiraIssuePriorityDTO> getPriorityList(Long connectId) throws Exception {
-        JiraInfoDTO info = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(connectId);
 
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
                                                                          info.getUserId(),

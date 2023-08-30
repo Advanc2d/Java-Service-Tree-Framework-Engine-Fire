@@ -2,7 +2,7 @@ package com.arms.jira.cloud.jiraissue.service;
 
 import com.arms.jira.cloud.jiraissue.dao.CloudJiraIssueJpaRepository;
 import com.arms.jira.cloud.jiraissue.model.*;
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.utils.지라유틸;
 import lombok.AllArgsConstructor;
@@ -43,7 +43,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         boolean isLast = false;
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
@@ -73,7 +73,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
     public CloudJiraIssueDTO getIssue(Long connectId, String issueKeyOrId) {
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueDTO response = 지라유틸.get(webClient, endpoint, CloudJiraIssueDTO.class).block();
@@ -90,7 +90,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue";
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueDTO response = 지라유틸.post(webClient, endpoint, cloudJiraIssueInputDTO, CloudJiraIssueDTO.class).block();
@@ -112,7 +112,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId;
         HttpStatus statusCode = null;
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> response = 지라유틸.executePut(webClient, endpoint, cloudJiraIssueInputDTO);
@@ -181,7 +181,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         Map<String, Object> result = new HashMap<String, Object>();
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"?deleteSubtasks=false";
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         if (checkSubTask(connectId, issueKeyOrId)){ //서브테스크가 있을 경유
@@ -370,7 +370,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
         int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         boolean isLast = false;
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueSearchDTO cloudJiraIssueSearchDTO = new CloudJiraIssueSearchDTO();
@@ -473,7 +473,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         TransitionsDTO transitions = 지라유틸.get(webClient, endpoint, TransitionsDTO.class).block();
@@ -486,7 +486,7 @@ public class CloudJiraIssueImpl implements CloudJiraIssue {
 
         String endpoint = "/rest/api/3/issue/" + issueKeyOrId +"/transitions";
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
 //        IssueStatusUpdateRequestDTO.TransitionInputDTO transitionInputDTO = new IssueStatusUpdateRequestDTO.TransitionInputDTO();

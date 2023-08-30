@@ -4,7 +4,7 @@ import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.CloudJiraIssueTypeSchemeMappingValueDTO;
 import com.arms.jira.cloud.jiraissuetypescheme.model.IssueTypeIdsDTO;
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.cloud.jiraissuetype.service.CloudJiraIssueType;
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         List<CloudJiraIssueTypeSchemeMappingValueDTO> values
                 = new ArrayList<CloudJiraIssueTypeSchemeMappingValueDTO>();
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeSchemeMappingDTO issueTypeSchemeMapping = null;
@@ -123,7 +123,7 @@ public class CloudJiraIssueTypeSchemeImpl implements CloudJiraIssueTypeScheme {
         IssueTypeIdsDTO dto = new IssueTypeIdsDTO();
         dto.setIssueTypeIds(issueTypeIds);
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         Optional<Boolean> result = 지라유틸.executePut(webClient, endpoint, dto);

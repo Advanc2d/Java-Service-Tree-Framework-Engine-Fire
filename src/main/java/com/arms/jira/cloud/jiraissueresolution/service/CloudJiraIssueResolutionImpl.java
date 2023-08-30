@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
 import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ public class CloudJiraIssueResolutionImpl implements CloudJiraIssueResolution {
     @Override
     public ResolutionSearchDTO getResolutionList(Long connectId) {
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         int startAt = 0;
