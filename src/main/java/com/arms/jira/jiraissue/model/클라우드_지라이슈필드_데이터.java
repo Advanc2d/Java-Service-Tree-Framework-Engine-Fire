@@ -18,7 +18,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class 클라우드_지라이슈필드_데이터 {
 
-    private 지라이슈생성필드_데이터.프로젝트 project;
+    private 지라프로젝트_데이터 project;
 
     private 지라이슈유형_데이터 issuetype;
 

@@ -40,27 +40,27 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
     @Override
     public List<지라이슈_데이터> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
-        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(연결_아이디);
 
-        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
-                info.getUserId(),
-                info.getPasswordOrToken());
+        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
+                연결정보.getUserId(),
+                연결정보.getPasswordOrToken());
 
-        String 조회대상_프로젝트 = "project = " + 프로젝트_키_또는_아이디;
+        String 조회할_프로젝트 = "project = " + 프로젝트_키_또는_아이디;
 
         int 검색_시작_지점 = 0;
         int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
         Set<String> 필드 = new HashSet<>(Arrays.asList("*all")); // 검색 필드
 
-        // 이슈 건수가 1000이 넘을때 이슈 조회를 위한 처리
+        // 이슈 건수가 1000이 넘을 때 이슈 조회를 위한 처리
         List<지라이슈_데이터> 프로젝트_이슈_목록 = new ArrayList<>();
         while (true) {
             SearchResult 프로젝트_이슈_검색결과 = restClient.getSearchClient()
-                    .searchJql(조회대상_프로젝트, 최대_검색수, 검색_시작_지점, 필드)
+                    .searchJql(조회할_프로젝트, 최대_검색수, 검색_시작_지점, 필드)
                     .claim();
 
-            for (Issue 지라_이슈 : 프로젝트_이슈_검색결과.getIssues()) {
-                프로젝트_이슈_목록.add(지라이슈_데이터로_변환(지라_이슈));
+            for (Issue 지라이슈 : 프로젝트_이슈_검색결과.getIssues()) {
+                프로젝트_이슈_목록.add(지라이슈_데이터로_변환(지라이슈));
             }
 
             if (프로젝트_이슈_목록.size() >= 프로젝트_이슈_검색결과.getTotal()) {
@@ -69,24 +69,26 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
             검색_시작_지점 += 최대_검색수;
         }
-        return 프로젝트_이슈_목록;
 
+        return 프로젝트_이슈_목록;
     }
 
     @Override
     public 지라이슈_데이터 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception {
 
-        로그.info("온프레미스 지라 이슈 생성하기");
+        로그.info("온프레미스 지라 이슈 조회하기");
 
         지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                 연결정보.getUserId(),
                 연결정보.getPasswordOrToken());
-        try {
-            Issue 지라_이슈 = restClient.getIssueClient().getIssue(이슈_키_또는_아이디).claim();
 
-            return 지라이슈_데이터로_변환(지라_이슈);
-        }catch (RestClientException e) {
+        try {
+            Issue 지라이슈 = restClient.getIssueClient().getIssue(이슈_키_또는_아이디).claim();
+
+            return 지라이슈_데이터로_변환(지라이슈);
+
+        } catch (RestClientException e) {
             로그.info("이슈 조회시 오류가 발생하였습니다.");
             throw new RuntimeException("이슈 조회시 오류가 발생하였습니다.");
         }
@@ -142,10 +144,10 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             내용 = 필드_데이터.getDescription();
         }
         if (필드_데이터.getReporter() != null) {
-            보고자 = 필드_데이터.getReporter().getName();
+            보고자 = 필드_데이터.getReporter().getAccountId();
         }
         if (필드_데이터.getAssignee() != null) {
-            담당자 = 필드_데이터.getAssignee().getName();
+            담당자 = 필드_데이터.getAssignee().getAccountId();
         }
         if (필드_데이터.getPriority() != null) {
             우선순위아이디 = Long.valueOf(필드_데이터.getPriority().getId());
@@ -276,6 +278,216 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
     }
 
+    public 지라이슈_데이터 지라이슈_데이터로_변환(Issue 지라이슈) {
+        지라이슈_데이터 지라이슈_데이터 = new 지라이슈_데이터();
+        지라이슈필드_데이터 지라이슈필드_데이터 = new 지라이슈필드_데이터();
+
+        // 초기화
+        지라프로젝트_데이터 프로젝트 = 지라프로젝트_데이터.builder().build();
+        지라사용자_데이터 보고자 = 지라사용자_데이터.builder().build();
+        지라사용자_데이터 담당자 = 지라사용자_데이터.builder().build();
+
+        // 프로젝트
+        if (지라이슈.getProject() != null) {
+
+            프로젝트.setSelf(지라이슈.getProject().getSelf().toString());
+            프로젝트.setId(지라이슈.getProject().getId().toString());
+            프로젝트.setKey(지라이슈.getProject().getKey());
+            프로젝트.setName(지라이슈.getProject().getName());
+
+            지라이슈필드_데이터.setProject(프로젝트);
+        }
+
+        // 이슈 유형
+        if (지라이슈.getIssueType() != null) {
+
+            String 이슈유형_주소 = String.valueOf(지라이슈.getIssueType().getSelf());
+            String 이슈유형_아이디 = String.valueOf(지라이슈.getIssueType().getId());
+            String 이슈유형_이름 = 지라이슈.getIssueType().getName();
+            String 이슈유형_내용 = 지라이슈.getIssueType().getDescription();
+
+            지라이슈유형_데이터 이슈유형 = new 지라이슈유형_데이터();
+            이슈유형.setSelf(이슈유형_주소);
+            이슈유형.setId(이슈유형_아이디);
+            이슈유형.setName(이슈유형_이름);
+            이슈유형.setDescription(이슈유형_내용);
+            // subtask
+
+            지라이슈필드_데이터.setIssuetype(이슈유형);
+        }
+
+        // 생성자
+
+        // 보고자
+        if (지라이슈.getReporter() != null) {
+
+            보고자.setAccountId(지라이슈.getReporter().getName());
+            보고자.setEmailAddress(지라이슈.getReporter().getEmailAddress());
+
+            지라이슈필드_데이터.setReporter(보고자);
+        }
+
+        // 담당자
+        if (지라이슈.getAssignee() != null) {
+
+            담당자.setAccountId(지라이슈.getAssignee().getName());
+            담당자.setEmailAddress(지라이슈.getAssignee().getEmailAddress());
+
+            지라이슈필드_데이터.setAssignee(담당자);
+        }
+
+        // 라벨
+        if (지라이슈.getLabels() != null) {
+            Set<String> 라벨_목록 = 지라이슈.getLabels();
+            List<String> 이슈라벨 = new ArrayList<>(라벨_목록);
+            지라이슈필드_데이터.setLabels(이슈라벨);
+        }
+
+        // 우선 순위
+        if (지라이슈.getPriority() != null) {
+
+            String 이슈우선순위_주소 = String.valueOf(지라이슈.getPriority().getSelf());
+            String 이슈우선순위_아이디 = String.valueOf(지라이슈.getPriority().getId());
+            String 이슈우선순위_이름 = 지라이슈.getPriority().getName();
+
+            지라이슈_우선순위_데이터 이슈우선순위 = new 지라이슈_우선순위_데이터();
+            이슈우선순위.setSelf(이슈우선순위_주소);
+            이슈우선순위.setId(이슈우선순위_아이디);
+            이슈우선순위.setName(이슈우선순위_이름);
+            // description
+
+            지라이슈필드_데이터.setPriority(이슈우선순위);
+        }
+
+        // 상태 값
+        if (지라이슈.getStatus() != null) {
+
+            String 이슈상태_주소 = String.valueOf(지라이슈.getStatus().getSelf());
+            String 이슈상태_아이디 = String.valueOf(지라이슈.getStatus().getId());
+            String 이슈상태_이름 = 지라이슈.getStatus().getName();
+            String 이슈상태_설명 =  지라이슈.getStatus().getDescription();
+
+            지라이슈상태_데이터 이슈상태 = new 지라이슈상태_데이터();
+            이슈상태.setSelf(이슈상태_주소);
+            이슈상태.setId(이슈상태_아이디);
+            이슈상태.setName(이슈상태_이름);
+            이슈상태.setDescription(이슈상태_설명);
+
+            지라이슈필드_데이터.setStatus(이슈상태);
+        }
+
+        // 해결책
+        if (지라이슈.getResolution() != null) {
+
+            String 이슈해결책_주소 = String.valueOf(지라이슈.getResolution().getSelf());
+            String 이슈해결책_아이디 = String.valueOf(지라이슈.getResolution().getId());
+            String 이슈해결책_이름 = 지라이슈.getResolution().getName();
+            String 이슈해결책_설명 = 지라이슈.getResolution().getDescription();
+
+            지라이슈_해결책_데이터 이슈해결책 = new 지라이슈_해결책_데이터();
+            이슈해결책.setSelf(이슈해결책_주소);
+            이슈해결책.setId(이슈해결책_아이디);
+            이슈해결책.setName(이슈해결책_이름);
+            이슈해결책.setDescription(이슈해결책_설명);
+
+            지라이슈필드_데이터.setResolution(이슈해결책);
+        }
+
+        // resolutiondate
+
+        // created
+        if (지라이슈.getCreationDate() != null) {
+            String 이슈생성날짜 = String.valueOf(지라이슈.getCreationDate());
+            지라이슈필드_데이터.setCreated(이슈생성날짜);
+        }
+
+        // worklogs
+        // BasicUser 타입에서 이메일 데이터를 받아올 수 없어서 고민 중...
+        if (지라이슈.getWorklogs() != null) {
+
+            List<지라이슈워크로그_데이터> 이슈워크로그_목록 = new ArrayList<>();
+
+            Iterable<Worklog> 전체이슈워크로그 = 지라이슈.getWorklogs();
+
+            for (Worklog 워크로그 : 전체이슈워크로그) {
+                지라사용자_데이터 작성자 = new 지라사용자_데이터();
+
+                String 이슈워크로그_주소 = 워크로그.getSelf().toString();
+                BasicUser 이슈워크로그_작성자 = 워크로그.getAuthor();
+                String 이슈워크로그_작성자아이디 = 이슈워크로그_작성자.getName();
+                //String 이슈워크로그_작성자이메일 = 이슈워크로그_작성자.getSelf().toString();
+                BasicUser 이슈워크로그_수정작성자 = 워크로그.getUpdateAuthor();
+                String 이슈워크로그_수정작성자아이디 = 이슈워크로그_수정작성자.getName();
+                //String 이슈워크로그_수정작성자이메일 = 이슈워크로그_수정작성자.getSelf().toString();
+                String 이슈워크로그_생성날짜 = 워크로그.getCreationDate().toString();
+                String 이슈워크로그_수정날짜 = 워크로그.getUpdateDate().toString();
+                String 이슈워크로그_시작날짜 = 워크로그.getStartDate().toString();
+                Integer 이슈워크로그_소요시간 = 워크로그.getMinutesSpent() * 60;
+
+                지라이슈워크로그_데이터 이슈워크로그 = new 지라이슈워크로그_데이터();
+                이슈워크로그.setSelf(이슈워크로그_주소);
+
+                작성자.setAccountId(이슈워크로그_작성자아이디);
+                //작성자.setEmailAddress(이슈워크로그_작성자이메일);
+                이슈워크로그.setAuthor(작성자);
+
+                작성자.setAccountId(이슈워크로그_수정작성자아이디);
+                //작성자.setEmailAddress(이슈워크로그_수정작성자이메일);
+                이슈워크로그.setUpdateAuthor(작성자);
+
+                이슈워크로그.setCreated(이슈워크로그_생성날짜);
+                이슈워크로그.setUpdated(이슈워크로그_수정날짜);
+                이슈워크로그.setStarted(이슈워크로그_시작날짜);
+                이슈워크로그.setTimeSpentSeconds(이슈워크로그_소요시간);
+                // timespent, id, issueId
+
+                이슈워크로그_목록.add(이슈워크로그);
+            }
+            지라이슈필드_데이터.setWorklogs(이슈워크로그_목록);
+        }
+
+        // timespent
+        if (지라이슈.getTimeTracking().getTimeSpentMinutes() != null) {
+            Integer 이슈소요시간 = 지라이슈.getTimeTracking().getTimeSpentMinutes() * 60;
+            지라이슈필드_데이터.setTimespent(이슈소요시간);
+        }
+
+        // fixVersions
+        if (지라이슈.getFixVersions() != null) {
+
+            List<지라이슈버전_데이터> 이슈버전_목록 = new ArrayList<>();
+
+            Iterable<Version> 전체이슈버전 = 지라이슈.getFixVersions();
+
+            for (Version 버전 : 전체이슈버전) {
+                String 이슈버전_주소 = 버전.getSelf().toString();
+                String 이슈버전_아이디 = 버전.getId().toString();
+                String 이슈버전_이름 = 버전.getName();
+                String 이슈버전_내용 = 버전.getDescription();
+                Boolean 이슈버전_저장여부 = 버전.isArchived();
+                Boolean 이슈버전_배포여부 = 버전.isReleased();
+                String 이슈버전_배포날짜 = 버전.getReleaseDate().toString();
+
+                지라이슈버전_데이터 이슈버전 = new 지라이슈버전_데이터();
+                이슈버전.setSelf(이슈버전_주소);
+                이슈버전.setId(이슈버전_아이디);
+                이슈버전.setName(이슈버전_이름);
+                이슈버전.setDescription(이슈버전_내용);
+                이슈버전.setArchived(이슈버전_저장여부);
+                이슈버전.setReleased(이슈버전_배포여부);
+                이슈버전.setReleaseDate(이슈버전_배포날짜);
+
+                이슈버전_목록.add(이슈버전);
+            }
+            지라이슈필드_데이터.setFixVersions(이슈버전_목록);
+        }
+
+        지라이슈_데이터.setFields(지라이슈필드_데이터);
+
+        return 지라이슈_데이터;
+    }
+
+    /*
     private 지라이슈_데이터 지라이슈_데이터로_변환(Issue 지라이슈) {
 
         지라이슈_데이터 반환할_지라_이슈_데이터= new 지라이슈_데이터();
@@ -497,6 +709,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         return 반환할_지라_이슈_데이터;
     }
+    */
 
     public List<지라이슈_데이터> 이슈링크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws URISyntaxException, IOException, ExecutionException, InterruptedException {
 
