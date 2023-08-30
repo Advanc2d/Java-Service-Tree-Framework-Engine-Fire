@@ -1,7 +1,7 @@
 package com.arms.jira.info.controller;
 
-import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.model.JiraInfoEntity;
+import com.arms.jira.info.model.지라연결정보_데이터;
+import com.arms.jira.info.model.지라연결정보_엔티티;
 import com.arms.jira.info.service.지라연결_서비스;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +25,11 @@ public class 지라연결_컨트롤러 {
             value = {"/connect/info"},
             method = {RequestMethod.POST}
     )
-    public JiraInfoEntity setJiraConnectInfo(@RequestBody JiraInfoDTO jiraInfoDTO,
-                                             ModelMap model, HttpServletRequest request) throws Exception {
+    public 지라연결정보_엔티티 setJiraConnectInfo(@RequestBody 지라연결정보_데이터 지라연결정보_데이터,
+                                         ModelMap model, HttpServletRequest request) throws Exception {
 
         logger.info("Jira Connect Info SET API 호출");
 
-        return 지라연결_서비스.saveConnectInfo(jiraInfoDTO);
+        return 지라연결_서비스.saveConnectInfo(지라연결정보_데이터);
     }
 }

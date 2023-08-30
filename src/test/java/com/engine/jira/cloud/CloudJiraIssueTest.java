@@ -1,6 +1,5 @@
 package com.engine.jira.cloud;
 
-import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueInputDTO;
 import com.arms.jira.cloud.jiraissue.model.CloudJiraIssueSearchDTO;
@@ -10,9 +9,9 @@ import com.arms.jira.cloud.jiraissuepriority.model.Priority;
 import com.arms.jira.cloud.jiraissuepriority.model.PrioritySearchDTO;
 import com.arms.jira.cloud.jiraissueresolution.model.Resolution;
 import com.arms.jira.cloud.jiraissueresolution.model.ResolutionSearchDTO;
-import com.arms.jira.jiraissue.model.지라_이슈_데이터_전송_객체;
-import com.arms.jira.jiraissue.model.클라우드_지라_이슈_조회_데이터_전송_객체;
-import com.arms.jira.jiraissue.model.클라우드_지라_이슈_필드_데이터_전송_객체;
+import com.arms.jira.jiraissue.model.지라이슈_데이터;
+import com.arms.jira.jiraissue.model.클라우드_지라이슈조회_데이터;
+import com.arms.jira.utils.지라유틸;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -414,7 +413,7 @@ public class CloudJiraIssueTest {
 //                .uri(endpoint)
 //                .accept(MediaType.APPLICATION_STREAM_JSON)
 //                .retrieve()
-//                .bodyToMono(지라_이슈_데이터_전송_객체.class)
+//                .bodyToMono(지라이슈_데이터.class)
 //                .subscribe(result -> {
 //                    System.out.println("result = " + result);
 //                    // 추가적인 로직...
@@ -426,10 +425,10 @@ public class CloudJiraIssueTest {
 
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        클라우드_지라_이슈_조회_데이터_전송_객체 sso =
-                objectMapper.readValue(result, 클라우드_지라_이슈_조회_데이터_전송_객체.class);
+        클라우드_지라이슈조회_데이터 클라우드_지라이슈조회_데이터 =
+                objectMapper.readValue(result, 클라우드_지라이슈조회_데이터.class);
 
-        System.out.println("result = " + sso.getIssues().toString());
+        System.out.println("result = " + 클라우드_지라이슈조회_데이터.getIssues().toString());
     }
 
     public Flux<String> get(WebClient webClient, String uri) {
@@ -556,30 +555,30 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("이슈링크_가져오기")
     public void IssueLinkCallTest() {
-        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> result = 이슈링크_가져오기(issueKeyOrId);
+        List<지라이슈_데이터> result = 이슈링크_가져오기(issueKeyOrId);
 
         System.out.println("result.toString() = " + result.toString());
 
     }
 
-    List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_가져오기(String 이슈_키_또는_아이디) {
+    List<지라이슈_데이터> 이슈링크_가져오기(String 이슈_키_또는_아이디) {
 
         int 검색_시작_지점 = 0;
         int 최대_검색수 = 50;
         boolean isLast = false;
 
-        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 이슈링크_목록 = new ArrayList<>(); // 이슈 저장
+        List<지라이슈_데이터> 이슈링크_목록 = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=issue in linkedIssues(" + 이슈_키_또는_아이디 + ")" +fieldsParam
                     + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수;
 
-            클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
-                    = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+            클라우드_지라이슈조회_데이터 이슈링크_조회결과
+                    = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈조회_데이터.class).block();
 
-            이슈링크_목록.addAll(서브테스크_조회결과.getIssues());
+            이슈링크_목록.addAll(이슈링크_조회결과.getIssues());
 
-            if (서브테스크_조회결과.getTotal() == 이슈링크_목록.size()) {
+            if (이슈링크_조회결과.getTotal() == 이슈링크_목록.size()) {
                 isLast = true;
             }else{
                 검색_시작_지점 += 최대_검색수;
@@ -594,25 +593,25 @@ public class CloudJiraIssueTest {
     @Test
     @DisplayName("서브테스크_가져오기")
     public void SubtaskCallTest() {
-        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> result = 서브테스크_가져오기(issueKeyOrId);
+        List<지라이슈_데이터> result = 서브테스크_가져오기(issueKeyOrId);
 
         System.out.println("result.toString() = " + result.toString());
     }
 
-    List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 서브테스크_가져오기(String 이슈_키_또는_아이디) {
+    List<지라이슈_데이터> 서브테스크_가져오기(String 이슈_키_또는_아이디) {
 
         int 검색_시작_지점 = 0;
         int 최대_검색수 = 50;
         boolean isLast = false;
 
-        List<지라_이슈_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용>> 서브테스크_목록 = new ArrayList<>(); // 이슈 저장
+        List<지라이슈_데이터> 서브테스크_목록 = new ArrayList<>(); // 이슈 저장
 
         while (!isLast) {
             String endpoint = "/rest/api/3/search?jql=parent="+ 이슈_키_또는_아이디 + fieldsParam
                             + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수;
 
-            클라우드_지라_이슈_조회_데이터_전송_객체<클라우드_지라_이슈_필드_데이터_전송_객체.내용> 서브테스크_조회결과
-                    = 지라유틸.get(webClient, endpoint, 클라우드_지라_이슈_조회_데이터_전송_객체.class).block();
+            클라우드_지라이슈조회_데이터 서브테스크_조회결과
+                    = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈조회_데이터.class).block();
 
             서브테스크_목록.addAll(서브테스크_조회결과.getIssues());
 

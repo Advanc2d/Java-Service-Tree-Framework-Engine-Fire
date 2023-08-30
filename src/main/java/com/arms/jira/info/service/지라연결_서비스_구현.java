@@ -1,8 +1,8 @@
 package com.arms.jira.info.service;
 
-import com.arms.jira.info.dao.지라연결_저장소;
-import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.model.JiraInfoEntity;
+import com.arms.jira.info.repositories.지라연결_저장소;
+import com.arms.jira.info.model.지라연결정보_데이터;
+import com.arms.jira.info.model.지라연결정보_엔티티;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -28,85 +28,85 @@ public class 지라연결_서비스_구현 implements 지라연결_서비스 {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Transactional
-    public JiraInfoDTO loadConnectInfo(Long connectId) {
-        Optional<JiraInfoEntity> optionalEntity = 지라연결저장소.findById(connectId);
+    public 지라연결정보_데이터 loadConnectInfo(Long connectId) {
+        Optional<지라연결정보_엔티티> optionalEntity = 지라연결저장소.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
             return null;
         }
 
-        JiraInfoEntity jiraInfoEntity = optionalEntity.get();
+        지라연결정보_엔티티 지라연결정보_엔티티 = optionalEntity.get();
 
-        JiraInfoDTO jiraInfoDTO = modelMapper.map(jiraInfoEntity, JiraInfoDTO.class);
+        지라연결정보_데이터 지라연결정보_데이터 = modelMapper.map(지라연결정보_엔티티, 지라연결정보_데이터.class);
 
-        return jiraInfoDTO;
+        return 지라연결정보_데이터;
     }
 
     @Override
-    public List<JiraInfoDTO> loadConnectInfos() {
-        List<JiraInfoEntity> jiraInfoEntityList = 지라연결저장소.findAll();
-        List<JiraInfoDTO> result = new ArrayList<>();
-        for (JiraInfoEntity jiraInfoEntity : jiraInfoEntityList) {
-            result.add(modelMapper.map(jiraInfoEntity, JiraInfoDTO.class));
+    public List<지라연결정보_데이터> loadConnectInfos() {
+        List<지라연결정보_엔티티> jiraInfoEntityList = 지라연결저장소.findAll();
+        List<지라연결정보_데이터> result = new ArrayList<>();
+        for (지라연결정보_엔티티 지라연결정보_엔티티 : jiraInfoEntityList) {
+            result.add(modelMapper.map(지라연결정보_엔티티, 지라연결정보_데이터.class));
         }
         return result;
     }
 
     public String getIssueTypeId(Long connectId) {
 
-        Optional<JiraInfoEntity> optionalEntity = 지라연결저장소.findById(connectId);
+        Optional<지라연결정보_엔티티> optionalEntity = 지라연결저장소.findById(connectId);
 
         if (!optionalEntity.isPresent()) {
             return null;
         }
 
-        JiraInfoEntity jiraInfoEntity = optionalEntity.get();
+        지라연결정보_엔티티 지라연결정보_엔티티 = optionalEntity.get();
 
-        return jiraInfoEntity.getIssueId();
+        return 지라연결정보_엔티티.getIssueId();
     }
 
-    public JiraInfoEntity saveConnectInfo(JiraInfoDTO jiraInfoDTO) {
+    public 지라연결정보_엔티티 saveConnectInfo(지라연결정보_데이터 지라연결정보_데이터) {
 
-        if (jiraInfoDTO == null) {
+        if (지라연결정보_데이터 == null) {
             throw new IllegalArgumentException("JiraInfo 정보가 없습니다.");
         }
-        else if (StringUtils.isBlank(jiraInfoDTO.getUri())) {
+        else if (StringUtils.isBlank(지라연결정보_데이터.getUri())) {
             throw new IllegalArgumentException("JiraInfo의 URI 정보가 없습니다.");
         }
-        else if (StringUtils.isBlank(jiraInfoDTO.getUserId())) {
+        else if (StringUtils.isBlank(지라연결정보_데이터.getUserId())) {
             throw new IllegalArgumentException("JiraInfo의 사용자 아이디 정보가 없습니다.");
         }
-        else if (StringUtils.isBlank(jiraInfoDTO.getPasswordOrToken())) {
+        else if (StringUtils.isBlank(지라연결정보_데이터.getPasswordOrToken())) {
             throw new IllegalArgumentException("JiraInfo의 비밀번호나 토큰 정보가 없습니다.");
         }
-        else if (StringUtils.isBlank(jiraInfoDTO.getType())) {
+        else if (StringUtils.isBlank(지라연결정보_데이터.getType())) {
             throw new IllegalArgumentException("JiraInfo의 타입 정보가 없습니다.");
         }
 
-        JiraInfoDTO loadJiraInfoDTO = loadConnectInfo(jiraInfoDTO.getConnectId());
-        JiraInfoEntity jiraInfoEntity;
+        지라연결정보_데이터 가져온_지라연결정보_데이터 = loadConnectInfo(지라연결정보_데이터.getConnectId());
+        지라연결정보_엔티티 지라연결정보_엔티티;
 
-        if (loadJiraInfoDTO != null) {
-            jiraInfoEntity = modelMapper.map(loadJiraInfoDTO, JiraInfoEntity.class);
+        if (가져온_지라연결정보_데이터 != null) {
+            지라연결정보_엔티티 = modelMapper.map(가져온_지라연결정보_데이터, 지라연결정보_엔티티.class);
         }
         else {
-            jiraInfoEntity = modelMapper.map(jiraInfoDTO, JiraInfoEntity.class);
+            지라연결정보_엔티티 = modelMapper.map(지라연결정보_데이터, 지라연결정보_엔티티.class);
         }
 
-        return 지라연결저장소.save(jiraInfoEntity);
+        return 지라연결저장소.save(지라연결정보_엔티티);
     }
 
-    public JiraInfoEntity saveIssueTypeInfo(JiraInfoEntity jiraInfoEntity) {
-        return 지라연결저장소.save(jiraInfoEntity);
+    public 지라연결정보_엔티티 saveIssueTypeInfo(지라연결정보_엔티티 지라연결정보_엔티티) {
+        return 지라연결저장소.save(지라연결정보_엔티티);
     }
     
     /*
     *  DB에서 조회 한 후 데이터 오류 처리
     *  임시로 checkInfo 메서드 위치 시킴
     * */
-    public JiraInfoDTO checkInfo(Long connectId){
+    public 지라연결정보_데이터 checkInfo(Long connectId){
 
-        JiraInfoDTO info = loadConnectInfo(connectId);
+        지라연결정보_데이터 info = loadConnectInfo(connectId);
 
         if (info == null) {
             logger.info("비정상적인 정보가 조회되었습니다.");

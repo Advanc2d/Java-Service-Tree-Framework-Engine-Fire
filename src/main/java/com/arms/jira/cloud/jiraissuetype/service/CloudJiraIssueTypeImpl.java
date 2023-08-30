@@ -3,8 +3,8 @@ package com.arms.jira.cloud.jiraissuetype.service;
 import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeDTO;
 import com.arms.jira.cloud.jiraissuetype.model.CloudJiraIssueTypeInputDTO;
-import com.arms.jira.info.model.JiraInfoDTO;
-import com.arms.jira.info.model.JiraInfoEntity;
+import com.arms.jira.info.model.지라연결정보_데이터;
+import com.arms.jira.info.model.지라연결정보_엔티티;
 import com.arms.jira.info.service.지라연결_서비스;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -35,7 +35,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<CloudJiraIssueTypeDTO> issueTypes = 지라유틸.get(webClient, endpoint,
@@ -51,7 +51,7 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype/project?projectId=" + projectId;
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         List<CloudJiraIssueTypeDTO> issueTypes = 지라유틸.get(webClient, endpoint,
@@ -70,22 +70,22 @@ public class CloudJiraIssueTypeImpl implements CloudJiraIssueType {
 
         String endpoint = "/rest/api/3/issuetype";
 
-        JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraIssueTypeDTO addCloudJirarIssueTypeDTO = 지라유틸.post(webClient, endpoint,
                 cloudJiraIssueTypeInputDTO, CloudJiraIssueTypeDTO.class).block();
 
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        JiraInfoEntity jiraInfoEntity = modelMapper.map(found, JiraInfoEntity.class);
+        지라연결정보_엔티티 지라연결정보_엔티티 = modelMapper.map(found, 지라연결정보_엔티티.class);
 
-        if (jiraInfoEntity != null) {
-            jiraInfoEntity.setIssueId(addCloudJirarIssueTypeDTO.getId());
-            jiraInfoEntity.setIssueName(addCloudJirarIssueTypeDTO.getName());
-            jiraInfoEntity.setSelf(addCloudJirarIssueTypeDTO.getSelf());
+        if (지라연결정보_엔티티 != null) {
+//            지라연결정보_엔티티.setIssueId(addCloudJirarIssueTypeDTO.getId());
+//            지라연결정보_엔티티.setIssueName(addCloudJirarIssueTypeDTO.getName());
+//            지라연결정보_엔티티.setSelf(addCloudJirarIssueTypeDTO.getSelf());
         }
 
-        JiraInfoEntity returnEntity = 지라연결_서비스.saveIssueTypeInfo(jiraInfoEntity);
+        지라연결정보_엔티티 returnEntity = 지라연결_서비스.saveIssueTypeInfo(지라연결정보_엔티티);
 
         if (returnEntity == null) {
             return null;

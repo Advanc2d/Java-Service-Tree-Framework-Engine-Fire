@@ -3,7 +3,7 @@ package com.arms.jira.cloud.jiraproject.service;
 
 import com.arms.jira.utils.지라유틸;
 import com.arms.jira.cloud.jiraproject.model.CloudJiraProjectDTO;
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 	public CloudJiraProjectDTO getProjectData(Long connectId, String projectKey) throws Exception {
 		String endpoint = "/rest/api/3/project/"+ projectKey;
 
-		JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+		지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
         WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
         CloudJiraProjectDTO project = 지라유틸.get(webClient, endpoint, CloudJiraProjectDTO.class).block();
@@ -42,7 +42,7 @@ public class CloudJiraProjectImpl implements CloudJiraProject {
 
 		String endpoint = "/rest/api/3/project";
 
-		JiraInfoDTO found = 지라연결_서비스.checkInfo(connectId);
+		지라연결정보_데이터 found = 지라연결_서비스.checkInfo(connectId);
 
 		if (found == null) {
 			// throw Exception e; ControllerAdvice 오류 처리

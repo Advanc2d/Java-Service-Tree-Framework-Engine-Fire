@@ -1,6 +1,6 @@
 package com.arms.jira.onpremise.jiraissuetype.service;
 
-import com.arms.jira.info.model.JiraInfoDTO;
+import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.onpremise.jiraissuetype.model.OnPremiseJiraIssueTypeDTO;
 import com.arms.jira.utils.지라유틸;
@@ -26,10 +26,10 @@ public class OnPremiseJiraIssueTypeImpl implements OnPremiseJiraIssueType{
 
     @Override
     public List<OnPremiseJiraIssueTypeDTO> getOnPremiseIssueTypeListAll(Long connectId) throws Exception {
-        JiraInfoDTO jiraInfoDTO = 지라연결_서비스.checkInfo(connectId);
-        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(jiraInfoDTO.getUri(),
-                                                                jiraInfoDTO.getUserId(),
-                                                                jiraInfoDTO.getPasswordOrToken());
+        지라연결정보_데이터 지라연결정보_데이터 = 지라연결_서비스.checkInfo(connectId);
+        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(지라연결정보_데이터.getUri(),
+                                                                지라연결정보_데이터.getUserId(),
+                                                                지라연결정보_데이터.getPasswordOrToken());
 
         Iterable<IssueType> issueTypes = restClient.getMetadataClient().getIssueTypes().get();
         List<OnPremiseJiraIssueTypeDTO> issueTypeList = new ArrayList<>();

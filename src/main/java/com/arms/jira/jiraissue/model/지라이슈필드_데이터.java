@@ -1,9 +1,9 @@
 package com.arms.jira.jiraissue.model;
 
-import com.arms.jira.jiraissueresolution.model.지라_이슈_해결책_데이터_전송_객체;
-import com.arms.jira.jiraissuestatus.model.지라_이슈_상태_데이터_전송_객체;
-import com.arms.jira.jiraissuetype.model.지라_이슈_유형_데이터_전송_객체;
-import com.arms.jira.jirapriority.model.지라_이슈_우선순위_데이터_전송_객체;
+import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
+import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
+import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
+import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -20,7 +20,7 @@ public class 지라이슈필드_데이터 {
 
     private 지라프로젝트_데이터 project;
 
-    private 지라_이슈_유형_데이터_전송_객체 issuetype;
+    private 지라이슈유형_데이터 issuetype;
 
     private 지라사용자_데이터 creator;
 
@@ -30,11 +30,11 @@ public class 지라이슈필드_데이터 {
 
     private List<String> labels;
 
-    private 지라_이슈_우선순위_데이터_전송_객체 priority;
+    private 지라이슈_우선순위_데이터 priority;
 
-    private 지라_이슈_상태_데이터_전송_객체 status;
+    private 지라이슈상태_데이터 status;
 
-    private 지라_이슈_해결책_데이터_전송_객체 resolution;
+    private 지라이슈_해결책_데이터 resolution;
 
     private String resolutiondate;
 
