@@ -242,21 +242,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                 })
                 .collect(Collectors.toList());
 
-        List<지라이슈.버전> 버전 = Optional.ofNullable(지라이슈_데이터.getFields().getFixVersions())
-                .orElse(Collections.emptyList()) // null인 경우 빈 리스트 반환
-                .stream()
-                .map(버전아이템 -> {
-                    return new 지라이슈.버전(Optional.ofNullable(버전아이템.getSelf()).orElse(null),
-                            Optional.ofNullable(버전아이템.getId()).orElse(null),
-                            Optional.ofNullable(버전아이템.getName()).orElse(null),
-                            Optional.ofNullable(버전아이템.getDescription()).orElse(null),
-                            Optional.ofNullable(버전아이템.isArchived()).orElse(null),
-                            Optional.ofNullable(버전아이템.isReleased()).orElse(null),
-                            Optional.ofNullable(버전아이템.getReleaseDate()).orElse(null)
-                    );
-                })
-                .collect(Collectors.toList());
-
         지라이슈 이슈 = 지라이슈.builder()
                 .jira_server_id(지라서버_아이디)
                 .issueID(지라이슈_데이터.getId().toString())
@@ -277,7 +262,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                 .created(지라이슈_데이터.getFields().getCreated())
                 .worklogs(워크로그)
                 .timespent(지라이슈_데이터.getFields().getTimespent())
-                .fixVersions(버전)
                 .build();
 
         이슈.generateId();
