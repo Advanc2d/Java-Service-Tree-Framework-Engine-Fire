@@ -282,6 +282,11 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         지라이슈_데이터 지라이슈_데이터 = new 지라이슈_데이터();
         지라이슈필드_데이터 지라이슈필드_데이터 = new 지라이슈필드_데이터();
 
+        지라이슈_데이터.setId(지라이슈.getId().toString());
+        지라이슈_데이터.setKey(지라이슈.getKey());
+        지라이슈_데이터.setSelf(지라이슈.getSelf().toString());
+
+        // 필드
         // 초기화
         지라프로젝트_데이터 프로젝트 = 지라프로젝트_데이터.builder().build();
         지라사용자_데이터 보고자 = 지라사용자_데이터.builder().build();
