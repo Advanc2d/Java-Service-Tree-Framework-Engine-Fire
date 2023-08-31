@@ -49,9 +49,9 @@ public class 전역오류처리 {
         String variableName = 에러.getVariableName();
         로그.error("커넥트 아이디:", 에러);
         if("connectId".equals(variableName)){
-            return newResponse(에러코드.요청한_커넥트아이디_없음.getErrorMsg(),HttpStatus.BAD_REQUEST);
+            return newResponse(에러코드.서버_아이디_없음.getErrorMsg(),HttpStatus.BAD_REQUEST);
         }
-        return newResponse(에러코드.요청한_커넥트아이디_없음.getErrorMsg(),HttpStatus.BAD_REQUEST);
+        return newResponse(에러코드.서버_아이디_없음.getErrorMsg(),HttpStatus.BAD_REQUEST);
     }
     /**
      * API 호출 시 '객체' 혹은 '파라미터' 데이터 값이 유효하지 않은 경우 @Valid 사용 (추후 필요 가능성)

@@ -1,5 +1,6 @@
 package com.arms.jira.jiraissueresolution.service;
 
+import com.arms.errors.codes.에러코드;
 import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.model.지라유형_정보;
 import com.arms.jira.info.service.지라연결_서비스;
@@ -8,6 +9,8 @@ import com.arms.jira.jiraissueresolution.strategy.온프레미스_지라이슈_�
 import com.arms.jira.jiraissueresolution.strategy.지라이슈_해결책_전략_등록_및_실행;
 import com.arms.jira.jiraissueresolution.strategy.클라우드_지라이슈_해결책_전략;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class 지라이슈_해결책_전략_호출 {
+
+    private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
+
     지라이슈_해결책_전략_등록_및_실행 지라이슈_해결책_전략_등록_및_실행;
 
     클라우드_지라이슈_해결책_전략 클라우드_지라_이슈_해결책_전략;
@@ -38,8 +44,9 @@ public class 지라이슈_해결책_전략_호출 {
 
     private 지라이슈_해결책_전략_등록_및_실행 지라_이슈_해결책_전략_확인(지라연결정보_데이터 연결정보) {
 
-        if(연결정보 == null || 연결정보.getType().isEmpty()) {
-            return null;
+        if (연결정보 == null || 연결정보.getType().isEmpty()) {
+            로그.error("지라이슈 해결책 전략 등록 Error: 연결정보_유형 " + 에러코드.서버_유형_정보없음.getErrorMsg());
+            throw new IllegalArgumentException("지라이슈 해결책 전략 등록 Error: 연결정보_유형 " + 에러코드.서버_유형_정보없음.getErrorMsg());
         }
 
         지라유형_정보 지라_유형 = 지라유형_정보.valueOf(연결정보.getType());
@@ -56,6 +63,11 @@ public class 지라이슈_해결책_전략_호출 {
     }
 
     public List<지라이슈_해결책_데이터> 이슈_해결책_목록_가져오기(Long 연결_아이디) throws Exception {
+
+        if (연결_아이디 == null) {
+            로그.error("이슈 해결책 목록 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 해결책 목록 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+        }
 
         지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
 
