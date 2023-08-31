@@ -28,7 +28,9 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
 
     @Override
     public 지라프로젝트_데이터 프로젝트_상세정보_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
+
         로그.info("클라우드 지라 프로젝트 "+ 프로젝트_키_또는_아이디 +" 상세정보 가져오기");
+
         try{
             String endpoint = "/rest/api/3/project/"+ 프로젝트_키_또는_아이디;
 
@@ -41,20 +43,18 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
 
             return 반환할_지라_프로젝트_상세정보;
         }catch (Exception e){
-            로그.error("프로젝트 정보 가져오기에 실패하였습니다." +e.getMessage());
+            로그.error("클라우드 프로젝트 정보 가져오기에 실패하였습니다." +e.getMessage());
             throw new IllegalArgumentException(에러코드.프로젝트_조회_오류.getErrorMsg());
         }
     }
 
     @Override
     public List<지라프로젝트_데이터> 프로젝트_전체_목록_가져오기(Long 연결_아이디) {
+
         로그.info("클라우드 지라 프로젝트 전체 목록 가져오기");
+
         try {
             지라연결정보_데이터 found = 지라연결_서비스.checkInfo(연결_아이디);
-
-            if (found == null) {
-                // throw Exception e; ControllerAdvice 오류 처리
-            }
 
             WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
@@ -83,7 +83,7 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
 
             return 반환할_프로젝트_데이터전송객체_목록;
         }catch (Exception e){
-            로그.error("프로젝트 전체 목록 가져오기에 실패하였습니다." +e.getMessage());
+            로그.error("클라우드 프로젝트 전체 목록 가져오기에 실패하였습니다." +e.getMessage());
             throw new IllegalArgumentException(에러코드.프로젝트_조회_오류.getErrorMsg());
         }
     }
