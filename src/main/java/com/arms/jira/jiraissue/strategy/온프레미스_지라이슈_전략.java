@@ -1,5 +1,6 @@
 package com.arms.jira.jiraissue.strategy;
 
+import com.arms.errors.codes.에러코드;
 import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissue.model.*;
@@ -40,37 +41,45 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
     @Override
     public List<지라이슈_데이터> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
-
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
-                연결정보.getUserId(),
-                연결정보.getPasswordOrToken());
-
-        String 조회할_프로젝트 = "project = " + 프로젝트_키_또는_아이디;
-
-        int 검색_시작_지점 = 0;
-        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
-        Set<String> 필드 = new HashSet<>(Arrays.asList("*all")); // 검색 필드
-
-        // 이슈 건수가 1000이 넘을 때 이슈 조회를 위한 처리
-        List<지라이슈_데이터> 프로젝트_이슈_목록 = new ArrayList<>();
-        while (true) {
-            SearchResult 프로젝트_이슈_검색결과 = restClient.getSearchClient()
-                    .searchJql(조회할_프로젝트, 최대_검색수, 검색_시작_지점, 필드)
-                    .claim();
-
-            for (Issue 지라이슈 : 프로젝트_이슈_검색결과.getIssues()) {
-                프로젝트_이슈_목록.add(지라이슈_데이터로_변환(지라이슈));
-            }
-
-            if (프로젝트_이슈_목록.size() >= 프로젝트_이슈_검색결과.getTotal()) {
-                break;
-            }
-
-            검색_시작_지점 += 최대_검색수;
+        로그.info("온프레미스 이슈 전체 조회");
+        if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
+            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
         }
+        try{
+            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
+                    연결정보.getUserId(),
+                    연결정보.getPasswordOrToken());
 
-        return 프로젝트_이슈_목록;
+            String 조회할_프로젝트 = "project = " + 프로젝트_키_또는_아이디;
+
+            int 검색_시작_지점 = 0;
+            int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
+            Set<String> 필드 = new HashSet<>(Arrays.asList("*all")); // 검색 필드
+
+            // 이슈 건수가 1000이 넘을 때 이슈 조회를 위한 처리
+            List<지라이슈_데이터> 프로젝트_이슈_목록 = new ArrayList<>();
+            while (true) {
+                SearchResult 프로젝트_이슈_검색결과 = restClient.getSearchClient()
+                        .searchJql(조회할_프로젝트, 최대_검색수, 검색_시작_지점, 필드)
+                        .claim();
+
+                for (Issue 지라이슈 : 프로젝트_이슈_검색결과.getIssues()) {
+                    프로젝트_이슈_목록.add(지라이슈_데이터로_변환(지라이슈));
+                }
+
+                if (프로젝트_이슈_목록.size() >= 프로젝트_이슈_검색결과.getTotal()) {
+                    break;
+                }
+
+                검색_시작_지점 += 최대_검색수;
+            }
+
+            return 프로젝트_이슈_목록;
+        }catch (Exception e){
+            로그.error("온프레미스 이슈 전체 조회시 오류가 발생하였습니다."+e.getMessage());
+            throw new IllegalArgumentException(에러코드.이슈_조회_오류.getErrorMsg());
+        }
     }
 
     @Override
@@ -78,19 +87,21 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         로그.info("온프레미스 지라 이슈 조회하기");
 
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
-                연결정보.getUserId(),
-                연결정보.getPasswordOrToken());
-
+        if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
+            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+        }
         try {
+            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
+                    연결정보.getUserId(),
+                    연결정보.getPasswordOrToken());
             Issue 지라이슈 = restClient.getIssueClient().getIssue(이슈_키_또는_아이디).claim();
 
             return 지라이슈_데이터로_변환(지라이슈);
 
-        } catch (RestClientException e) {
-            로그.info("이슈 조회시 오류가 발생하였습니다.");
-            throw new RuntimeException("이슈 조회시 오류가 발생하였습니다.");
+        }catch (Exception e){
+            로그.error("온프레미스 이슈 조회시 오류가 발생하였습니다.");
+            throw new IllegalArgumentException(에러코드.이슈_조회_오류.getErrorMsg());
         }
     }
 
@@ -107,21 +118,11 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());
 
-//        if (지라_이슈_생성_데이터_전송_객체 == null) {
-//            로그.info("생성할 이슈 데이터가 없습니다.");
-//            /* ***
-//             * 수정사항: 에러 처리 필요
-//             *** */
-//            return null;
-//        }
-
         지라이슈생성필드_데이터 필드_데이터 = 지라이슈생성_데이터.getFields();
         if (필드_데이터 == null) {
-            /* ***
-             * 수정사항: 에러 처리 필요
-             *** */
-            return null;
+            throw new IllegalArgumentException(에러코드.요청본문_오류체크.getErrorMsg());
         }
+
 
         String 프로젝트키 = null;
         Long 이슈유형아이디 = null;
@@ -155,10 +156,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         IssueInputBuilder 입력_생성 = new IssueInputBuilder(프로젝트키, 이슈유형아이디, 제목);
         if (입력_생성 == null) {
-            /* ***
-             * 수정사항: 에러 처리 필요
-             *** */
-            return null;
+            throw new IllegalArgumentException(에러코드.이슈생성_오류.getErrorMsg());
         }
         입력_생성.setDescription(내용);
         if (보고자 != null) {
@@ -174,12 +172,9 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         BasicIssue 생성된_이슈 = restClient.getIssueClient().createIssue(입력_데이터).claim();
         if (생성된_이슈 == null) {
-            로그.info("이슈 생성에 실패하였습니다.");
-            /* ***
-             * 수정사항: 에러 처리 필요
-             *** */
-            return null;
+            throw new IllegalArgumentException(에러코드.이슈생성_오류.getErrorMsg());
         }
+
 
         지라이슈_데이터 반환할_지라이슈_데이터 = new 지라이슈_데이터();
         반환할_지라이슈_데이터.setId(생성된_이슈.getId().toString());

@@ -1,5 +1,6 @@
 package com.arms.jira.jirapriority.strategy;
 
+import com.arms.errors.codes.에러코드;
 import com.arms.jira.utils.지라유틸;
 import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
@@ -29,31 +30,35 @@ public class 클라우드_지라이슈_우선순위_전략 implements 지라이�
     public List<지라이슈_우선순위_데이터> 우선순위_전체_목록_가져오기(Long 연결_아이디) throws Exception {
 
         로그.info("클라우드 지라 이슈 우선순위 전체 목록 가져오기");
+        try {
+            지라연결정보_데이터 found = 지라연결_서비스.checkInfo(연결_아이디);
+            WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
 
-        지라연결정보_데이터 found = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = 지라유틸.클라우드_통신기_생성(found.getUri(), found.getUserId(), found.getPasswordOrToken());
+            int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
+            int startAt = 0;
+            boolean isLast = false;
 
-        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
-        int startAt = 0;
-        boolean isLast = false;
+            List<지라이슈_우선순위_데이터> 반환할_지라_이슈_우선순위_데이터전송객체_목록 = new ArrayList<>();
 
-        List<지라이슈_우선순위_데이터> 반환할_지라_이슈_우선순위_데이터전송객체_목록 = new ArrayList<>();
+            while(!isLast) {
 
-        while(!isLast) {
+                String endpoint = "/rest/api/3/priority/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
+                클라우드_지라이슈_우선순위_전체_데이터 클라우드_지라이슈_우선순위_전체_데이터 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈_우선순위_전체_데이터.class).block();
 
-            String endpoint = "/rest/api/3/priority/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
-            클라우드_지라이슈_우선순위_전체_데이터 클라우드_지라이슈_우선순위_전체_데이터 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈_우선순위_전체_데이터.class).block();
+                반환할_지라_이슈_우선순위_데이터전송객체_목록.addAll(클라우드_지라이슈_우선순위_전체_데이터.getValues());
 
-            반환할_지라_이슈_우선순위_데이터전송객체_목록.addAll(클라우드_지라이슈_우선순위_전체_데이터.getValues());
-
-            if (클라우드_지라이슈_우선순위_전체_데이터.getTotal() == 반환할_지라_이슈_우선순위_데이터전송객체_목록.size()) {
-                isLast = true;
+                if (클라우드_지라이슈_우선순위_전체_데이터.getTotal() == 반환할_지라_이슈_우선순위_데이터전송객체_목록.size()) {
+                    isLast = true;
+                }
+                else {
+                    startAt += 최대_검색수;
+                }
             }
-            else {
-                startAt += 최대_검색수;
-            }
+
+            return 반환할_지라_이슈_우선순위_데이터전송객체_목록;
+        }catch (Exception e){
+            로그.error("클라우드 지라 이슈 우선순위 전체 목록 가져오기에 실패하였습니다." + e.getMessage());
+            throw new IllegalArgumentException(에러코드.우선순위_조회_오류.getErrorMsg());
         }
-
-        return 반환할_지라_이슈_우선순위_데이터전송객체_목록;
     }
 }
