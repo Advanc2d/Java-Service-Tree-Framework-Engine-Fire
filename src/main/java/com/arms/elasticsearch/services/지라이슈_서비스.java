@@ -28,4 +28,6 @@ public interface 지라이슈_서비스 {
 
     public List<검색결과> 특정필드_검색후_다른필드_그룹결과(String 인덱스이름, String 특정필드, String 특정필드검색어, String 그룹할필드) throws IOException;
 
+    public int 이슈_링크드이슈_서브테스크_벌크로_추가하기(Long 지라서버_아이디, String 이슈_키) throws Exception;
+
 }
