@@ -305,13 +305,14 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             String 이슈유형_아이디 = String.valueOf(지라이슈.getIssueType().getId());
             String 이슈유형_이름 = 지라이슈.getIssueType().getName();
             String 이슈유형_내용 = 지라이슈.getIssueType().getDescription();
+            Boolean 이슈유형_서브테스크여부 = 지라이슈.getIssueType().isSubtask();
 
             지라이슈유형_데이터 이슈유형 = new 지라이슈유형_데이터();
             이슈유형.setSelf(이슈유형_주소);
             이슈유형.setId(이슈유형_아이디);
             이슈유형.setName(이슈유형_이름);
             이슈유형.setDescription(이슈유형_내용);
-            // subtask
+            이슈유형.setSubtask(이슈유형_서브테스크여부);
 
             지라이슈필드_데이터.setIssuetype(이슈유형);
         }
@@ -422,7 +423,9 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
                 String 이슈워크로그_생성날짜 = 워크로그.getCreationDate().toString();
                 String 이슈워크로그_수정날짜 = 워크로그.getUpdateDate().toString();
                 String 이슈워크로그_시작날짜 = 워크로그.getStartDate().toString();
+                String 이슈워크로그_소요시간_포맷 = 시간_포맷(워크로그.getMinutesSpent());
                 Integer 이슈워크로그_소요시간 = 워크로그.getMinutesSpent() * 60;
+                String[] 이슈워크로그_아이디 = 이슈워크로그_주소.split("/");
 
                 지라이슈워크로그_데이터 이슈워크로그 = new 지라이슈워크로그_데이터();
                 이슈워크로그.setSelf(이슈워크로그_주소);
@@ -438,8 +441,10 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
                 이슈워크로그.setCreated(이슈워크로그_생성날짜);
                 이슈워크로그.setUpdated(이슈워크로그_수정날짜);
                 이슈워크로그.setStarted(이슈워크로그_시작날짜);
+                이슈워크로그.setTimeSpent(이슈워크로그_소요시간_포맷);
                 이슈워크로그.setTimeSpentSeconds(이슈워크로그_소요시간);
-                // timespent, id, issueId
+                이슈워크로그.setId(이슈워크로그_아이디[이슈워크로그_아이디.length - 1]);
+                이슈워크로그.setIssueId(지라이슈_데이터.getId());
 
                 이슈워크로그_목록.add(이슈워크로그);
             }
@@ -485,6 +490,31 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         지라이슈_데이터.setFields(지라이슈필드_데이터);
 
         return 지라이슈_데이터;
+    }
+
+    public String 시간_포맷(int 분) {
+
+        // 1주 = 5일, 1일 = 8시간, 1시간 = 60분
+        int 주 = 분 / (5 * 8 * 60);
+        int 일 = (분 % (5 * 8 * 60)) / (8 * 60);
+        int 시간 = (분 % (8 * 60)) / 60;
+        int 남은시간 = 분 % 60;
+
+        StringBuilder 포맷팅 = new StringBuilder();
+        if (주 > 0) {
+            포맷팅.append(주).append("w ");
+        }
+        if (일 > 0) {
+            포맷팅.append(일).append("d ");
+        }
+        if (시간 > 0) {
+            포맷팅.append(시간).append("h ");
+        }
+        if (남은시간 > 0 || (주 == 0 && 일 == 0 && 시간 == 0)) {
+            포맷팅.append(남은시간).append("m ");
+        }
+
+        return 포맷팅.toString().trim();
     }
 
     /*
