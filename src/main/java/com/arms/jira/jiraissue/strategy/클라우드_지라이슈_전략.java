@@ -31,56 +31,76 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
 
     @Override
     public List<지라이슈_데이터> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
+        로그.info("클라우드 이슈 전체 조회");
 
-        int 검색_시작_지점 = 0;
-        int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
-        boolean isLast = false;
+        if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
+            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+        }
+        try {
+            int 검색_시작_지점 = 0;
+            int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
+            boolean isLast = false;
 
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = 지라유틸.클라우드_통신기_생성(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
+            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            WebClient webClient = 지라유틸.클라우드_통신기_생성(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
-        List<지라이슈_데이터> 프로젝트_이슈_목록 = new ArrayList<>();
+            List<지라이슈_데이터> 프로젝트_이슈_목록 = new ArrayList<>();
 
-        while (!isLast) {
-            String endpoint = "/rest/api/3/search?jql=project=" + 프로젝트_키_또는_아이디
-                            + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수
-                            + "&" + 지라유틸.조회할_필드_목록_가져오기();
+            while (!isLast) {
+                String endpoint = "/rest/api/3/search?jql=project=" + 프로젝트_키_또는_아이디
+                                + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 최대_검색수
+                                + "&" + 지라유틸.조회할_필드_목록_가져오기();
 
-            지라이슈조회_데이터 프로젝트_이슈_검색결과 = 지라유틸.get(webClient, endpoint, 지라이슈조회_데이터.class)
-                    .onErrorMap(e -> new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg())).block();
+                지라이슈조회_데이터 프로젝트_이슈_검색결과 = 지라유틸.get(webClient, endpoint, 지라이슈조회_데이터.class)
+                        .onErrorMap(e -> new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg())).block();
 
-            프로젝트_이슈_목록.addAll(프로젝트_이슈_검색결과.getIssues());
+                프로젝트_이슈_목록.addAll(프로젝트_이슈_검색결과.getIssues());
 
-            if (프로젝트_이슈_검색결과.getTotal() == 프로젝트_이슈_목록.size()) {
-                isLast = true;
-            } else {
-                검색_시작_지점 += 최대_검색수;
+                if (프로젝트_이슈_검색결과.getTotal() == 프로젝트_이슈_목록.size()) {
+                    isLast = true;
+                } else {
+                    검색_시작_지점 += 최대_검색수;
+                }
             }
-        }
 
-        for (지라이슈_데이터 지라이슈 : 프로젝트_이슈_목록) {
-            지라이슈.getFields().setWorklogs(이슈_워크로그_조회(webClient, 지라이슈.getKey()));
-        }
+            for (지라이슈_데이터 지라이슈 : 프로젝트_이슈_목록) {
+                지라이슈.getFields().setWorklogs(이슈_워크로그_조회(webClient, 지라이슈.getKey()));
+            }
 
-        return 프로젝트_이슈_목록;
+            return 프로젝트_이슈_목록;
+        }catch (Exception e){
+            로그.error("클라우드 이슈 전체 조회시 오류가 발생하였습니다."+e.getMessage());
+            throw new IllegalArgumentException(에러코드.이슈_조회_오류.getErrorMsg());
+
+        }
     }
 
     @Override
     public 지라이슈_데이터 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) {
 
-        String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디 + "?" + 지라유틸.조회할_필드_목록_가져오기();
+        로그.info("클라우드 지라 이슈 조회하기");
 
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = 지라유틸.클라우드_통신기_생성(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
+        if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
+            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+        }
+        try {
+            String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디 + "?" + 지라유틸.조회할_필드_목록_가져오기();
 
-        지라이슈_데이터 지라이슈_데이터 = 지라유틸.get(webClient, endpoint, 지라이슈_데이터.class)
-                .onErrorMap(e -> new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg())).block();
+            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            WebClient webClient = 지라유틸.클라우드_통신기_생성(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
-        지라이슈_데이터.getFields().setWorklogs(이슈_워크로그_조회(webClient, 이슈_키_또는_아이디));
+            지라이슈_데이터 지라이슈_데이터 = 지라유틸.get(webClient, endpoint, 지라이슈_데이터.class)
+                    .onErrorMap(e -> new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg())).block();
 
-        로그.info(지라이슈_데이터.toString());
+            지라이슈_데이터.getFields().setWorklogs(이슈_워크로그_조회(webClient, 이슈_키_또는_아이디));
 
-        return 지라이슈_데이터;
+            로그.info(지라이슈_데이터.toString());
+
+            return 지라이슈_데이터;
+        }catch (Exception e){
+            로그.error("클라우드 이슈 조회시 오류가 발생하였습니다.");
+            throw new IllegalArgumentException(에러코드.이슈_조회_오류.getErrorMsg());
+        }
     }
 
     /* ***
@@ -189,87 +209,97 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
     public Map<String, Object> 이슈_수정하기(Long 연결_아이디, String 이슈_키_또는_아이디, 지라이슈생성_데이터 지라이슈생성_데이터) {
 
         로그.info("클라우드 지라 이슈 수정하기");
-
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
-        WebClient webClient = 지라유틸.클라우드_통신기_생성(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
-
-        String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디;
-        Map<String, Object> 결과 = new HashMap<>();
-
-        지라이슈생성필드_데이터 필드_데이터 = 지라이슈생성_데이터.getFields();
-        if (필드_데이터.getProject() != null || 필드_데이터.getIssuetype() != null || 필드_데이터.getReporter() != null ||
-            필드_데이터.getAssignee() != null || 필드_데이터.getPriority() != null || 필드_데이터.getStatus() != null
-                || 필드_데이터.getResolution() != null) {
-
-            로그.info("입력 값에 수정할 수 없는 필드가 있습니다.");
-
-            결과.put("이슈 수정", "실패");
-            결과.put("에러 메시지", "수정할 수 없는 필드가 포함");
-
-            return 결과;
+        if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
+            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
         }
+        try {
+            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            WebClient webClient = 지라유틸.클라우드_통신기_생성(연결정보.getUri(), 연결정보.getUserId(), 연결정보.getPasswordOrToken());
 
-        클라우드_지라이슈생성_데이터 수정_데이터 = new 클라우드_지라이슈생성_데이터();
-        클라우드_지라이슈필드_데이터 클라우드_필드_데이터 = new 클라우드_지라이슈필드_데이터();
+            String endpoint = "/rest/api/3/issue/" + 이슈_키_또는_아이디;
+            Map<String, Object> 결과 = new HashMap<>();
 
-        if (필드_데이터.getSummary() != null) {
-            클라우드_필드_데이터.setSummary(필드_데이터.getSummary());
-        }
+            지라이슈생성필드_데이터 필드_데이터 = 지라이슈생성_데이터.getFields();
+            if (필드_데이터.getProject() != null || 필드_데이터.getIssuetype() != null || 필드_데이터.getReporter() != null ||
+                    필드_데이터.getAssignee() != null || 필드_데이터.getPriority() != null || 필드_데이터.getStatus() != null
+                    || 필드_데이터.getResolution() != null) {
 
-        if (필드_데이터.getDescription() != null) {
-            클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
-        }
+                로그.info("입력 값에 수정할 수 없는 필드가 있습니다.");
 
-        if (필드_데이터.getLabels() != null) {
-            클라우드_필드_데이터.setLabels(필드_데이터.getLabels());
-        }
-
-        수정_데이터.setFields(클라우드_필드_데이터);
-        Optional<Boolean> 응답_결과 = 지라유틸.executePut(webClient, endpoint, 수정_데이터);
-
-        if (응답_결과.isPresent()) {
-            if (응답_결과.get()) {
-
-                결과.put("success", true);
-                결과.put("message", "이슈 수정 성공");
+                결과.put("이슈 수정", "실패");
+                결과.put("에러 메시지", "수정할 수 없는 필드가 포함");
 
                 return 결과;
             }
-        }
-        결과.put("success", false);
-        결과.put("message", "이슈 수정 실패");
 
-        return 결과;
+            클라우드_지라이슈생성_데이터 수정_데이터 = new 클라우드_지라이슈생성_데이터();
+            클라우드_지라이슈필드_데이터 클라우드_필드_데이터 = new 클라우드_지라이슈필드_데이터();
+
+            if (필드_데이터.getSummary() != null) {
+                클라우드_필드_데이터.setSummary(필드_데이터.getSummary());
+            }
+
+            if (필드_데이터.getDescription() != null) {
+                클라우드_필드_데이터.setDescription(내용_변환(필드_데이터.getDescription()));
+            }
+
+            if (필드_데이터.getLabels() != null) {
+                클라우드_필드_데이터.setLabels(필드_데이터.getLabels());
+            }
+
+            수정_데이터.setFields(클라우드_필드_데이터);
+            Optional<Boolean> 응답_결과 = 지라유틸.executePut(webClient, endpoint, 수정_데이터);
+
+            if (응답_결과.isPresent()) {
+                if (응답_결과.get()) {
+
+                    결과.put("success", true);
+                    결과.put("message", "이슈 수정 성공");
+
+                    return 결과;
+                }
+            }
+            결과.put("success", false);
+            결과.put("message", "이슈 수정 실패");
+
+            return 결과;
+        }catch (Exception e){
+            로그.error("이슈 수정시 오류가 발생하였습니다. "+e.getMessage());
+            throw new IllegalArgumentException(에러코드.이슈수정_오류.getErrorMsg());
+        }
+
     }
 
     @Override
     public Map<String, Object> 이슈_삭제_라벨_처리하기(Long 연결_아이디, String 이슈_키_또는_아이디) {
 
         로그.info("지라 이슈 삭제 라벨 처리하기");
+        try {
+            Map<String, Object> 반환할_결과맵 = new HashMap<String, Object>();
 
-        Map<String, Object> 반환할_결과맵 = new HashMap<String, Object>();
+            String 삭제_라벨링 = "이슈_삭제_라벨_처리";
 
-        String 삭제_라벨링 = "이슈_삭제_라벨_처리";
+            지라이슈생성필드_데이터 필드_데이터_전송_객체 = new 지라이슈생성필드_데이터();
+            필드_데이터_전송_객체.setLabels(List.of(삭제_라벨링));
 
-        지라이슈생성필드_데이터 필드_데이터_전송_객체 = new 지라이슈생성필드_데이터();
-        필드_데이터_전송_객체.setLabels(List.of(삭제_라벨링));
+            지라이슈생성_데이터 지라이슈생성_데이터 = new 지라이슈생성_데이터();
+            지라이슈생성_데이터.setFields(필드_데이터_전송_객체);
 
-        지라이슈생성_데이터 지라이슈생성_데이터 = new 지라이슈생성_데이터();
-        지라이슈생성_데이터.setFields(필드_데이터_전송_객체);
+            Map<String, Object> 라벨_처리_결과맵 = 이슈_수정하기(연결_아이디, 이슈_키_또는_아이디, 지라이슈생성_데이터);
 
-        Map<String, Object> 라벨_처리_결과맵 = 이슈_수정하기(연결_아이디, 이슈_키_또는_아이디, 지라이슈생성_데이터);
+            if (!((Boolean) 라벨_처리_결과맵.get("success"))) {
+                반환할_결과맵.put("success", false);
+                반환할_결과맵.put("message", "이슈 라벨 닫기 처리 실패");
+            }
+            else {
+                반환할_결과맵.put("success", true);
+                반환할_결과맵.put("message", "이슈 라벨 닫기 처리 성공");
+            }
 
-        if (!((Boolean) 라벨_처리_결과맵.get("success"))) {
-            반환할_결과맵.put("success", false);
-            반환할_결과맵.put("message", "이슈 라벨 닫기 처리 실패");
+            return 반환할_결과맵;
+        }catch (Exception e){
+            throw new IllegalArgumentException(에러코드.이슈수정_오류.getErrorMsg());
         }
-        else {
-            반환할_결과맵.put("success", true);
-            반환할_결과맵.put("message", "이슈 라벨 닫기 처리 성공");
-        }
-
-        return 반환할_결과맵;
-
     }
 
     public 클라우드_지라이슈필드_데이터.내용 내용_변환(String 입력_데이터) {

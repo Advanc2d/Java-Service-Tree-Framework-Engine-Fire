@@ -1,5 +1,6 @@
 package com.arms.jira.jiraissuestatus.strategy;
 
+import com.arms.errors.codes.에러코드;
 import com.arms.jira.info.model.지라연결정보_데이터;
 import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
@@ -25,51 +26,65 @@ public class 온프레미스_지라이슈상태_전략 implements 지라이슈�
 
     @Override
     public List<지라이슈상태_데이터> 이슈_상태_목록_가져오기(Long 연결_아이디) throws Exception {
-        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
-                info.getUserId(),
-                info.getPasswordOrToken());
+        로그.info("온프레미스 이슈 상태 목록 가져오기");
 
-        Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
-        Iterable<Status> statuses = statusesPromise.claim();
+        try {
+            지라연결정보_데이터 info = 지라연결_서비스.checkInfo(연결_아이디);
+            JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
+                    info.getUserId(),
+                    info.getPasswordOrToken());
 
-        List<지라이슈상태_데이터> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<>();
-        for (Status status : statuses) {
-            지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
-            지라이슈상태_데이터.setSelf(status.getSelf().toString());
-            지라이슈상태_데이터.setId(status.getId().toString());
-            지라이슈상태_데이터.setName(status.getName());
-            지라이슈상태_데이터.setDescription(status.getDescription());
-            반환할_지라_이슈_상태_데이터전송객체_목록.add(지라이슈상태_데이터);
+            Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
+            Iterable<Status> statuses = statusesPromise.claim();
+
+            List<지라이슈상태_데이터> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<>();
+            for (Status status : statuses) {
+                지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
+                지라이슈상태_데이터.setSelf(status.getSelf().toString());
+                지라이슈상태_데이터.setId(status.getId().toString());
+                지라이슈상태_데이터.setName(status.getName());
+                지라이슈상태_데이터.setDescription(status.getDescription());
+                반환할_지라_이슈_상태_데이터전송객체_목록.add(지라이슈상태_데이터);
+            }
+
+            return 반환할_지라_이슈_상태_데이터전송객체_목록;
+        }catch (Exception e){
+            로그.error("온프레미스 이슈 상태 목록 조회에 실패하였습니다" +e.getMessage());
+            throw new IllegalArgumentException(에러코드.이슈상태_조회_오류.getErrorMsg());
         }
-
-        return 반환할_지라_이슈_상태_데이터전송객체_목록;
     }
 
     @Override
     public List<지라이슈상태_데이터> 프로젝트별_이슈_상태_목록_가져오기(Long 연결_아이디, String 프로젝트_아이디) throws Exception {
 
         로그.info("온프레미스 이슈_상태_목록_가져오기 실행");
-
-        지라연결정보_데이터 info = 지라연결_서비스.checkInfo(연결_아이디);
-        JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
-                                                                        info.getUserId(),
-                                                                        info.getPasswordOrToken());
-
-        Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
-        Iterable<Status> statuses = statusesPromise.claim();
-
-        List<지라이슈상태_데이터> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<>();
-        for (Status status : statuses) {
-            지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
-            지라이슈상태_데이터.setSelf(status.getSelf().toString());
-            지라이슈상태_데이터.setId(status.getId().toString());
-            지라이슈상태_데이터.setName(status.getName());
-            지라이슈상태_데이터.setDescription(status.getDescription());
-            반환할_지라_이슈_상태_데이터전송객체_목록.add(지라이슈상태_데이터);
+        if (프로젝트_아이디 == null || 프로젝트_아이디.isEmpty()) {
+            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
         }
+        try {
+            지라연결정보_데이터 info = 지라연결_서비스.checkInfo(연결_아이디);
+            JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(info.getUri(),
+                                                                            info.getUserId(),
+                                                                            info.getPasswordOrToken());
 
-        return 반환할_지라_이슈_상태_데이터전송객체_목록;
+            Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
+            Iterable<Status> statuses = statusesPromise.claim();
+
+            List<지라이슈상태_데이터> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<>();
+            for (Status status : statuses) {
+                지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
+                지라이슈상태_데이터.setSelf(status.getSelf().toString());
+                지라이슈상태_데이터.setId(status.getId().toString());
+                지라이슈상태_데이터.setName(status.getName());
+                지라이슈상태_데이터.setDescription(status.getDescription());
+                반환할_지라_이슈_상태_데이터전송객체_목록.add(지라이슈상태_데이터);
+            }
+
+            return 반환할_지라_이슈_상태_데이터전송객체_목록;
+        }catch (Exception e){
+            로그.error("온프레미스 이슈 상태 목록 조회에 실패하였습니다" +e.getMessage());
+            throw new IllegalArgumentException(에러코드.이슈상태_조회_오류.getErrorMsg());
+        }
     }
 
 }
