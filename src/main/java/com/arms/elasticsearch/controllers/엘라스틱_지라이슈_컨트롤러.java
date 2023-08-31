@@ -104,11 +104,9 @@ public class 엘라스틱_지라이슈_컨트롤러 {
     public 지라이슈 이슈_검색엔진_저장(@PathVariable("connectId") Long 지라서버_아이디,
                                         @PathVariable("issueKey") String 이슈_키,
                                         ModelMap model, HttpServletRequest request) throws Exception {
-        로그.info("지라 이슈_상세정보_가져오기");
+        로그.info("지라 이슈_검색엔진_저장");
 
         지라이슈_데이터 받아온_이슈 = 지라이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키);
-        List<지라이슈_데이터> 받아온_이슈링크_목록 = 지라이슈_전략_호출.이슈링크_가져오기(지라서버_아이디, 이슈_키);
-        List<지라이슈_데이터> 받아온_서브테스크_목록 = 지라이슈_전략_호출.서브테스크_가져오기(지라서버_아이디, 이슈_키);
 
         지라이슈.프로젝트 프로젝트 = 지라이슈.프로젝트.builder()
                 .id(받아온_이슈.getFields().getProject().getId())
@@ -130,6 +128,20 @@ public class 엘라스틱_지라이슈_컨트롤러 {
         이슈.generateId();
 
         return 지라이슈_검색엔진.이슈_추가하기(이슈);
+    }
+
+    @ResponseBody
+    @RequestMapping(
+            value = {"/loadToES/bulk/{issueKey}"},
+            method = {RequestMethod.GET}
+    )
+    public int 이슈_검색엔진_벌크_저장(@PathVariable("connectId") Long 지라서버_아이디,
+                                       @PathVariable("issueKey") String 이슈_키,
+                                       ModelMap model, HttpServletRequest request) throws Exception {
+
+        로그.info("지라 이슈_검색엔진_벌크_저장 컨트롤러");
+
+        return 지라이슈_검색엔진.이슈_링크드이슈_서브테스크_벌크로_추가하기(지라서버_아이디, 이슈_키);
     }
 
 }
