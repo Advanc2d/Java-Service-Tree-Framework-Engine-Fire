@@ -103,9 +103,6 @@ public class 지라이슈 {
     @Field(type = FieldType.Integer, name = "timespent")
     private Integer timespent;
 
-    @Field(type = FieldType.Nested)
-    private List<지라이슈.버전> fixVersions;
-
     @Getter
     @Setter
     @Builder
@@ -405,42 +402,4 @@ public class 지라이슈 {
 
     }
 
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class 버전 {
-
-        @Field(type = FieldType.Text, name = "fixVersions_self")
-        @JsonProperty("fixVersions_self")
-        private String self;
-
-        @Field(type = FieldType.Text, name = "fixVersions_id")
-        @JsonProperty("fixVersions_id")
-        private String id;
-
-        @Field(type = FieldType.Text, name = "fixVersions_name")
-        @JsonProperty("fixVersions_name")
-        private String name;
-
-        @Field(type = FieldType.Text, name = "fixVersions_description")
-        @JsonProperty("fixVersions_description")
-        private String description;
-
-        @Field(type = FieldType.Boolean, name = "fixVersions_archived")
-        @JsonProperty("fixVersions_archived")
-        private boolean archived;
-
-        @Field(type = FieldType.Boolean, name = "fixVersions_released")
-        @JsonProperty("fixVersions_released")
-        private boolean released;
-
-        @Field(type = FieldType.Text, name = "fixVersions_releaseDate")
-        @JsonProperty("fixVersions_releaseDate")
-        private String releaseDate;
-
-    }
 }
