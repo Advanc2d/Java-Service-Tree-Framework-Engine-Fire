@@ -29,7 +29,7 @@ class 통합이슈조회테스트 {
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
     ObjectMapper objectMapper = new ObjectMapper();
 
-    String fieldsParam = "project,issuetype,creator,reporter,assignee,labels,priority,status,resolution,resolutiondate,created,worklogs,timespent,fixVersions";
+    String fieldsParam = "project,issuetype,creator,reporter,assignee,labels,priority,status,resolution,resolutiondate,created,worklogs,timespent,summary";
 
     // 온프레미스
     JiraRestClient restClient;
@@ -400,34 +400,34 @@ class 통합이슈조회테스트 {
         }
 
         // fixVersions
-        if (이슈.getFixVersions() != null) {
-
-            List<지라이슈버전_데이터> 이슈버전_목록 = new ArrayList<>();
-
-            Iterable<Version> 전체이슈버전 = 이슈.getFixVersions();
-
-            for (Version 버전 : 전체이슈버전) {
-                String 이슈버전_주소 = 버전.getSelf().toString();
-                String 이슈버전_아이디 = 버전.getId().toString();
-                String 이슈버전_이름 = 버전.getName();
-                String 이슈버전_내용 = 버전.getDescription();
-                Boolean 이슈버전_저장여부 = 버전.isArchived();
-                Boolean 이슈버전_배포여부 = 버전.isReleased();
-                String 이슈버전_배포날짜 = 버전.getReleaseDate().toString();
-
-                지라이슈버전_데이터 이슈버전 = new 지라이슈버전_데이터();
-                이슈버전.setSelf(이슈버전_주소);
-                이슈버전.setId(이슈버전_아이디);
-                이슈버전.setName(이슈버전_이름);
-                이슈버전.setDescription(이슈버전_내용);
-                이슈버전.setArchived(이슈버전_저장여부);
-                이슈버전.setReleased(이슈버전_배포여부);
-                이슈버전.setReleaseDate(이슈버전_배포날짜);
-
-                이슈버전_목록.add(이슈버전);
-            }
-            지라이슈필드_데이터.setFixVersions(이슈버전_목록);
-        }
+//        if (이슈.getFixVersions() != null) {
+//
+//            List<지라이슈버전_데이터> 이슈버전_목록 = new ArrayList<>();
+//
+//            Iterable<Version> 전체이슈버전 = 이슈.getFixVersions();
+//
+//            for (Version 버전 : 전체이슈버전) {
+//                String 이슈버전_주소 = 버전.getSelf().toString();
+//                String 이슈버전_아이디 = 버전.getId().toString();
+//                String 이슈버전_이름 = 버전.getName();
+//                String 이슈버전_내용 = 버전.getDescription();
+//                Boolean 이슈버전_저장여부 = 버전.isArchived();
+//                Boolean 이슈버전_배포여부 = 버전.isReleased();
+//                String 이슈버전_배포날짜 = 버전.getReleaseDate().toString();
+//
+//                지라이슈버전_데이터 이슈버전 = new 지라이슈버전_데이터();
+//                이슈버전.setSelf(이슈버전_주소);
+//                이슈버전.setId(이슈버전_아이디);
+//                이슈버전.setName(이슈버전_이름);
+//                이슈버전.setDescription(이슈버전_내용);
+//                이슈버전.setArchived(이슈버전_저장여부);
+//                이슈버전.setReleased(이슈버전_배포여부);
+//                이슈버전.setReleaseDate(이슈버전_배포날짜);
+//
+//                이슈버전_목록.add(이슈버전);
+//            }
+//            지라이슈필드_데이터.setFixVersions(이슈버전_목록);
+//        }
 
         지라이슈_데이터.setFields(지라이슈필드_데이터);
 

@@ -1,8 +1,6 @@
 package com.arms.jira.jiraissue.strategy;
 
 import com.arms.errors.codes.에러코드;
-import com.arms.jira.info.model.지라연결정보_데이터;
-import com.arms.jira.info.service.지라연결_서비스;
 import com.arms.jira.jiraissue.model.*;
 import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
@@ -405,6 +403,14 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         }
 
         // resolutiondate
+        for (IssueField 필드 : 지라이슈.getFields()) {
+            if (필드 != null && !필드.getId().isEmpty() && 필드.getId().equals("resolutiondate")) {
+                if (필드.getValue().toString() != null) {
+                    지라이슈필드_데이터.setResolutiondate(필드.getValue().toString());
+                }
+                break;
+            }
+        }
 
         // created
         if (지라이슈.getCreationDate() != null) {
@@ -467,34 +473,8 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             지라이슈필드_데이터.setTimespent(이슈소요시간);
         }
 
-        // fixVersions
-        if (지라이슈.getFixVersions() != null) {
-
-            List<지라이슈버전_데이터> 이슈버전_목록 = new ArrayList<>();
-
-            Iterable<Version> 전체이슈버전 = 지라이슈.getFixVersions();
-
-            for (Version 버전 : 전체이슈버전) {
-                String 이슈버전_주소 = 버전.getSelf().toString();
-                String 이슈버전_아이디 = 버전.getId().toString();
-                String 이슈버전_이름 = 버전.getName();
-                String 이슈버전_내용 = 버전.getDescription();
-                Boolean 이슈버전_저장여부 = 버전.isArchived();
-                Boolean 이슈버전_배포여부 = 버전.isReleased();
-                String 이슈버전_배포날짜 = 버전.getReleaseDate().toString();
-
-                지라이슈버전_데이터 이슈버전 = new 지라이슈버전_데이터();
-                이슈버전.setSelf(이슈버전_주소);
-                이슈버전.setId(이슈버전_아이디);
-                이슈버전.setName(이슈버전_이름);
-                이슈버전.setDescription(이슈버전_내용);
-                이슈버전.setArchived(이슈버전_저장여부);
-                이슈버전.setReleased(이슈버전_배포여부);
-                이슈버전.setReleaseDate(이슈버전_배포날짜);
-
-                이슈버전_목록.add(이슈버전);
-            }
-            지라이슈필드_데이터.setFixVersions(이슈버전_목록);
+        if (지라이슈.getSummary() != null) {
+            지라이슈필드_데이터.setSummary(지라이슈.getSummary());
         }
 
         지라이슈_데이터.setFields(지라이슈필드_데이터);

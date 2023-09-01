@@ -103,6 +103,9 @@ public class 지라이슈 {
     @Field(type = FieldType.Integer, name = "timespent")
     private Integer timespent;
 
+    @Field(type = FieldType.Text, name = "summary")
+    private String summary;
+
     @Getter
     @Setter
     @Builder
