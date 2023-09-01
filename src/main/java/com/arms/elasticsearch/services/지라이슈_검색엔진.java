@@ -18,9 +18,7 @@ import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -117,9 +115,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         List<지라이슈> 벌크_저장_목록 = new ArrayList<지라이슈>();
 
         지라이슈_데이터 받아온_이슈 = 지라이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키);
-        if (받아온_이슈 == null ) {
-
-        }
         지라이슈 저장할_요구사항_이슈 = ELK_데이터로_변환(지라서버_아이디, 받아온_이슈,
                 true, "");
 
@@ -146,21 +141,127 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
     private 지라이슈 ELK_데이터로_변환(Long 지라서버_아이디, 지라이슈_데이터 지라이슈_데이터,
                              boolean 요구사항유형_여부, String 부모_요구사항_키) {
 
-        지라이슈.프로젝트 프로젝트 = 지라이슈.프로젝트.builder()
-                .id(지라이슈_데이터.getFields().getProject().getId())
-                .key(지라이슈_데이터.getFields().getProject().getKey())
-                .name(지라이슈_데이터.getFields().getProject().getName())
-                .self(지라이슈_데이터.getFields().getProject().getSelf())
-                .build();
+        지라이슈.프로젝트 프로젝트 = Optional.ofNullable(지라이슈_데이터.getFields().getProject())
+                .map(project -> 지라이슈.프로젝트.builder()
+                        .id(Optional.ofNullable(project.getId()).orElse(null))
+                        .key(Optional.ofNullable(project.getKey()).orElse(null))
+                        .name(Optional.ofNullable(project.getName()).orElse(null))
+                        .self(Optional.ofNullable(project.getSelf()).orElse(null))
+                        .build())
+                .orElse(null);
+
+        지라이슈.이슈유형 이슈유형 = Optional.ofNullable(지라이슈_데이터.getFields().getIssuetype())
+                .map(issuetype -> 지라이슈.이슈유형.builder()
+                        .self(Optional.ofNullable(issuetype.getSelf()).orElse(null))
+                        .id(Optional.ofNullable(issuetype.getId()).orElse(null))
+                        .description(Optional.ofNullable(issuetype.getDescription()).orElse(null))
+                        .name(Optional.ofNullable(issuetype.getName()).orElse(null))
+                        .subtask(Optional.ofNullable(issuetype.getSubtask()).orElse(null))
+                        .untranslatedName(Optional.ofNullable(issuetype.getUntranslatedName()).orElse(null))
+                        .hierarchyLevel(Optional.ofNullable(issuetype.getHierarchyLevel()).orElse(null))
+                        .build())
+                .orElse(null);
+
+        지라이슈.생성자 생성자 = Optional.ofNullable(지라이슈_데이터.getFields().getCreator())
+                .map(creator -> 지라이슈.생성자.builder()
+                        .accountId(Optional.ofNullable(creator.getAccountId()).orElse(null))
+                        .emailAddress(Optional.ofNullable(creator.getEmailAddress()).orElse(null))
+                        .build())
+                .orElse(null);
+
+        지라이슈.보고자 보고자 = Optional.ofNullable(지라이슈_데이터.getFields().getReporter())
+                .map(reporter -> 지라이슈.보고자.builder()
+                        .accountId(Optional.ofNullable(reporter.getAccountId()).orElse(null))
+                        .emailAddress(Optional.ofNullable(reporter.getEmailAddress()).orElse(null))
+                        .build())
+                .orElse(null);
+
+        지라이슈.담당자 담당자 = Optional.ofNullable(지라이슈_데이터.getFields().getAssignee())
+                .map(assignee -> 지라이슈.담당자.builder()
+                        .accountId(Optional.ofNullable(assignee.getAccountId()).orElse(null))
+                        .emailAddress(Optional.ofNullable(assignee.getEmailAddress()).orElse(null))
+                        .build())
+                .orElse(null);
+
+        지라이슈.우선순위 우선순위 = Optional.ofNullable(지라이슈_데이터.getFields().getPriority())
+                .map(priority -> 지라이슈.우선순위.builder()
+                        .self(Optional.ofNullable(priority.getSelf()).orElse(null))
+                        .id(Optional.ofNullable(priority.getId()).orElse(null))
+                        .name(Optional.ofNullable(priority.getName()).orElse(null))
+                        .description(Optional.ofNullable(priority.getDescription()).orElse(null))
+                        .isDefault(Optional.ofNullable(priority.isDefault()).orElse(false)) // 기본값을 false로 설정
+                        .build())
+                .orElse(null);
+
+        지라이슈.상태 상태 = Optional.ofNullable(지라이슈_데이터.getFields().getStatus())
+                .map(status -> 지라이슈.상태.builder()
+                        .self(Optional.ofNullable(status.getSelf()).orElse(null))
+                        .id(Optional.ofNullable(status.getId()).orElse(null))
+                        .name(Optional.ofNullable(status.getName()).orElse(null))
+                        .description(Optional.ofNullable(status.getDescription()).orElse(null))
+                        .build())
+                .orElse(null);
+
+        지라이슈.해결책 해결책 = Optional.ofNullable(지라이슈_데이터.getFields().getResolution())
+                .map(resolution -> 지라이슈.해결책.builder()
+                        .self(Optional.ofNullable(resolution.getSelf()).orElse(null))
+                        .id(Optional.ofNullable(resolution.getId()).orElse(null))
+                        .name(Optional.ofNullable(resolution.getName()).orElse(null))
+                        .description(Optional.ofNullable(resolution.getDescription()).orElse(null))
+                        .isDefault(Optional.ofNullable(resolution.isDefault()).orElse(false)) // 기본값을 false로 설정
+                        .build())
+                .orElse(null);
+
+        List<지라이슈.워크로그> 워크로그 = Optional.ofNullable(지라이슈_데이터.getFields().getWorklogs())
+                .orElse(Collections.emptyList()) // null인 경우 빈 리스트 반환
+                .stream()
+                .map(워크로그아이템 -> {
+                    지라이슈.저자 저자 = Optional.ofNullable(워크로그아이템.getAuthor())
+                            .map(author -> new 지라이슈.저자(
+                                    Optional.ofNullable(author.getAccountId()).orElse(null),
+                                    Optional.ofNullable(author.getEmailAddress()).orElse(null)))
+                            .orElse(null);
+
+                    지라이슈.수정한_저자 수정한_저자 = Optional.ofNullable(워크로그아이템.getUpdateAuthor())
+                            .map(updateAuthor -> new 지라이슈.수정한_저자(
+                                    Optional.ofNullable(updateAuthor.getAccountId()).orElse(null),
+                                    Optional.ofNullable(updateAuthor.getEmailAddress()).orElse(null)))
+                            .orElse(null);
+
+                    return new 지라이슈.워크로그(Optional.ofNullable(워크로그아이템.getSelf()).orElse(null),
+                            저자,
+                            수정한_저자,
+                            Optional.ofNullable(워크로그아이템.getCreated()).orElse(null),
+                            Optional.ofNullable(워크로그아이템.getUpdated()).orElse(null),
+                            Optional.ofNullable(워크로그아이템.getStarted()).orElse(null),
+                            Optional.ofNullable(워크로그아이템.getTimeSpent()).orElse(null),
+                            Optional.ofNullable(워크로그아이템.getTimeSpentSeconds()).orElse(null),
+                            Optional.ofNullable(워크로그아이템.getId()).orElse(null),
+                            Optional.ofNullable(워크로그아이템.getIssueId()).orElse(null)
+                    );
+                })
+                .collect(Collectors.toList());
 
         지라이슈 이슈 = 지라이슈.builder()
                 .jira_server_id(지라서버_아이디)
-                .self(지라이슈_데이터.getSelf())
-                .key(지라이슈_데이터.getKey())
                 .issueID(지라이슈_데이터.getId().toString())
-                .project(프로젝트)
+                .key(지라이슈_데이터.getKey())
+                .self(지라이슈_데이터.getSelf())
                 .parentReqKey(부모_요구사항_키)
                 .isReq(요구사항유형_여부)
+                .project(프로젝트)
+                .issuetype(이슈유형)
+                .creator(생성자)
+                .reporter(보고자)
+                .assignee(담당자)
+                .labels(지라이슈_데이터.getFields().getLabels())
+                .priority(우선순위)
+                .status(상태)
+                .resolution(해결책)
+                .resolutiondate(지라이슈_데이터.getFields().getResolutiondate())
+                .created(지라이슈_데이터.getFields().getCreated())
+                .worklogs(워크로그)
+                .timespent(지라이슈_데이터.getFields().getTimespent())
                 .build();
 
         이슈.generateId();

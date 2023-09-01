@@ -20,8 +20,8 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
  *
  */
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "com.arms.elasticsearch.repositories")
-@ComponentScan(basePackages = { "com.arms.elasticsearch" })
+@EnableElasticsearchRepositories(basePackages = {"com.arms.elasticsearch.repositories","com.arms.serverinfo.repositories"})
+@ComponentScan(basePackages = { "com.arms.elasticsearch" ,"com.arms.serverinfo"})
 public class ElasticsearchClientConfig extends AbstractElasticsearchConfiguration {
 
 	@Value("${elasticsearch.url}")

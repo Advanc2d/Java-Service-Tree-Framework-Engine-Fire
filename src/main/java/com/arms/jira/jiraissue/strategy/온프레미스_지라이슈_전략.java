@@ -10,7 +10,6 @@ import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
 import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
 import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -42,9 +41,11 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
     @Override
     public List<지라이슈_데이터> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
         로그.info("온프레미스 이슈 전체 조회");
+
         if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
             throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
         }
+
         try{
             지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
             JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
@@ -260,13 +261,13 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         Map<String, Object> 라벨_처리_결과맵 = 이슈_수정하기(연결_아이디, 이슈_키_또는_아이디, 지라이슈생성_데이터);
 
-        if (!((Boolean) 라벨_처리_결과맵.get("success"))) {
-            반환할_결과맵.put("success", false);
-            반환할_결과맵.put("message", "이슈 라벨 닫기 처리 실패 : " + 라벨_처리_결과맵.toString());
-        }
-        else {
+        if (((Boolean) 라벨_처리_결과맵.get("success"))) {
             반환할_결과맵.put("success", true);
             반환할_결과맵.put("message", "이슈 라벨 닫기 처리 성공");
+        }
+        else {
+            반환할_결과맵.put("success", false);
+            반환할_결과맵.put("message", "이슈 라벨 닫기 처리 실패 : " + 라벨_처리_결과맵.toString());
         }
 
         return 반환할_결과맵;
