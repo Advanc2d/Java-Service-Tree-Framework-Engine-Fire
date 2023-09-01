@@ -44,6 +44,5 @@ public class 지라이슈필드_데이터 {
 
     private Integer timespent;
 
-    private List<지라이슈버전_데이터> fixVersions;
-
+    private String summary;
 }

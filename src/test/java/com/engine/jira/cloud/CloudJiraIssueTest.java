@@ -56,7 +56,7 @@ public class CloudJiraIssueTest {
 
     // public String fieldsParam = "&fields=-subtasks,-issuelinks,-description";
 
-    public String fieldsParam = "fields=project,issuetype,creator,reporter,assignee,labels,priority,status,resolution,resolutiondate,created,worklogs,timespent,fixVersions";
+    public String fieldsParam = "fields=project,issuetype,creator,reporter,assignee,labels,priority,status,resolution,resolutiondate,created,worklogs,timespent,summary";
 
     @BeforeEach
     void setUp () {

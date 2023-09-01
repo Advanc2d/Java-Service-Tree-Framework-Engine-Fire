@@ -262,6 +262,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                 .created(지라이슈_데이터.getFields().getCreated())
                 .worklogs(워크로그)
                 .timespent(지라이슈_데이터.getFields().getTimespent())
+                .summary(지라이슈_데이터.getFields().getSummary())
                 .build();
 
         이슈.generateId();
