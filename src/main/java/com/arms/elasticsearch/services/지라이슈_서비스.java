@@ -30,4 +30,6 @@ public interface 지라이슈_서비스 {
 
     public int 이슈_링크드이슈_서브테스크_벌크로_추가하기(Long 지라서버_아이디, String 이슈_키) throws Exception;
 
+    public List<지라이슈> 요구사항_링크드이슈_서브테스크_검색하기(Long 서버_아이디, 검색조건 검색조건);
+
 }
