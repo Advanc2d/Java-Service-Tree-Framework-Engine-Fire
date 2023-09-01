@@ -111,17 +111,17 @@ public class 지라연결_서비스_구현 implements 지라연결_서비스 {
 
         if (info == null) {
             logger.info("비정상적인 정보가 조회되었습니다.");
-            throw new IllegalArgumentException(에러코드.연결정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
         }
 
         if(info.getUserId() == null){
             logger.info("사용자 아이디 조회에 실패했습니다.");
-            throw new IllegalArgumentException(에러코드.연결정보_오류_아이디.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버정보_오류_아이디.getErrorMsg());
         }
 
         if(info.getPasswordOrToken()== null){
             logger.info("비밀 번호 및 토큰 정보 조회에 실패했습니다.");
-            throw new IllegalArgumentException(에러코드.연결정보_오류_비밀번호.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버정보_오류_비밀번호.getErrorMsg());
         }
         return info;
     }

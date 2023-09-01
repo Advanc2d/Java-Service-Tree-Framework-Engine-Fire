@@ -23,6 +23,7 @@ import java.util.Optional;
 @Service("서버정보_서비스")
 @AllArgsConstructor
 public class 서버정보_서비스_구현 implements 서버정보_서비스 {
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -31,7 +32,8 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public 서버정보_엔티티 연결정보_저장(서버정보_데이터 서버정보_데이터){
+    public 서버정보_엔티티 서버정보_저장(서버정보_데이터 서버정보_데이터){
+
         if (서버정보_데이터 == null) {
             throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
         }
@@ -48,7 +50,7 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
             throw new IllegalArgumentException(에러코드.서버정보_TYPE_오류.getErrorMsg());
         }
 
-        서버정보_데이터 조회한_서버_데이터 = 연결정보_조회(서버정보_데이터.getConnectId());
+        서버정보_데이터 조회한_서버_데이터 = 서버정보_조회(서버정보_데이터.getConnectId());
         서버정보_엔티티 서버정보_엔티티;
 
         if (조회한_서버_데이터 != null) {
@@ -59,59 +61,68 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
         }
 
         서버정보_엔티티 결과 = 서버정보_저장소.save(서버정보_엔티티);
+
         if (결과 == null){
             throw new IllegalArgumentException(에러코드.서버정보_생성_오류.getErrorMsg());
         }
+
         return 결과;
     }
+
     @Override
     public 서버정보_엔티티 서버정보_삭제하기(서버정보_데이터 서버정보_데이터) {
 
-        서버정보_데이터 이슈 = 연결정보_조회(서버정보_데이터.getConnectId());
+        서버정보_데이터 이슈 = 서버정보_검증(서버정보_데이터.getConnectId());
         서버정보_엔티티 서버정보 = modelMapper.map(이슈, 서버정보_엔티티.class);
-        log.info("왠만하면 쓰지 마시지...");
 
-        if( 이슈 == null ){
+        if (이슈 == null) {
             return null;
-        }else{
+        } else {
             서버정보_저장소.delete(서버정보);
             return 서버정보;
         }
     }
+
     @Override
     public void 서버정보_전체_삭제하기(){
         서버정보_저장소.deleteAll();
     }
 
-    public 서버정보_데이터 연결정보_조회(Long 연결대상_아이디) {
+    @Override
+    public 서버정보_데이터 서버정보_검증(Long 서버_아이디) {
 
-        Optional< 서버정보_엔티티 > optionalEntity = Optional.ofNullable(서버정보_저장소.findById(연결대상_아이디).orElse(null));
+        서버정보_데이터 조회한_서버정보 = 서버정보_조회(서버_아이디);
+
+        if (조회한_서버정보 == null) {
+            로그.error("등록된 서버 정보가 아닙니다.");
+            throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
+        }
+
+        if (조회한_서버정보.getUserId() == null) {
+            로그.error("사용자 아이디 조회에 실패했습니다.");
+            throw new IllegalArgumentException(에러코드.서버정보_오류_아이디.getErrorMsg());
+        }
+
+        if (조회한_서버정보.getPasswordOrToken()== null) {
+            로그.info("비밀 번호 및 토큰 정보 조회에 실패했습니다.");
+            throw new IllegalArgumentException(에러코드.서버정보_오류_비밀번호.getErrorMsg());
+        }
+
+        return 조회한_서버정보;
+    }
+
+    private 서버정보_데이터 서버정보_조회(Long 서버_아이디) {
+
+        Optional< 서버정보_엔티티 > optionalEntity = Optional.ofNullable(서버정보_저장소.findById(서버_아이디).orElse(null));
 
         if (!optionalEntity.isPresent()) {
             return null;
         }
+
         서버정보_엔티티 서버정보_엔티티 = optionalEntity.get();
         서버정보_데이터 서버정보_데이터 = modelMapper.map(서버정보_엔티티, 서버정보_데이터.class);
+
         return 서버정보_데이터;
-    }
-
-    public 서버정보_데이터 서버정보_검증(Long 연결대상_아이디){
-
-        서버정보_데이터 조회한_서버정보 = 연결정보_조회(연결대상_아이디);
-
-        if (조회한_서버정보 == null) {
-            로그.error("비정상적인 정보가 조회되었습니다.");
-            throw new IllegalArgumentException(에러코드.연결정보_오류.getErrorMsg());
-        }
-        if(조회한_서버정보.getUserId() == null){
-            로그.error("사용자 아이디 조회에 실패했습니다.");
-            throw new IllegalArgumentException(에러코드.연결정보_오류_아이디.getErrorMsg());
-        }
-        if(조회한_서버정보.getPasswordOrToken()== null){
-            로그.info("비밀 번호 및 토큰 정보 조회에 실패했습니다.");
-            throw new IllegalArgumentException(에러코드.연결정보_오류_비밀번호.getErrorMsg());
-        }
-        return 조회한_서버정보;
     }
 }
 
