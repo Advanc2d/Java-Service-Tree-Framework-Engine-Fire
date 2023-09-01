@@ -9,6 +9,8 @@ import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
 import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
 import com.arms.jira.utils.지라유틸;
+import com.arms.serverinfo.model.서버정보_데이터;
+import com.arms.serverinfo.service.서버정보_서비스;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
@@ -29,8 +31,11 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
+//    @Autowired
+//    private 지라연결_서비스 지라연결_서비스;
+
     @Autowired
-    private 지라연결_서비스 지라연결_서비스;
+    private 서버정보_서비스 서버정보_서비스;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -47,7 +52,8 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         }
 
         try{
-            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            서버정보_데이터 연결정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
+            //지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
             JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                     연결정보.getUserId(),
                     연결정보.getPasswordOrToken());
@@ -92,7 +98,8 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
         }
         try {
-            지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+            서버정보_데이터 연결정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
+            //지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
             JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                     연결정보.getUserId(),
                     연결정보.getPasswordOrToken());
@@ -113,8 +120,9 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
     public 지라이슈_데이터 이슈_생성하기(Long 연결_아이디, 지라이슈생성_데이터 지라이슈생성_데이터) throws Exception {
 
         로그.info("온프레미스 지라 이슈 생성하기");
-        
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+
+        서버정보_데이터 연결정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
+        //지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());
@@ -195,7 +203,8 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         로그.info("온프레미스 지라 이슈 수정하기");
 
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+        서버정보_데이터 연결정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
+        //지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                                          연결정보.getUserId(),
                                                                          연결정보.getPasswordOrToken());
@@ -746,7 +755,8 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         로그.info("온프레미스 지라 이슈링크_가져오기");
 
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+        서버정보_데이터 연결정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
+        //지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                             연결정보.getUserId(),
                                                             연결정보.getPasswordOrToken());
@@ -780,8 +790,9 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
     public List<지라이슈_데이터> 서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws URISyntaxException, IOException, ExecutionException, InterruptedException {
 
         로그.info("온프레미스 지라 이슈링크_가져오기");
-
-        지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
+        
+        서버정보_데이터 연결정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
+        //지라연결정보_데이터 연결정보 = 지라연결_서비스.checkInfo(연결_아이디);
         JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(연결정보.getUri(),
                                                             연결정보.getUserId(),
                                                             연결정보.getPasswordOrToken());

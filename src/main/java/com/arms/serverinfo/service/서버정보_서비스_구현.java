@@ -78,6 +78,11 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
             return 서버정보;
         }
     }
+    @Override
+    public void 서버정보_전체_삭제하기(){
+        서버정보_저장소.deleteAll();
+    }
+
     public 서버정보_데이터 연결정보_조회(Long 연결대상_아이디) {
 
         Optional< 서버정보_엔티티 > optionalEntity = Optional.ofNullable(서버정보_저장소.findById(연결대상_아이디).orElse(null));
