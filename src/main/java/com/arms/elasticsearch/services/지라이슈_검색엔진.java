@@ -269,5 +269,20 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
         return 이슈;
     }
+
+    @Override
+    public List<지라이슈> 요구사항_링크드이슈_서브테스크_검색하기(Long 서버_아이디, 검색조건 검색조건) {
+
+        final SearchRequest request = 검색엔진_유틸.buildSearchRequest(
+                인덱스자료.지라이슈_인덱스명,
+                검색조건,
+                서버_아이디
+        );
+
+        List<지라이슈> 전체결과 = 검색엔진_유틸.searchInternal(request,지라이슈.class);
+
+        return 전체결과;
+    }
+
 }
 

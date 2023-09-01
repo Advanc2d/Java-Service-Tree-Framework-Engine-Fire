@@ -1,13 +1,16 @@
 package com.arms.jira.jiraissue.service;
 
-import com.arms.jira.cloud.CloudJiraUtils;
 import com.arms.jira.jiraissue.model.*;
 import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
 import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
+import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.*;
+import com.atlassian.jira.rest.client.api.domain.BasicUser;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,7 +119,7 @@ class 통합이슈조회테스트 {
         while (!isLast) {
             String endpoint = "/rest/api/3/issue/" + issueKey + "/worklog?startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
 
-            지라이슈전체워크로그_데이터 지라이슈전체워크로그_데이터 = CloudJiraUtils.get(webClient, endpoint, 지라이슈전체워크로그_데이터.class).block();
+            지라이슈전체워크로그_데이터 지라이슈전체워크로그_데이터 = 지라유틸.get(webClient, endpoint, 지라이슈전체워크로그_데이터.class).block();
 
             지라이슈워크로그_목록.addAll(지라이슈전체워크로그_데이터.getWorklogs());
 
@@ -145,7 +148,7 @@ class 통합이슈조회테스트 {
             String endpoint = "/rest/api/3/search?jql=project=" + c_projectKey + "&fields=" + fieldsParam
                             + "&startAt=" + 검색_시작_지점 + "&maxResults=" + 검색_최대_개수;
 
-            지라이슈조회_데이터 지라이슈조회_데이터 = CloudJiraUtils.get(webClient, endpoint, 지라이슈조회_데이터.class).block();
+            지라이슈조회_데이터 지라이슈조회_데이터 = 지라유틸.get(webClient, endpoint, 지라이슈조회_데이터.class).block();
 
             지라이슈_목록.addAll(지라이슈조회_데이터.getIssues());
             로그.info("이슈 개수: " + 지라이슈_목록.size());

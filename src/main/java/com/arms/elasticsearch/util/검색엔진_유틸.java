@@ -290,4 +290,48 @@ public final class 검색엔진_유틸 {
         return QueryBuilders.rangeQuery(field).gte(date);
     }
 
+    /* ***
+     * 페이징 처리 데이터 조회 시 이슈 키 값으로 조회하면 같은 프로젝트명, 이슈 키 값이 있을 경우 문제가 있어 검색 조건 추가
+     *** */
+    public static SearchRequest buildSearchRequest(final String indexName,
+                                                   final 검색조건 dto,
+                                                   final Long serverId) {
+        try {
+            final int page = dto.getPage();
+            final int size = dto.getSize();
+            final int from = page <= 0 ? 0 : page * size;
+
+            final QueryBuilder searchQuery = getQueryBuilder(dto);
+            final QueryBuilder serverQuery = getQueryBuilder("jira_server_id", serverId);
+
+            final BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                    .must(searchQuery)
+                    .must(serverQuery);
+
+            SearchSourceBuilder builder = new SearchSourceBuilder()
+                    .from(from)
+                    .size(size)
+                    .postFilter(boolQuery);
+
+            if (dto.getSortBy() != null) {
+                builder = builder.sort(
+                        dto.getSortBy(),
+                        dto.getOrder() != null ? dto.getOrder() : SortOrder.ASC
+                );
+            }
+
+            final SearchRequest request = new SearchRequest(indexName);
+            request.source(builder);
+
+            return request;
+        } catch (final Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static QueryBuilder getQueryBuilder(final String field, final Long serverId) {
+        return QueryBuilders.matchQuery(field, serverId);
+    }
+
 }

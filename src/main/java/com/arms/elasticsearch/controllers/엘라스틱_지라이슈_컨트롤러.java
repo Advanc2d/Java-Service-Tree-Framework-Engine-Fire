@@ -144,4 +144,15 @@ public class 엘라스틱_지라이슈_컨트롤러 {
         return 지라이슈_검색엔진.이슈_링크드이슈_서브테스크_벌크로_추가하기(지라서버_아이디, 이슈_키);
     }
 
+    @ResponseBody
+    @RequestMapping(
+            value = {"/search/req/subAndLinks"},
+            method = {RequestMethod.POST}
+    )
+    public List<지라이슈> 요구사항_링크드이슈_서브테스크_검색하기(@PathVariable("connectId") Long 지라서버_아이디,
+                                                @RequestBody final 검색조건 검색조건) {
+
+        return 지라이슈_검색엔진.요구사항_링크드이슈_서브테스크_검색하기(지라서버_아이디, 검색조건);
+    }
+
 }
