@@ -1,4 +1,4 @@
-package com.arms.jira.jiraissue.model;
+package com.arms.jira.jirapriority.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -10,20 +10,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class 지라이슈버전_데이터 {
-
+public class 지라이슈우선순위_데이터 {
+    
+    // 온프레미스, 클라우드 공통
     private String self;
-
     private String id;
-
     private String name;
-
     private String description;
-
-    private boolean archived;
-
-    private boolean released;
-
-    private String releaseDate;
-
+    
+    // 클라우드
+    private boolean isDefault;
 }
