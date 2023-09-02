@@ -85,7 +85,7 @@ public class 지라이슈 {
     @Field(type = FieldType.Nested)
     private 지라이슈.우선순위 priority;
 
-    @Field(type = FieldType.Nested)
+    @Field(type = FieldType.Nested, fielddata = true)
     private 지라이슈.상태 status;
 
     @Field(type = FieldType.Nested)
@@ -277,7 +277,7 @@ public class 지라이슈 {
         @JsonProperty("status_id")
         private String id;
 
-        @Field(type = FieldType.Text, name = "status_name")
+        @Field(type = FieldType.Text, name = "status_name", fielddata = true)
         @JsonProperty("status_name")
         private String name;
 
