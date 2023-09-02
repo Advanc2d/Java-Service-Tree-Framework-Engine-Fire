@@ -1,7 +1,7 @@
 package com.arms.jira.jiraissuestatus.strategy;
 
 
-import com.arms.jira.jiraissueresolution.strategy.지라이슈_해결책_전략;
+import com.arms.jira.jiraissueresolution.strategy.지라이슈해결책_전략;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ public class 지라이슈상태_전략_등록_및_실행 {
     지라이슈상태_전략 지라이슈상태_전략;
 
 
-    지라이슈_해결책_전략 지라이슈_해결책_전략;
+    지라이슈해결책_전략 지라이슈해결책_전략;
 
     public List<지라이슈상태_데이터> 이슈_상태_목록_가져오기(Long 연결_아이디) throws Exception {
         return this.지라이슈상태_전략.이슈_상태_목록_가져오기(연결_아이디);

@@ -1,4 +1,4 @@
-package com.arms.jira.jiraissuestatus.model;
+package com.arms.jira.jiraissueresolution.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -12,11 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class 클라우드_지라이슈상태_전체_데이터 {
+public class 클라우드_지라이슈해결책_데이터 {
     private Integer maxResults;
     private Integer startAt;
     private Integer total;
     private boolean isLast;
-    private List<지라이슈상태_데이터> values;
-
+    private List<지라이슈해결책_데이터> values;
 }

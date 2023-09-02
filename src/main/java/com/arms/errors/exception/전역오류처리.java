@@ -75,11 +75,11 @@ public class 전역오류처리 {
     /**
      * 잘못된 주소로 요청 한 경우
      */
-    @ExceptionHandler(NoHandlerFoundException.class)
-    protected ResponseEntity<?> API요청경로_체크(NoHandlerFoundException 에러) {
-        로그.error("잘못된 주소로 요청하였습니다. ", 에러);
-        return newResponse(에러코드.AP경로_오류.getErrorMsg(), HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(NoHandlerFoundException.class)
+//    protected ResponseEntity<?> API요청경로_체크(NoHandlerFoundException 에러) {
+//        로그.error("잘못된 주소로 요청하였습니다. ", 에러);
+//        return newResponse(에러코드.AP경로_오류.getErrorMsg(), HttpStatus.BAD_REQUEST);
+//    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException 에러) {

@@ -2,7 +2,7 @@ package com.arms.jira.jiraissuestatus.strategy;
 
 import com.arms.errors.codes.에러코드;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
-import com.arms.jira.jiraissuestatus.model.클라우드_지라이슈상태_전체_데이터;
+import com.arms.jira.jiraissuestatus.model.클라우드_지라이슈상태_데이터;
 import com.arms.jira.utils.지라유틸;
 import com.arms.serverinfo.model.서버정보_데이터;
 import com.arms.serverinfo.service.서버정보_서비스;
@@ -45,7 +45,7 @@ public class 클라우드_지라이슈상태_전략 implements 지라이슈상�
 
             while(!checkLast) {
                 String endpoint = "/rest/api/3/statuses/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
-                클라우드_지라이슈상태_전체_데이터 지라_이슈_상태_조회_결과 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈상태_전체_데이터.class).block();
+                클라우드_지라이슈상태_데이터 지라_이슈_상태_조회_결과 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈상태_데이터.class).block();
 
                 반환할_지라_이슈_상태_데이터전송객체_목록.addAll(지라_이슈_상태_조회_결과.getValues());
 
@@ -91,7 +91,7 @@ public class 클라우드_지라이슈상태_전략 implements 지라이슈상�
 
             while(!checkLast) {
                 String endpoint = "/rest/api/3/statuses/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt + "&projectId="+프로젝트_아이디;
-                클라우드_지라이슈상태_전체_데이터 지라_이슈_상태_조회_결과 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈상태_전체_데이터.class).block();
+                클라우드_지라이슈상태_데이터 지라_이슈_상태_조회_결과 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈상태_데이터.class).block();
 
                 반환할_지라_이슈_상태_데이터전송객체_목록.addAll(지라_이슈_상태_조회_결과.getValues());
 
