@@ -39,6 +39,10 @@ import java.util.List;
 @Slf4j
 public final class 검색엔진_유틸 {
 
+    public RestHighLevelClient getClient() {
+        return client;
+    }
+
     private final RestHighLevelClient client;
 
 
@@ -47,6 +51,8 @@ public final class 검색엔진_유틸 {
     public 검색엔진_유틸(RestHighLevelClient client) {
         this.client = client;
     }
+
+
 
 
     public <T> List<T>  searchInternal(final SearchRequest request,Class<T> valueType) {

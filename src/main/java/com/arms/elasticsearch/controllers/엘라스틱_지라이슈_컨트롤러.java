@@ -155,4 +155,11 @@ public class 엘라스틱_지라이슈_컨트롤러 {
         return 지라이슈_검색엔진.요구사항_링크드이슈_서브테스크_검색하기(지라서버_아이디, 검색조건);
     }
 
+    @ResponseBody
+    @GetMapping("/test")
+    public void 테스트_조회() throws IOException {
+
+        지라이슈_검색엔진.요구사항_릴레이션이슈_상태값_통계();
+    }
+
 }

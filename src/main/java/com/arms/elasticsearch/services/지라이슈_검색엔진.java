@@ -11,6 +11,12 @@ import com.arms.jira.jiraissue.service.지라이슈_전략_호출;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
@@ -282,6 +288,36 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         List<지라이슈> 전체결과 = 검색엔진_유틸.searchInternal(request,지라이슈.class);
 
         return 전체결과;
+    }
+
+    @Override
+    public void 요구사항_릴레이션이슈_상태값_통계() throws IOException {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(QueryBuilders.matchAllQuery()); // You can add your own query here if needed
+
+        // Define the Terms Aggregation
+        sourceBuilder.aggregation(
+                AggregationBuilders.terms("status_name_agg").field("status.status_name.keyword")
+        );
+
+        // Create the search request
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices("jiraissue"); // Replace with your actual index name
+        searchRequest.source(sourceBuilder);
+
+        // Execute the search request
+        SearchResponse searchResponse = 검색엔진_유틸.getClient().search(searchRequest, RequestOptions.DEFAULT);
+
+        // Extract the Terms aggregation results
+        Terms statusNameAggregation = searchResponse.getAggregations().get("status_name_agg");
+
+        // Iterate through the aggregation buckets
+        for (Terms.Bucket bucket : statusNameAggregation.getBuckets()) {
+            String statusName = bucket.getKeyAsString();
+            long docCount = bucket.getDocCount();
+            System.out.println("Status Name: " + statusName + ", Count: " + docCount);
+        }
+
     }
 
 }
