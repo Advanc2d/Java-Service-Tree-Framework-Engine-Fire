@@ -2,10 +2,10 @@ package com.arms.jira.jiraissue.strategy;
 
 import com.arms.errors.codes.에러코드;
 import com.arms.jira.jiraissue.model.*;
-import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
+import com.arms.jira.jiraissueresolution.model.지라이슈해결책_데이터;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
-import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
+import com.arms.jira.jirapriority.model.지라이슈우선순위_데이터;
 import com.arms.jira.utils.지라유틸;
 import com.arms.serverinfo.model.서버정보_데이터;
 import com.arms.serverinfo.service.서버정보_서비스;
@@ -352,7 +352,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             String 이슈우선순위_아이디 = String.valueOf(지라이슈.getPriority().getId());
             String 이슈우선순위_이름 = 지라이슈.getPriority().getName();
 
-            지라이슈_우선순위_데이터 이슈우선순위 = new 지라이슈_우선순위_데이터();
+            지라이슈우선순위_데이터 이슈우선순위 = new 지라이슈우선순위_데이터();
             이슈우선순위.setSelf(이슈우선순위_주소);
             이슈우선순위.setId(이슈우선순위_아이디);
             이슈우선순위.setName(이슈우선순위_이름);
@@ -386,7 +386,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             String 이슈해결책_이름 = 지라이슈.getResolution().getName();
             String 이슈해결책_설명 = 지라이슈.getResolution().getDescription();
 
-            지라이슈_해결책_데이터 이슈해결책 = new 지라이슈_해결책_데이터();
+            지라이슈해결책_데이터 이슈해결책 = new 지라이슈해결책_데이터();
             이슈해결책.setSelf(이슈해결책_주소);
             이슈해결책.setId(이슈해결책_아이디);
             이슈해결책.setName(이슈해결책_이름);

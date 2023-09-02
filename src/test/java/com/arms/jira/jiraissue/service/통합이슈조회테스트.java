@@ -1,10 +1,10 @@
 package com.arms.jira.jiraissue.service;
 
 import com.arms.jira.jiraissue.model.*;
-import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
+import com.arms.jira.jiraissueresolution.model.지라이슈해결책_데이터;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
-import com.arms.jira.jirapriority.model.지라이슈_우선순위_데이터;
+import com.arms.jira.jirapriority.model.지라이슈우선순위_데이터;
 import com.arms.jira.utils.지라유틸;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicUser;
@@ -296,7 +296,7 @@ class 통합이슈조회테스트 {
             String 이슈우선순위_아이디 = String.valueOf(이슈.getPriority().getId());
             String 이슈우선순위_이름 = 이슈.getPriority().getName();
 
-            지라이슈_우선순위_데이터 이슈우선순위 = new 지라이슈_우선순위_데이터();
+            지라이슈우선순위_데이터 이슈우선순위 = new 지라이슈우선순위_데이터();
             이슈우선순위.setSelf(이슈우선순위_주소);
             이슈우선순위.setId(이슈우선순위_아이디);
             이슈우선순위.setName(이슈우선순위_이름);
@@ -330,7 +330,7 @@ class 통합이슈조회테스트 {
             String 이슈해결책_이름 = 이슈.getResolution().getName();
             String 이슈해결책_설명 = 이슈.getResolution().getDescription();
 
-            지라이슈_해결책_데이터 이슈해결책 = new 지라이슈_해결책_데이터();
+            지라이슈해결책_데이터 이슈해결책 = new 지라이슈해결책_데이터();
             이슈해결책.setSelf(이슈해결책_주소);
             이슈해결책.setId(이슈해결책_아이디);
             이슈해결책.setName(이슈해결책_이름);
@@ -401,36 +401,6 @@ class 통합이슈조회테스트 {
             Integer 이슈소요시간 = 이슈.getTimeTracking().getTimeSpentMinutes() * 60;
             지라이슈필드_데이터.setTimespent(이슈소요시간);
         }
-
-        // fixVersions
-//        if (이슈.getFixVersions() != null) {
-//
-//            List<지라이슈버전_데이터> 이슈버전_목록 = new ArrayList<>();
-//
-//            Iterable<Version> 전체이슈버전 = 이슈.getFixVersions();
-//
-//            for (Version 버전 : 전체이슈버전) {
-//                String 이슈버전_주소 = 버전.getSelf().toString();
-//                String 이슈버전_아이디 = 버전.getId().toString();
-//                String 이슈버전_이름 = 버전.getName();
-//                String 이슈버전_내용 = 버전.getDescription();
-//                Boolean 이슈버전_저장여부 = 버전.isArchived();
-//                Boolean 이슈버전_배포여부 = 버전.isReleased();
-//                String 이슈버전_배포날짜 = 버전.getReleaseDate().toString();
-//
-//                지라이슈버전_데이터 이슈버전 = new 지라이슈버전_데이터();
-//                이슈버전.setSelf(이슈버전_주소);
-//                이슈버전.setId(이슈버전_아이디);
-//                이슈버전.setName(이슈버전_이름);
-//                이슈버전.setDescription(이슈버전_내용);
-//                이슈버전.setArchived(이슈버전_저장여부);
-//                이슈버전.setReleased(이슈버전_배포여부);
-//                이슈버전.setReleaseDate(이슈버전_배포날짜);
-//
-//                이슈버전_목록.add(이슈버전);
-//            }
-//            지라이슈필드_데이터.setFixVersions(이슈버전_목록);
-//        }
 
         지라이슈_데이터.setFields(지라이슈필드_데이터);
 

@@ -1,7 +1,7 @@
 package com.arms.jira.jiraissueresolution.strategy;
 
 import com.arms.errors.codes.에러코드;
-import com.arms.jira.jiraissueresolution.model.지라이슈_해결책_데이터;
+import com.arms.jira.jiraissueresolution.model.지라이슈해결책_데이터;
 import com.arms.jira.utils.지라유틸;
 import com.arms.serverinfo.model.서버정보_데이터;
 import com.arms.serverinfo.service.서버정보_서비스;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class 온프레미스_지라이슈_해결책_전략 implements 지라이슈_해결책_전략 {
+public class 온프레미스_지라이슈해결책_전략 implements 지라이슈해결책_전략 {
 
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
@@ -26,7 +26,7 @@ public class 온프레미스_지라이슈_해결책_전략 implements 지라이�
     private 서버정보_서비스 서버정보_서비스;
 
     @Override
-    public List<지라이슈_해결책_데이터> 이슈_해결책_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
+    public List<지라이슈해결책_데이터> 이슈_해결책_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException {
 
         로그.info("온프레미스 지라 이슈_해결책_목록_가져오기");
         try {
@@ -36,14 +36,14 @@ public class 온프레미스_지라이슈_해결책_전략 implements 지라이�
                                                                             서버정보.getPasswordOrToken());
 
             Iterable<Resolution> 온프레미스_이슈_해결책_목록 = restClient.getMetadataClient().getResolutions().claim();
-            List<지라이슈_해결책_데이터> 반환할_이슈_해결책_목록 = new ArrayList<>();
+            List<지라이슈해결책_데이터> 반환할_이슈_해결책_목록 = new ArrayList<>();
 
             for (Resolution 온프레미스_이슈_해결책 : 온프레미스_이슈_해결책_목록) {
                 로그.info("id: " + String.valueOf(온프레미스_이슈_해결책.getId()));
                 로그.info("name:" + 온프레미스_이슈_해결책.getName());
                 로그.info("desc:" + 온프레미스_이슈_해결책.getDescription());
 
-                지라이슈_해결책_데이터 반환할_이슈_해결책 = new 지라이슈_해결책_데이터();
+                지라이슈해결책_데이터 반환할_이슈_해결책 = new 지라이슈해결책_데이터();
 
                 반환할_이슈_해결책.setSelf(온프레미스_이슈_해결책.getSelf().toString());
                 반환할_이슈_해결책.setId(온프레미스_이슈_해결책.getId().toString());
