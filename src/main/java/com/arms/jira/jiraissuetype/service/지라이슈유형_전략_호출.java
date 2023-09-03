@@ -98,8 +98,8 @@ public class 지라이슈유형_전략_호출 {
         }
 
         if (프로젝트_아이디 == null || 프로젝트_아이디.isEmpty()) {
-            로그.error("프로젝트별_이슈_유형_목록_가져오기 Error 프로젝트_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
-            throw new IllegalArgumentException("프로젝트별_이슈_유형_목록_가져오기 Error 프로젝트_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
+            로그.error("프로젝트별_이슈_유형_목록_가져오기 Error 프로젝트_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("프로젝트별_이슈_유형_목록_가져오기 Error 프로젝트_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);

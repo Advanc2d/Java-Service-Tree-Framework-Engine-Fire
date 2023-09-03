@@ -76,7 +76,7 @@ public class 클라우드_지라이슈상태_전략 implements 지라이슈상�
         로그.info("클라우드 프로젝트별_이슈_상태_목록_가져오기 실행");
 
         if (프로젝트_아이디 == null || 프로젝트_아이디.isEmpty()) {
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         try {
