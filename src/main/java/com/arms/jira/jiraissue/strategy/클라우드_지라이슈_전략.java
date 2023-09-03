@@ -34,7 +34,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
         로그.info("클라우드 이슈 전체 조회");
 
         if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
         try {
             int 검색_시작_지점 = 0;
@@ -81,7 +81,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
         로그.info("클라우드 지라 이슈 조회하기");
 
         if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         try {
@@ -213,7 +213,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
         로그.info("클라우드 지라 이슈 수정하기");
 
         if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         try {

@@ -51,7 +51,7 @@ public class 클라우드_지라이슈유형_전략 implements 지라이슈유�
         로그.info("클라우드 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈_유형_목록_가져오기");
 
         if (프로젝트_아이디 == null || 프로젝트_아이디.isEmpty()) {
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         try {

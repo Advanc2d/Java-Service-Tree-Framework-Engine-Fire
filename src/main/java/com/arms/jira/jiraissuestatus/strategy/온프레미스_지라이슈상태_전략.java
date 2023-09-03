@@ -59,7 +59,7 @@ public class 온프레미스_지라이슈상태_전략 implements 지라이슈�
 
         로그.info("온프레미스 이슈_상태_목록_가져오기 실행");
         if (프로젝트_아이디 == null || 프로젝트_아이디.isEmpty()) {
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
         try {
             서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);

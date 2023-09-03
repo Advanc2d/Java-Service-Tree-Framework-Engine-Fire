@@ -70,8 +70,8 @@ public class 지라이슈_전략_호출 {
         }
 
         if (프로젝트_키_또는_아이디 == null || 프로젝트_키_또는_아이디.isEmpty()) {
-            로그.error("이슈 전체 목록 가져오기 Error 프로젝트_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
-            throw new IllegalArgumentException("이슈 전체 목록 가져오기 Error 프로젝트_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
+            로그.error("이슈 전체 목록 가져오기 Error 프로젝트_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("이슈 전체 목록 가져오기 Error 프로젝트_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -93,8 +93,8 @@ public class 지라이슈_전략_호출 {
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
-            로그.error("이슈 상세정보 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
-            throw new IllegalArgumentException("이슈 상세정보 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
+            로그.error("이슈 상세정보 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("이슈 상세정보 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -164,8 +164,8 @@ public class 지라이슈_전략_호출 {
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
-            로그.error("이슈 삭제 라벨 처리하기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
-            throw new IllegalArgumentException("이슈 삭제 라벨 처리하기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
+            로그.error("이슈 삭제 라벨 처리하기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("이슈 삭제 라벨 처리하기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -187,8 +187,8 @@ public class 지라이슈_전략_호출 {
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
-            로그.error("이슈 링크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
-            throw new IllegalArgumentException("이슈 링크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
+            로그.error("이슈 링크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("이슈 링크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -210,8 +210,8 @@ public class 지라이슈_전략_호출 {
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
-            로그.error("이슈 서브테스크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
-            throw new IllegalArgumentException("이슈 서브테스크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.검색정보_오류.getErrorMsg());
+            로그.error("이슈 서브테스크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("이슈 서브테스크 가져오기 Error 이슈_키_또는_아이디 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);

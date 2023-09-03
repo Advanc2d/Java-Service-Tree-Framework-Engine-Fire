@@ -43,7 +43,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         로그.info("온프레미스 이슈 전체 조회");
 
         if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         try{
@@ -89,7 +89,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         로그.info("온프레미스 지라 이슈 조회하기");
 
         if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
-            throw new IllegalArgumentException(에러코드.검색정보_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         try {
@@ -124,7 +124,6 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         if (필드_데이터 == null) {
             throw new IllegalArgumentException(에러코드.요청본문_오류체크.getErrorMsg());
         }
-
 
         String 프로젝트키 = null;
         Long 이슈유형아이디 = null;
