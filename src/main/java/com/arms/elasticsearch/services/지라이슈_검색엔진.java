@@ -8,7 +8,10 @@ import com.arms.elasticsearch.util.검색엔진_유틸;
 import com.arms.elasticsearch.util.검색조건;
 import com.arms.errors.codes.에러코드;
 import com.arms.jira.jiraissue.model.지라이슈_데이터;
+import com.arms.jira.jiraissue.model.지라이슈필드_데이터;
+import com.arms.jira.jiraissue.model.지라프로젝트_데이터;
 import com.arms.jira.jiraissue.service.지라이슈_전략_호출;
+import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -122,9 +125,9 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         return 검색엔진_유틸.특정필드_검색후_다른필드_그룹결과(인덱스이름, 특정필드, 특정필드검색어, 그룹할필드 );
     }
 
-
     @Override
     public int 이슈_링크드이슈_서브테스크_벌크로_추가하기(Long 지라서버_아이디, String 이슈_키 , Long 제품서비스_아이디, Long 제품서비스_버전) throws Exception {
+
         long beforeTime = System.currentTimeMillis(); //코드 실행 전에 시간 받아오기
 
         if (지라서버_아이디 == null) {
@@ -144,30 +147,70 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
         List<지라이슈> 벌크_저장_목록 = new ArrayList<지라이슈>();
 
-        지라이슈_데이터 받아온_이슈 = 지라이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키);
-        지라이슈 저장할_요구사항_이슈 = ELK_데이터로_변환(지라서버_아이디, 받아온_이슈,
-                true, "", 제품서비스_아이디, 제품서비스_버전);
+        지라이슈_데이터 반환된_이슈 = Optional.ofNullable(지라이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키))
+                .map(이슈 -> {
+                    벌크_저장_목록.add(ELK_데이터로_변환(지라서버_아이디, 이슈, true, "", 제품서비스_아이디, 제품서비스_버전));
+                    return 이슈;
+                }).orElse(null);
 
-        벌크_저장_목록.add(저장할_요구사항_이슈);
+        if (반환된_이슈 == null) {
 
-        List<지라이슈_데이터> 받아온_이슈링크_목록 = 지라이슈_전략_호출.이슈링크_가져오기(지라서버_아이디, 이슈_키);
-        List<지라이슈_데이터> 받아온_서브테스크_목록 = 지라이슈_전략_호출.서브테스크_가져오기(지라서버_아이디, 이슈_키);
+            반환된_이슈 = new 지라이슈_데이터();
 
-        List<지라이슈_데이터> 이슈링크_또는_서브테스크_목록 = new ArrayList<지라이슈_데이터>();
+            반환된_이슈.setKey(이슈_키);
 
-        이슈링크_또는_서브테스크_목록.addAll(받아온_이슈링크_목록);
-        이슈링크_또는_서브테스크_목록.addAll(받아온_서브테스크_목록);
+            String 프로젝트_키 = 이슈_키.substring(0, 이슈_키.indexOf("-"));
 
-        List<지라이슈> 이슈링크_또는_서브테스크 = 이슈링크_또는_서브테스크_목록.stream()
-                .map(이슈링크또는서브테스크 -> ELK_데이터로_변환(지라서버_아이디, 이슈링크또는서브테스크,
-                                    false, 이슈_키, 제품서비스_아이디, 제품서비스_버전))
-                .collect(Collectors.toList());
+            지라프로젝트_데이터 지라프로젝트_데이터 = new 지라프로젝트_데이터();
+            지라프로젝트_데이터.setKey(프로젝트_키);
 
-        벌크_저장_목록.addAll(이슈링크_또는_서브테스크);
+            지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
+            지라이슈상태_데이터.setId("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+            지라이슈상태_데이터.setSelf("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+            지라이슈상태_데이터.setName("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+            지라이슈상태_데이터.setDescription("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+
+            지라이슈필드_데이터 지라이슈필드_데이터 = new 지라이슈필드_데이터();
+
+            지라이슈필드_데이터.setProject(지라프로젝트_데이터);
+            지라이슈필드_데이터.setStatus(지라이슈상태_데이터);
+
+            반환된_이슈.setFields(지라이슈필드_데이터);
+
+            벌크_저장_목록.add(ELK_데이터로_변환(지라서버_아이디, 반환된_이슈, true, "", 제품서비스_아이디, 제품서비스_버전));
+        }
+        else {
+
+            List<지라이슈_데이터> 이슈링크_또는_서브테스크_목록 = new ArrayList<지라이슈_데이터>();
+
+            Optional.ofNullable(지라이슈_전략_호출.이슈링크_가져오기(지라서버_아이디, 이슈_키))
+                    .map(이슈링크_목록 -> {
+                        이슈링크_또는_서브테스크_목록.addAll(이슈링크_목록);
+                        return 이슈링크_목록;
+                    });
+
+            Optional.ofNullable(지라이슈_전략_호출.서브테스크_가져오기(지라서버_아이디, 이슈_키))
+                    .map(서브테스크_목록 -> {
+                        이슈링크_또는_서브테스크_목록.addAll(서브테스크_목록);
+                        return 서브테스크_목록;
+                    });
+
+            if (이슈링크_또는_서브테스크_목록 != null || 이슈링크_또는_서브테스크_목록.size() < 1) {
+                이슈링크_또는_서브테스크_목록.stream().map(이슈링크또는서브테스크 -> {
+                            지라이슈 변환된_이슈 = ELK_데이터로_변환(지라서버_아이디, 이슈링크또는서브테스크,
+                                    false, 이슈_키, 제품서비스_아이디, 제품서비스_버전);
+                            벌크_저장_목록.add(변환된_이슈);
+                            return 변환된_이슈;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+        }
 
         long afterTime = System.currentTimeMillis(); // 코드 실행 후에 시간 받아오기
-        long secDiffTime = (afterTime - beforeTime)/1000; //두 시간에 차 계산
-        System.out.println("시간차이(m) : "+secDiffTime);
+        long secDiffTime = (afterTime - beforeTime) / 1000; //두 시간에 차 계산
+        System.out.println("시간차이(m) : " + secDiffTime);
+
         return 대량이슈_추가하기(벌크_저장_목록);
     }
 
@@ -278,9 +321,9 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
         지라이슈 이슈 = 지라이슈.builder()
                 .jira_server_id(지라서버_아이디)
-                .issueID(지라이슈_데이터.getId().toString())
-                .key(지라이슈_데이터.getKey())
-                .self(지라이슈_데이터.getSelf())
+                .issueID(Optional.ofNullable(지라이슈_데이터.getId()).orElse(null))
+                .key(Optional.ofNullable(지라이슈_데이터.getKey()).orElse(null))
+                .self(Optional.ofNullable(지라이슈_데이터.getSelf()).orElse(null))
                 .parentReqKey(부모_요구사항_키)
                 .isReq(요구사항유형_여부)
                 .project(프로젝트)
@@ -288,15 +331,15 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                 .creator(생성자)
                 .reporter(보고자)
                 .assignee(담당자)
-                .labels(지라이슈_데이터.getFields().getLabels())
+                .labels(Optional.ofNullable(지라이슈_데이터.getFields().getLabels()).orElse(null))
                 .priority(우선순위)
                 .status(상태)
                 .resolution(해결책)
-                .resolutiondate(지라이슈_데이터.getFields().getResolutiondate())
-                .created(지라이슈_데이터.getFields().getCreated())
+                .resolutiondate(Optional.ofNullable(지라이슈_데이터.getFields().getResolutiondate()).orElse(null))
+                .created(Optional.ofNullable(지라이슈_데이터.getFields().getCreated()).orElse(null))
                 .worklogs(워크로그)
-                .timespent(지라이슈_데이터.getFields().getTimespent())
-                .summary(지라이슈_데이터.getFields().getSummary())
+                .timespent(Optional.ofNullable(지라이슈_데이터.getFields().getTimespent()).orElse(null))
+                .summary(Optional.ofNullable(지라이슈_데이터.getFields().getSummary()).orElse(null))
                 .pdServiceId(제품서비스_아이디)
                 .pdServiceVersion(제품서비스_버전)
                 .build();
