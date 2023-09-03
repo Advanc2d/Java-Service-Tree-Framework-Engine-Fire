@@ -121,7 +121,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
 
     @Override
-    public int 이슈_링크드이슈_서브테스크_벌크로_추가하기(Long 지라서버_아이디, String 이슈_키 , String 제품서비스_이름, String 제품서비스_버전) throws Exception {
+    public int 이슈_링크드이슈_서브테스크_벌크로_추가하기(Long 지라서버_아이디, String 이슈_키 , Long 제품서비스_아이디, Long 제품서비스_버전) throws Exception {
         long beforeTime = System.currentTimeMillis(); //코드 실행 전에 시간 받아오기
 
         if (지라서버_아이디 == null) {
@@ -134,16 +134,16 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
             throw new IllegalArgumentException("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error 이슈_키 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
-        if (제품서비스_이름 == null || 제품서비스_이름.isEmpty() || 제품서비스_버전 == null || 제품서비스_버전.isEmpty()) {
-            로그.error("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error 제품서비스_이름 또는 제품서비스_버전 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
-            throw new IllegalArgumentException("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error 제품서비스_이름 또는 제품서비스_버전 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+        if (제품서비스_아이디 == null || 제품서비스_버전 == null) {
+            로그.error("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error 제품서비스_아이디 또는 제품서비스_버전 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
+            throw new IllegalArgumentException("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error 제품서비스_아이디 또는 제품서비스_버전 " + 에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
         List<지라이슈> 벌크_저장_목록 = new ArrayList<지라이슈>();
 
         지라이슈_데이터 받아온_이슈 = 지라이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키);
         지라이슈 저장할_요구사항_이슈 = ELK_데이터로_변환(지라서버_아이디, 받아온_이슈,
-                true, "", 제품서비스_이름, 제품서비스_버전);
+                true, "", 제품서비스_아이디, 제품서비스_버전);
 
         벌크_저장_목록.add(저장할_요구사항_이슈);
 
@@ -157,7 +157,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
         List<지라이슈> 이슈링크_또는_서브테스크 = 이슈링크_또는_서브테스크_목록.stream()
                 .map(이슈링크또는서브테스크 -> ELK_데이터로_변환(지라서버_아이디, 이슈링크또는서브테스크,
-                                    false, 이슈_키, 제품서비스_이름, 제품서비스_버전))
+                                    false, 이슈_키, 제품서비스_아이디, 제품서비스_버전))
                 .collect(Collectors.toList());
 
         벌크_저장_목록.addAll(이슈링크_또는_서브테스크);
@@ -170,7 +170,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
 
     private 지라이슈 ELK_데이터로_변환(Long 지라서버_아이디, 지라이슈_데이터 지라이슈_데이터,
                                  boolean 요구사항유형_여부, String 부모_요구사항_키,
-                                 String 제품서비스_이름, String 제품서비스_버전) {
+                                 Long 제품서비스_아이디, Long 제품서비스_버전) {
 
         지라이슈.프로젝트 프로젝트 = Optional.ofNullable(지라이슈_데이터.getFields().getProject())
                 .map(project -> 지라이슈.프로젝트.builder()
@@ -294,7 +294,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                 .worklogs(워크로그)
                 .timespent(지라이슈_데이터.getFields().getTimespent())
                 .summary(지라이슈_데이터.getFields().getSummary())
-                .pdServiceName(제품서비스_이름)
+                .pdServiceId(제품서비스_아이디)
                 .pdServiceVersion(제품서비스_버전)
                 .build();
 
@@ -325,10 +325,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         // Define the Terms Aggregation
         sourceBuilder.aggregation(
                 AggregationBuilders.terms("status_name_agg").field("status.status_name.keyword")
-        );
-
-        sourceBuilder.aggregation(
-                AggregationBuilders.terms("project_key_agg").field("project.project_key.keyword")
         );
 
         // Create the search request
