@@ -158,9 +158,9 @@ public class 엘라스틱_지라이슈_컨트롤러 {
     }
 
     @ResponseBody
-    @GetMapping("/getProgress/{pdService}/{pdServiceVersion}")
+    @GetMapping("/getProgress/{pdServiceId}/{pdServiceVersion}")
     public Map<String, Long> 제품서비스_버전별_상태값_통계(@PathVariable("connectId") Long 지라서버_아이디,
-                                       @PathVariable("pdService") Long 제품서비스_아이디,
+                                       @PathVariable("pdServiceId") Long 제품서비스_아이디,
                                        @PathVariable("pdServiceVersion") Long 제품서비스_버전_아이디) throws IOException {
 
         return 지라이슈_검색엔진.제품서비스_버전별_상태값_통계(제품서비스_아이디,제품서비스_버전_아이디);
@@ -175,6 +175,7 @@ public class 엘라스틱_지라이슈_컨트롤러 {
         로그.info("전체 상태값 통계");
         return 지라이슈_검색엔진.요구사항_릴레이션이슈_상태값_전체통계(지라서버_아이디);
     }
+
     /*
      * 프로젝트별 상태값 전체 통계
      * */
