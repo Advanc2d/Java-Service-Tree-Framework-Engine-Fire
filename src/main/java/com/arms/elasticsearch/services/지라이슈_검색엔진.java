@@ -438,5 +438,50 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         }
         return 프로젝트별상태값_집계;
     }
+
+    @Override
+    public Map<String, Long> 제품서비스_버전별_상태값_통계(Long 제품서비스_아이디, Long 버전_아이디) throws IOException {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(QueryBuilders.matchAllQuery()); // You can add your own query here if needed
+
+        if ( 제품서비스_아이디 != null && 제품서비스_아이디 > 9L){
+            MatchQueryBuilder 제품서비스_조회 = QueryBuilders.matchQuery("pdServiceId", 제품서비스_아이디);
+            sourceBuilder.query(제품서비스_조회);
+        }
+
+        if ( 버전_아이디 != null && 버전_아이디 > 9L){
+            MatchQueryBuilder 제품서비스_버전_조회 = QueryBuilders.matchQuery("pdServiceVersion", 버전_아이디);
+            sourceBuilder.query(제품서비스_버전_조회);
+        }
+
+        sourceBuilder.aggregation(
+                AggregationBuilders.terms("status_name_agg").field("status.status_name.keyword")
+        );
+
+        // Create the search request
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices("jiraissue"); // Replace with your actual index name
+        searchRequest.source(sourceBuilder);
+
+        // Execute the search request
+        SearchResponse searchResponse = 검색엔진_유틸.getClient().search(searchRequest, RequestOptions.DEFAULT);
+
+        // Extract the Terms aggregation results
+        Terms statusNameAggregation = searchResponse.getAggregations().get("status_name_agg");
+
+        // Iterate through the aggregation buckets
+
+        Map<String, Long> 제품서비스_버전별_집계 = new HashMap<>();
+        for (Terms.Bucket bucket : statusNameAggregation.getBuckets()) {
+            String statusName = bucket.getKeyAsString();
+            long docCount = bucket.getDocCount();
+            log.info("Status Name: " + statusName + ", Count: " + docCount);
+
+            제품서비스_버전별_집계.put(statusName, docCount);
+        }
+
+        return 제품서비스_버전별_집계;
+
+    }
 }
 
