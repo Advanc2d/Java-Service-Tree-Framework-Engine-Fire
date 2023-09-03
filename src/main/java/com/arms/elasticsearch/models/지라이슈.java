@@ -106,11 +106,11 @@ public class 지라이슈 {
     @Field(type = FieldType.Text, name = "summary")
     private String summary;
 
-    @Field(type = FieldType.Text, name = "pdServiceName", fielddata = true)
-    private String pdServiceName;
+    @Field(type = FieldType.Long, name = "pdServiceId", fielddata = true)
+    private Long pdServiceId;
 
-    @Field(type = FieldType.Text, name = "pdServiceVersion", fielddata = true)
-    private String pdServiceVersion;
+    @Field(type = FieldType.Long, name = "pdServiceVersion", fielddata = true)
+    private Long pdServiceVersion;
 
     @Getter
     @Setter
