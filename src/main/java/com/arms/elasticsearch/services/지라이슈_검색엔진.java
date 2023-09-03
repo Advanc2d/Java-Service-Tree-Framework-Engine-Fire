@@ -24,6 +24,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -177,6 +178,37 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
             반환된_이슈.setFields(지라이슈필드_데이터);
 
             벌크_저장_목록.add(ELK_데이터로_변환(지라서버_아이디, 반환된_이슈, true, "", 제품서비스_아이디, 제품서비스_버전));
+
+            검색조건 검색조건 = new 검색조건();
+            String field = "parentReqKey";
+            List<String> fields = new ArrayList<>();
+            fields.add(field);
+
+            검색조건.setFields(fields);
+            검색조건.setOrder(SortOrder.valueOf("ASC"));
+            검색조건.setSearchTerm(이슈_키);
+            검색조건.setPage(0);
+            검색조건.setSize(0);
+
+            try {
+                List<지라이슈> 링크드이슈_서브테스크_목록 = Optional.ofNullable(요구사항_링크드이슈_서브테스크_검색하기(지라서버_아이디, 검색조건))
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(링크드이슈_서브테스크 -> {
+                            if (링크드이슈_서브테스크.getStatus() != null) {
+                                링크드이슈_서브테스크.getStatus().setId("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+                                링크드이슈_서브테스크.getStatus().setName("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+                                링크드이슈_서브테스크.getStatus().setSelf("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+                                링크드이슈_서브테스크.getStatus().setDescription("해당 요구사항은 지라서버에서 조회가 되지 않는 상태입니다.");
+                            }
+                            return 링크드이슈_서브테스크;
+                        })
+                        .collect(Collectors.toList());
+
+                벌크_저장_목록.addAll(링크드이슈_서브테스크_목록);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         else {
 
@@ -367,7 +399,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         MatchQueryBuilder 사용자별_조회 = QueryBuilders.matchQuery("jira_server_id", 지라서버_아이디);
 
-
         sourceBuilder.query(사용자별_조회);
 
         sourceBuilder.aggregation(
@@ -393,7 +424,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         }
         return 전체상태값_집계;
     }
-
 
     @Override
     public Map<String, Map<String, Integer>> 요구사항_릴레이션이슈_상태값_프로젝트별통계(Long 지라서버_아이디) throws IOException {
