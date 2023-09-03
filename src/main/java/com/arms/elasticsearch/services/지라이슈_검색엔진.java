@@ -17,9 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -361,34 +364,80 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
     }
 
     @Override
-    public void 요구사항_릴레이션이슈_상태값_통계() throws IOException {
+    public Map<String,Integer>  요구사항_릴레이션이슈_상태값_전체통계(Long 지라서버_아이디) throws IOException {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(QueryBuilders.matchAllQuery()); // You can add your own query here if needed
+        MatchQueryBuilder 사용자별_조회 = QueryBuilders.matchQuery("jira_server_id", 지라서버_아이디);
 
-        // Define the Terms Aggregation
+
+        sourceBuilder.query(사용자별_조회);
+
         sourceBuilder.aggregation(
-                AggregationBuilders.terms("status_name_agg").field("status.status_name.keyword")
+                AggregationBuilders.terms("이슈_상태별_집계").field("status.status_name.keyword")
         );
 
-        // Create the search request
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.indices("jiraissue"); // Replace with your actual index name
         searchRequest.source(sourceBuilder);
 
-        // Execute the search request
-        SearchResponse searchResponse = 검색엔진_유틸.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        SearchResponse 검색결과 = 검색엔진_유틸.getClient().search(searchRequest, RequestOptions.DEFAULT);
 
-        // Extract the Terms aggregation results
-        Terms statusNameAggregation = searchResponse.getAggregations().get("status_name_agg");
+        Terms 상태별집계_결과 = 검색결과.getAggregations().get("이슈_상태별_집계");
 
-        // Iterate through the aggregation buckets
-        for (Terms.Bucket bucket : statusNameAggregation.getBuckets()) {
-            String statusName = bucket.getKeyAsString();
-            long docCount = bucket.getDocCount();
-            System.out.println("Status Name: " + statusName + ", Count: " + docCount);
+        Map<String, Integer> 전체상태값_집계 = new HashMap<>();
+        if(상태별집계_결과.getBuckets().isEmpty()){
+            전체상태값_집계.put("조회된 상태: ",0 );
         }
-
+        for (Terms.Bucket 상태 : 상태별집계_결과.getBuckets()) {
+            String statusName = 상태.getKeyAsString();
+            long docCount = 상태.getDocCount();
+            전체상태값_집계.put(statusName, (int) docCount);
+        }
+        return 전체상태값_집계;
     }
 
+
+    @Override
+    public Map<String, Map<String, Integer>> 요구사항_릴레이션이슈_상태값_프로젝트별통계(Long 지라서버_아이디) throws IOException {
+
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+
+        MatchQueryBuilder 사용자별_조회 = QueryBuilders.matchQuery("jira_server_id", 지라서버_아이디);
+
+        sourceBuilder.query(사용자별_조회);
+
+        TermsAggregationBuilder 상태별_집계 = AggregationBuilders.terms("생태별_집계").field("status.status_name.keyword");
+        TermsAggregationBuilder 프로젝트별_집계 = AggregationBuilders.terms("프로젝트키별_집계").field("project.project_key.keyword")
+                .subAggregation(상태별_집계);
+
+        sourceBuilder.aggregation(프로젝트별_집계);
+
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices("jiraissue");
+        searchRequest.source(sourceBuilder);
+
+        SearchResponse searchResponse = 검색엔진_유틸.getClient().search(searchRequest, RequestOptions.DEFAULT);
+
+        Terms 종합집계_결과 = searchResponse.getAggregations().get("프로젝트키별_집계");
+        Map<String, Map<String, Integer>> 프로젝트별상태값_집계= new HashMap<>();
+
+        for (Terms.Bucket 프로젝트 : 종합집계_결과.getBuckets()) {
+            String 프로젝트이름= 프로젝트.getKeyAsString();
+            Map<String,Integer> 상태값_프로젝트별통계= new HashMap<>();
+            프로젝트별상태값_집계.put(프로젝트이름 , 상태값_프로젝트별통계 );
+
+            Terms 상태_조회결과=  프로젝트.getAggregations().get("생태별_집계");
+
+            for (Terms.Bucket 상태 : 상태_조회결과.getBuckets()) {
+
+                String 상태이름  = 상태.getKeyAsString();
+                int docCount  =(int)상태.getDocCount();
+
+                상태값_프로젝트별통계.put(상태이름 , docCount );
+
+            }
+
+        }
+        return 프로젝트별상태값_집계;
+    }
 }
 

@@ -32,6 +32,8 @@ public interface 지라이슈_서비스 {
 
     public List<지라이슈> 요구사항_링크드이슈_서브테스크_검색하기(Long 서버_아이디, 검색조건 검색조건);
 
-    public void 요구사항_릴레이션이슈_상태값_통계() throws IOException;
+    public Map<String,Integer> 요구사항_릴레이션이슈_상태값_전체통계(Long 지라서버_아이디) throws IOException;
+
+    public Map<String, Map<String, Integer>> 요구사항_릴레이션이슈_상태값_프로젝트별통계(Long 지라서버_아이디) throws IOException;
 
 }

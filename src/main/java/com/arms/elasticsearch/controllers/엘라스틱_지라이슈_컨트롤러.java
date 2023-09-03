@@ -157,11 +157,29 @@ public class 엘라스틱_지라이슈_컨트롤러 {
         return 지라이슈_검색엔진.요구사항_링크드이슈_서브테스크_검색하기(지라서버_아이디, 검색조건);
     }
 
+//    @ResponseBody
+//    @GetMapping("/test")
+//    public void 테스트_조회() throws IOException {
+//
+//        지라이슈_검색엔진.요구사항_릴레이션이슈_상태값_통계();
+//    }
+
+    /*
+    * 상태값 전체 통계
+    * */
     @ResponseBody
-    @GetMapping("/test")
-    public void 테스트_조회() throws IOException {
-
-        지라이슈_검색엔진.요구사항_릴레이션이슈_상태값_통계();
+    @GetMapping("/search/req/status")
+    public Map<String,Integer> 상태값_조회(@PathVariable("connectId") Long 지라서버_아이디) throws IOException {
+        로그.info("전체 상태값 통계");
+        return 지라이슈_검색엔진.요구사항_릴레이션이슈_상태값_전체통계(지라서버_아이디);
     }
-
+    /*
+     * 프로젝트별 상태값 전체 통계
+     * */
+    @ResponseBody
+    @GetMapping("/search/req/status/project")
+    public Map<String, Map<String, Integer>>프로젝트별_상태값_조회(@PathVariable("connectId") Long 지라서버_아이디) throws IOException {
+        로그.info("프로젝트별 상태값 통계");
+        return 지라이슈_검색엔진.요구사항_릴레이션이슈_상태값_프로젝트별통계(지라서버_아이디);
+    }
 }
