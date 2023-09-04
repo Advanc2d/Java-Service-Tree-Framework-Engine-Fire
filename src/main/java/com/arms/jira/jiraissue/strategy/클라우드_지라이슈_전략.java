@@ -30,7 +30,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
     private 지라유틸 지라유틸;
 
     @Override
-    public List<지라이슈_데이터> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
+    public List<지라이슈_데이터> 이슈_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
         로그.info("클라우드 이슈 전체 조회");
 
         if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){

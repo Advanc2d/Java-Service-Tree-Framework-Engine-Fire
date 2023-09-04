@@ -26,7 +26,7 @@ public class 클라우드_지라이슈우선순위_전략 implements 지라이�
     private 지라유틸 지라유틸;
 
     @Override
-    public List<지라이슈우선순위_데이터> 우선순위_전체_목록_가져오기(Long 연결_아이디) throws Exception {
+    public List<지라이슈우선순위_데이터> 우선순위_목록_가져오기(Long 연결_아이디) throws Exception {
 
         로그.info("클라우드 지라 이슈 우선순위 전체 목록 가져오기");
 

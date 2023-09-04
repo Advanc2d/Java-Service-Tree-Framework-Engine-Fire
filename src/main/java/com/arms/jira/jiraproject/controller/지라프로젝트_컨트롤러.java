@@ -38,10 +38,10 @@ public class 지라프로젝트_컨트롤러 {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<지라프로젝트_데이터> 프로젝트_전체_목록_가져오기(@PathVariable("connectId") Long 연결_아이디,
+    public List<지라프로젝트_데이터> 프로젝트_목록_가져오기(@PathVariable("connectId") Long 연결_아이디,
                                                         ModelMap model, HttpServletRequest request) throws Exception {
         로그.info("지라 프로젝트 전체 목록 가져오기");
 
-        return 지라프로젝트_전략_호출.프로젝트_전체_목록_가져오기(연결_아이디);
+        return 지라프로젝트_전략_호출.프로젝트_목록_가져오기(연결_아이디);
     }
 }

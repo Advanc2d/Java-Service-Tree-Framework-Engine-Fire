@@ -65,8 +65,8 @@ public class 지라프로젝트_전략_호출 {
     public 지라프로젝트_데이터 프로젝트_상세정보_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception {
 
         if (연결_아이디 == null) {
-            로그.error("프로젝트 상세 정보 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("프로젝트 상세 정보 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("프로젝트 상세 정보 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("프로젝트 상세 정보 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (프로젝트_키_또는_아이디 == null || 프로젝트_키_또는_아이디.isEmpty()) {
@@ -84,11 +84,11 @@ public class 지라프로젝트_전략_호출 {
         return 반환할_지라_프로젝트_상세정보;
     }
 
-    public List<지라프로젝트_데이터> 프로젝트_전체_목록_가져오기(Long 연결_아이디) throws Exception {
+    public List<지라프로젝트_데이터> 프로젝트_목록_가져오기(Long 연결_아이디) throws Exception {
 
         if (연결_아이디 == null) {
-            로그.error("프로젝트 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("프로젝트 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("프로젝트 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("프로젝트 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -96,7 +96,7 @@ public class 지라프로젝트_전략_호출 {
         지라프로젝트_전략_등록_및_실행 = 지라_프로젝트_전략_확인(서버정보);
 
         List<지라프로젝트_데이터> 반환할_지라_프로젝트_목록
-                = 지라프로젝트_전략_등록_및_실행.프로젝트_전체_목록_가져오기(연결_아이디);
+                = 지라프로젝트_전략_등록_및_실행.프로젝트_목록_가져오기(연결_아이디);
 
         return 반환할_지라_프로젝트_목록;
 
