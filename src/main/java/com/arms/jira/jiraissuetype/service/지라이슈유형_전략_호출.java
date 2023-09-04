@@ -46,8 +46,8 @@ public class 지라이슈유형_전략_호출 {
 
 
         if (서버정보 == null || 서버정보.getType().isEmpty()) {
-            로그.error("지라이슈 유형 전략 등록 Error: 서버정보_유형 " + 에러코드.서버_유형_정보없음.getErrorMsg());
-            throw new IllegalArgumentException("지라이슈 유형 전략 등록 Error: 서버정보_유형 " + 에러코드.서버_유형_정보없음.getErrorMsg());
+            로그.error("지라이슈 유형 전략 등록 Error: 서버정보_유형 " + 에러코드.서버유형_정보오류.getErrorMsg());
+            throw new IllegalArgumentException("지라이슈 유형 전략 등록 Error: 서버정보_유형 " + 에러코드.서버유형_정보오류.getErrorMsg());
         }
 
         서버유형_정보 지라_유형 = 서버유형_정보.valueOf(서버정보.getType());

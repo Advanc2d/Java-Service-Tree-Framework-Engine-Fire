@@ -57,7 +57,8 @@ public class 클라우드_지라이슈해결책_전략 implements 지라이슈�
             }
 
             return 반환할_지라_이슈_해결책_데이터전송객체_목록;
-        }catch (Exception e){
+
+        } catch (Exception e) {
             로그.error("클라우드 지라 이슈 해결책 목록 조회에 실패하였습니다."+e.getMessage());
             throw new IllegalArgumentException(에러코드.이슈해결책_조회_오류.getErrorMsg());
         }

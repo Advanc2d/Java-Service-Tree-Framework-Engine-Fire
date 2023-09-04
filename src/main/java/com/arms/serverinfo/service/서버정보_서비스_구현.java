@@ -38,16 +38,16 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
             throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
         }
         else if (StringUtils.isBlank(서버정보_데이터.getUri())) {
-            throw new IllegalArgumentException(에러코드.서버정보_URI_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버_URI정보_오류.getErrorMsg());
         }
         else if (StringUtils.isBlank(서버정보_데이터.getUserId())) {
-            throw new IllegalArgumentException(에러코드.서버정보_ID_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버_ID정보_오류.getErrorMsg());
         }
         else if (StringUtils.isBlank(서버정보_데이터.getPasswordOrToken())) {
-            throw new IllegalArgumentException(에러코드.서버정보_PW_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버_PW_또큰_API토큰정보_오류.getErrorMsg());
         }
         else if (StringUtils.isBlank(서버정보_데이터.getType())) {
-            throw new IllegalArgumentException(에러코드.서버정보_TYPE_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버유형_정보오류.getErrorMsg());
         }
 
         서버정보_데이터 조회한_서버_데이터 = 서버정보_조회(서버정보_데이터.getConnectId());
@@ -97,15 +97,16 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
             로그.error("등록된 서버 정보가 아닙니다.");
             throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
         }
-
-        if (조회한_서버정보.getUserId() == null) {
-            로그.error("사용자 아이디 조회에 실패했습니다.");
-            throw new IllegalArgumentException(에러코드.서버정보_오류_아이디.getErrorMsg());
+        else if (조회한_서버정보.getUri() == null || 조회한_서버정보.getUri().isEmpty()) {
+            throw new IllegalArgumentException(에러코드.서버_URI정보_오류.getErrorMsg());
         }
-
-        if (조회한_서버정보.getPasswordOrToken()== null) {
+        else if (조회한_서버정보.getUserId() == null || 조회한_서버정보.getUserId().isEmpty()) {
+            로그.error("사용자 아이디 조회에 실패했습니다.");
+            throw new IllegalArgumentException(에러코드.서버_ID정보_오류.getErrorMsg());
+        }
+        else if (조회한_서버정보.getPasswordOrToken()== null || 조회한_서버정보.getPasswordOrToken().isEmpty()) {
             로그.info("비밀 번호 및 토큰 정보 조회에 실패했습니다.");
-            throw new IllegalArgumentException(에러코드.서버정보_오류_비밀번호.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.서버_PW_또큰_API토큰정보_오류.getErrorMsg());
         }
 
         return 조회한_서버정보;
@@ -113,7 +114,7 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
 
     private 서버정보_데이터 서버정보_조회(Long 서버_아이디) {
 
-        Optional< 서버정보_엔티티 > optionalEntity = Optional.ofNullable(서버정보_저장소.findById(서버_아이디).orElse(null));
+        Optional<서버정보_엔티티> optionalEntity = Optional.ofNullable(서버정보_저장소.findById(서버_아이디).orElse(null));
 
         if (!optionalEntity.isPresent()) {
             return null;

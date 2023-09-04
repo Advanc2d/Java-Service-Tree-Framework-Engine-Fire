@@ -72,7 +72,7 @@ public class 온프레미스_지라이슈우선순위_전략 implements 지라�
 
         } catch (Exception e) {
             로그.error("온프레미스 지라 이슈 우선순위 전체 목록 가져오기에 실패하였습니다." + e.getMessage());
-            throw new IllegalArgumentException(에러코드.우선순위_조회_오류.getErrorMsg());
+            throw new IllegalArgumentException(에러코드.이슈우선순위_조회_오류.getErrorMsg());
         }
     }
 
