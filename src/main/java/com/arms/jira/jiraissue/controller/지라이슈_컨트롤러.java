@@ -27,11 +27,11 @@ public class 지라이슈_컨트롤러 {
             value = {"/list/{projectKeyOrId}"},
             method = {RequestMethod.GET}
     )
-    public List<지라이슈_데이터> 이슈_전체_목록_가져오기(@PathVariable("connectId") Long 연결_아이디,
+    public List<지라이슈_데이터> 이슈_목록_가져오기(@PathVariable("connectId") Long 연결_아이디,
                                                            @PathVariable("projectKeyOrId") String 프로젝트_키_또는_아이디,
                                                            ModelMap model, HttpServletRequest request) throws Exception {
-        로그.info("지라 이슈_전체_목록_가져오기");
-        return 지라이슈_전략_호출.이슈_전체_목록_가져오기(연결_아이디, 프로젝트_키_또는_아이디);
+        로그.info("지라 이슈_목록_가져오기");
+        return 지라이슈_전략_호출.이슈_목록_가져오기(연결_아이디, 프로젝트_키_또는_아이디);
     }
 
     @ResponseBody

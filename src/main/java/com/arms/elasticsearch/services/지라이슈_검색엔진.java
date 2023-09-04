@@ -132,8 +132,8 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         long beforeTime = System.currentTimeMillis(); //코드 실행 전에 시간 받아오기
 
         if (지라서버_아이디 == null) {
-            로그.error("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error: 서버_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error: 서버_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error: 서버_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error: 서버_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (이슈_키 == null || 이슈_키.isEmpty()) {

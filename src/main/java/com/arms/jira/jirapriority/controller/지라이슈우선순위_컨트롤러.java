@@ -23,9 +23,9 @@ public class 지라이슈우선순위_컨트롤러 {
             value = {"/list"},
             method = {RequestMethod.GET}
     )
-    public List<지라이슈우선순위_데이터> 우선순위_전체_목록_가져오기(@PathVariable("connectId") Long 연결_아이디) throws Exception {
+    public List<지라이슈우선순위_데이터> 우선순위_목록_가져오기(@PathVariable("connectId") Long 연결_아이디) throws Exception {
         로그.info("지라 이슈 우선순위 전체 목록 가져오기");
-        return 지라이슈우선순위_전략_호출.우선순위_전체_목록_가져오기(연결_아이디);
+        return 지라이슈우선순위_전략_호출.우선순위_목록_가져오기(연결_아이디);
     }
 
 }

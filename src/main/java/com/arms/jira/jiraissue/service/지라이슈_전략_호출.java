@@ -62,11 +62,11 @@ public class 지라이슈_전략_호출 {
         return 지라이슈_전략_등록_및_실행;
     }
 
-    public List<지라이슈_데이터> 이슈_전체_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception{
+    public List<지라이슈_데이터> 이슈_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception{
 
         if (연결_아이디 == null) {
-            로그.error("이슈 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 전체 목록 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (프로젝트_키_또는_아이디 == null || 프로젝트_키_또는_아이디.isEmpty()) {
@@ -79,7 +79,7 @@ public class 지라이슈_전략_호출 {
         지라이슈_전략_등록_및_실행 = 지라_이슈_전략_확인(서버정보);
 
         List<지라이슈_데이터> 반환할_지라이슈_데이터
-                = 지라이슈_전략_등록_및_실행.이슈_전체_목록_가져오기(연결_아이디, 프로젝트_키_또는_아이디);
+                = 지라이슈_전략_등록_및_실행.이슈_목록_가져오기(연결_아이디, 프로젝트_키_또는_아이디);
 
         return 반환할_지라이슈_데이터;
 
@@ -88,8 +88,8 @@ public class 지라이슈_전략_호출 {
     public 지라이슈_데이터 이슈_상세정보_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception{
 
         if (연결_아이디 == null) {
-            로그.error("이슈 상세정보 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 상세정보 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 상세정보 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 상세정보 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
@@ -112,8 +112,8 @@ public class 지라이슈_전략_호출 {
                             지라이슈생성_데이터 지라이슈생성_데이터) throws Exception {
 
         if (연결_아이디 == null) {
-            로그.error("이슈 생성하기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 생성하기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 생성하기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 생성하기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (지라이슈생성_데이터 == null) {
@@ -136,8 +136,8 @@ public class 지라이슈_전략_호출 {
                                       지라이슈생성_데이터 지라이슈생성_데이터) throws Exception {
 
         if (연결_아이디 == null) {
-            로그.error("이슈 수정하기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 수정하기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 수정하기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 수정하기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (지라이슈생성_데이터 == null) {
@@ -159,8 +159,8 @@ public class 지라이슈_전략_호출 {
     public Map<String,Object> 이슈_삭제_라벨_처리하기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception {
 
         if (연결_아이디 == null) {
-            로그.error("이슈 삭제 라벨 처리하기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 삭제 라벨 처리하기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 삭제 라벨 처리하기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 삭제 라벨 처리하기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
@@ -182,8 +182,8 @@ public class 지라이슈_전략_호출 {
     public List<지라이슈_데이터> 이슈링크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception{
 
         if (연결_아이디 == null) {
-            로그.error("이슈 링크 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 링크 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 링크 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 링크 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {
@@ -205,8 +205,8 @@ public class 지라이슈_전략_호출 {
     public List<지라이슈_데이터> 서브테스크_가져오기(Long 연결_아이디, String 이슈_키_또는_아이디) throws Exception{
 
         if (연결_아이디 == null) {
-            로그.error("이슈 서브테스크 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
-            throw new IllegalArgumentException("이슈 서브테스크 가져오기 Error: 연결_아이디 " + 에러코드.서버_아이디_없음.getErrorMsg());
+            로그.error("이슈 서브테스크 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
+            throw new IllegalArgumentException("이슈 서브테스크 가져오기 Error: 연결_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
         }
 
         if (이슈_키_또는_아이디 == null || 이슈_키_또는_아이디.isEmpty()) {

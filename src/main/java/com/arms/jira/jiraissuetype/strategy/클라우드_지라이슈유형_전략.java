@@ -24,8 +24,8 @@ public class 클라우드_지라이슈유형_전략 implements 지라이슈유�
     private 서버정보_서비스 서버정보_서비스;
 
     @Override
-    public List<지라이슈유형_데이터> 이슈_유형_목록_가져오기(Long 연결_아이디) {
-        로그.info("클라우드 지라 이슈_유형_목록_가져오기");
+    public List<지라이슈유형_데이터> 이슈유형_목록_가져오기(Long 연결_아이디) {
+        로그.info("클라우드 지라 이슈유형_목록_가져오기");
         try {
             String endpoint = "/rest/api/3/issuetype";
 
@@ -46,9 +46,9 @@ public class 클라우드_지라이슈유형_전략 implements 지라이슈유�
     }
 
     @Override
-    public List<지라이슈유형_데이터> 프로젝트별_이슈_유형_목록_가져오기(Long 연결_아이디, String 프로젝트_아이디) {
+    public List<지라이슈유형_데이터> 프로젝트별_이슈유형_목록_가져오기(Long 연결_아이디, String 프로젝트_아이디) {
 
-        로그.info("클라우드 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈_유형_목록_가져오기");
+        로그.info("클라우드 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈유형_목록_가져오기");
 
         if (프로젝트_아이디 == null || 프로젝트_아이디.isEmpty()) {
             throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
@@ -68,7 +68,7 @@ public class 클라우드_지라이슈유형_전략 implements 지라이슈유�
 
             return 반환할_이슈_유형_목록;
         }catch (Exception e){
-            로그.error("클라우드 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈_유형_목록_가져오기에 실패하였습니다.");
+            로그.error("클라우드 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈유형_목록_가져오기에 실패하였습니다.");
             throw new IllegalArgumentException(에러코드.이슈유형_조회_오류.getErrorMsg());
         }
     }

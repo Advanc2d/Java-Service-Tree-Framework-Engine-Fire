@@ -24,11 +24,11 @@ public class 온프레미스_지라이슈우선순위_전략 implements 지라�
 
     @Autowired
     private 서버정보_서비스 서버정보_서비스;
+
     @Override
-    public List<지라이슈우선순위_데이터> 우선순위_전체_목록_가져오기(Long 연결_아이디) throws Exception {
+    public List<지라이슈우선순위_데이터> 우선순위_목록_가져오기(Long 연결_아이디) throws Exception {
 
         로그.info("온프레미스 지라 이슈 우선순위 전체 목록 가져오기");
-        long beforeTime = System.currentTimeMillis(); //코드 실행 전에 시간 받아오기
 
         try {
             서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -63,11 +63,6 @@ public class 온프레미스_지라이슈우선순위_전략 implements 지라�
 //                    })
 //                    .collect(Collectors.toList());
 
-            //실험할 코드 추가
-
-            long afterTime = System.currentTimeMillis(); // 코드 실행 후에 시간 받아오기
-            long secDiffTime = (afterTime - beforeTime)/1000; //두 시간에 차 계산
-            System.out.println("시간차이(m) : "+secDiffTime);
             return 반환할_지라이슈우선순위_데이터_목록;
 
         } catch (Exception e) {

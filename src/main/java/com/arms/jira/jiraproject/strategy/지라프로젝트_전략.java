@@ -10,6 +10,6 @@ public interface 지라프로젝트_전략 {
 
     지라프로젝트_데이터 프로젝트_상세정보_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) throws Exception;
 
-    List<지라프로젝트_데이터> 프로젝트_전체_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException;
+    List<지라프로젝트_데이터> 프로젝트_목록_가져오기(Long 연결_아이디) throws URISyntaxException, IOException;
 
 }
