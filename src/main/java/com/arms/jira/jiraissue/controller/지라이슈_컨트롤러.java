@@ -16,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/{connectId}/jira/issue")
 public class 지라이슈_컨트롤러 {
+
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

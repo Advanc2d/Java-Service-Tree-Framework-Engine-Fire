@@ -45,8 +45,8 @@ public class 지라이슈우선순위_전략_호출 {
     private 지라이슈우선순위_전략_등록_및_실행 지라_이슈_우선순위_전략_확인(서버정보_데이터 서버정보) {
 
         if (서버정보 == null || 서버정보.getType().isEmpty()) {
-            로그.error("지라이슈 우선순위 전략 등록 Error: 서버정보_유형 " + 에러코드.서버_유형_정보없음.getErrorMsg());
-            throw new IllegalArgumentException("지라이슈 우선순위 전략 등록 Error: 서버정보_유형 " + 에러코드.서버_유형_정보없음.getErrorMsg());
+            로그.error("지라이슈 우선순위 전략 등록 Error: 서버정보_유형 " + 에러코드.서버유형_정보오류.getErrorMsg());
+            throw new IllegalArgumentException("지라이슈 우선순위 전략 등록 Error: 서버정보_유형 " + 에러코드.서버유형_정보오류.getErrorMsg());
         }
 
         서버유형_정보 지라_유형 = 서버유형_정보.valueOf(서버정보.getType());
