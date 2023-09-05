@@ -1,4 +1,5 @@
 package com.arms.serverinfo.controller;
+
 import com.arms.serverinfo.service.서버정보_서비스;
 import com.arms.serverinfo.model.서버정보_데이터;
 import com.arms.serverinfo.model.서버정보_엔티티;
@@ -29,38 +30,38 @@ public class 서버정보_컨트롤러 {
 
         로그.info("서버정보 저장");
 
-        return 서버정보_서비스.서버정보_저장(서버정보_데이터);
+        return 서버정보_서비스.서버정보_저장_또는_수정(서버정보_데이터);
     }
 
     /*
-    * 테스트및 관리자를 위한 구현
+    * 삭제 관련 차후 설계 후 개발 진행
     * */
-    @ResponseBody
-    @RequestMapping(
-            value = {""},
-            method = {RequestMethod.DELETE}
-    )
-    public 서버정보_엔티티 서버정보_삭제(@RequestBody 서버정보_데이터 서버정보_데이터,
-                            ModelMap model, HttpServletRequest request) throws Exception {
-
-        로그.info("특정 서버정보 삭제");
-
-        return 서버정보_서비스.서버정보_삭제하기(서버정보_데이터);
-    }
+//    @ResponseBody
+//    @RequestMapping(
+//            value = {""},
+//            method = {RequestMethod.DELETE}
+//    )
+//    public 서버정보_엔티티 서버정보_삭제(@RequestBody 서버정보_데이터 서버정보_데이터,
+//                            ModelMap model, HttpServletRequest request) throws Exception {
+//
+//        로그.info("특정 서버정보 삭제");
+//
+//        return 서버정보_서비스.서버정보_삭제하기(서버정보_데이터);
+//    }
 
     /*
-     * 테스트및 관리자를 위한 구현
+     * 삭제 관련 차후 설계 후 개발 진행
      * */
-    @ResponseBody
-    @RequestMapping(
-            value = {"/all"},
-            method = {RequestMethod.DELETE}
-    )
-    public void 서버정보_전체_삭제하기(ModelMap model, HttpServletRequest request) throws Exception {
-
-        로그.info("전체 서버정보 삭제");
-
-        서버정보_서비스.서버정보_전체_삭제하기();
-    }
+//    @ResponseBody
+//    @RequestMapping(
+//            value = {"/all"},
+//            method = {RequestMethod.DELETE}
+//    )
+//    public void 서버정보_전체_삭제하기(ModelMap model, HttpServletRequest request) throws Exception {
+//
+//        로그.info("전체 서버정보 삭제");
+//
+//        서버정보_서비스.서버정보_전체_삭제하기();
+//    }
 
 }

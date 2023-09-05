@@ -1,6 +1,5 @@
 package com.arms.serverinfo.model;
 
-
 import lombok.*;
 
 @Getter
