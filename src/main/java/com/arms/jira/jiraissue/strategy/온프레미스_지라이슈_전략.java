@@ -13,7 +13,6 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,6 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
     private 서버정보_서비스 서버정보_서비스;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
     private 지라유틸 지라유틸;
 
     @Override
@@ -43,11 +39,11 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         로그.info("온프레미스 이슈 전체 조회");
 
-        if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
+        if (프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()) {
             throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
-        try{
+        try {
             서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
             JiraRestClient restClient = 지라유틸.온프레미스_통신기_생성(서버정보.getUri(),
                     서버정보.getUserId(),
@@ -78,7 +74,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
             }
 
             return 프로젝트_이슈_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("온프레미스 이슈 전체 조회시 오류가 발생하였습니다."+e.getMessage());
             throw new IllegalArgumentException(에러코드.이슈_조회_오류.getErrorMsg());
         }
@@ -89,7 +85,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
         로그.info("온프레미스 지라 이슈 조회하기");
 
-        if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
+        if (이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()) {
             throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
@@ -102,7 +98,7 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
 
             return 지라이슈_데이터로_변환(지라이슈);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("온프레미스 이슈 조회시 오류가 발생하였습니다.");
             return null;
         }
@@ -137,56 +133,62 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         if (필드_데이터.getProject() != null) {
             프로젝트키 = 필드_데이터.getProject().getKey();
         }
+
         if (필드_데이터.getIssuetype() != null) {
             이슈유형아이디 = Long.valueOf(필드_데이터.getIssuetype().getId());
         }
+
         if (필드_데이터.getSummary() != null) {
             제목 = 필드_데이터.getSummary();
         }
+
         if (필드_데이터.getDescription() != null) {
             내용 = 필드_데이터.getDescription();
         }
+
         if (필드_데이터.getReporter() != null) {
             보고자 = 필드_데이터.getReporter().getAccountId();
         }
+
         if (필드_데이터.getAssignee() != null) {
             담당자 = 필드_데이터.getAssignee().getAccountId();
         }
+
         if (필드_데이터.getPriority() != null) {
             우선순위아이디 = Long.valueOf(필드_데이터.getPriority().getId());
         }
 
         IssueInputBuilder 입력_생성 = new IssueInputBuilder(프로젝트키, 이슈유형아이디, 제목);
+
         if (입력_생성 == null) {
             throw new IllegalArgumentException(에러코드.이슈생성_오류.getErrorMsg());
         }
         입력_생성.setDescription(내용);
+
         if (보고자 != null) {
             입력_생성.setReporterName(보고자);
         }
+
         if (담당자 != null) {
             입력_생성.setAssigneeName(담당자);
         }
+
         if (우선순위아이디 != null) {
             입력_생성.setPriorityId(우선순위아이디);
         }
+
         IssueInput 입력_데이터 = 입력_생성.build();
 
         BasicIssue 생성된_이슈 = restClient.getIssueClient().createIssue(입력_데이터).claim();
+
         if (생성된_이슈 == null) {
             throw new IllegalArgumentException(에러코드.이슈생성_오류.getErrorMsg());
         }
-
 
         지라이슈_데이터 반환할_지라이슈_데이터 = new 지라이슈_데이터();
         반환할_지라이슈_데이터.setId(생성된_이슈.getId().toString());
         반환할_지라이슈_데이터.setKey(생성된_이슈.getKey());
         반환할_지라이슈_데이터.setSelf(생성된_이슈.getSelf().toString());
-
-        // DB 저장 ELK로 변경
-//        지라_이슈_엔티티 지라_이슈_엔티티 = modelMapper.map(반환할_지라이슈_데이터, 지라_이슈_엔티티.class);
-//        지라_이슈_엔티티.setConnectId(연결_아이디);
-//        지라_이슈_저장소.save(지라_이슈_엔티티);
 
         return 반환할_지라이슈_데이터;
     }
@@ -271,7 +273,6 @@ public class 온프레미스_지라이슈_전략 implements 지라이슈_전략 
         }
 
         return 반환할_결과맵;
-
     }
 
     public 지라이슈_데이터 지라이슈_데이터로_변환(Issue 지라이슈) {

@@ -33,7 +33,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
     public List<지라이슈_데이터> 이슈_목록_가져오기(Long 연결_아이디, String 프로젝트_키_또는_아이디) {
         로그.info("클라우드 이슈 전체 조회");
 
-        if(프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()){
+        if (프로젝트_키_또는_아이디==null || 프로젝트_키_또는_아이디.isEmpty()) {
             throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
         try {
@@ -68,7 +68,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
             }
 
             return 프로젝트_이슈_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("클라우드 이슈 전체 조회시 오류가 발생하였습니다."+e.getMessage());
             throw new IllegalArgumentException(에러코드.이슈_조회_오류.getErrorMsg());
 
@@ -80,7 +80,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
 
         로그.info("클라우드 지라 이슈 조회하기");
 
-        if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
+        if (이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()) {
             throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
@@ -212,7 +212,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
 
         로그.info("클라우드 지라 이슈 수정하기");
 
-        if(이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()){
+        if (이슈_키_또는_아이디==null || 이슈_키_또는_아이디.isEmpty()) {
             throw new IllegalArgumentException(에러코드.파라미터_NULL_오류.getErrorMsg());
         }
 
@@ -267,7 +267,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
             결과.put("message", "이슈 수정 실패");
 
             return 결과;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("이슈 수정시 오류가 발생하였습니다. "+e.getMessage());
             throw new IllegalArgumentException(에러코드.이슈수정_오류.getErrorMsg());
         }
@@ -301,7 +301,7 @@ public class 클라우드_지라이슈_전략 implements 지라이슈_전략 {
             }
 
             return 반환할_결과맵;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException(에러코드.이슈수정_오류.getErrorMsg());
         }
     }

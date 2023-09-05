@@ -1,7 +1,5 @@
 package com.arms.jira.jiraissuestatus.strategy;
 
-
-import com.arms.jira.jiraissueresolution.strategy.지라이슈해결책_전략;
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import org.springframework.stereotype.Component;
 

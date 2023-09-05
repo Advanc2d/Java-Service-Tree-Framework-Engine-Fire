@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 @Component
 public class 온프레미스_지라프로젝트_전략 implements 지라프로젝트_전략 {
 

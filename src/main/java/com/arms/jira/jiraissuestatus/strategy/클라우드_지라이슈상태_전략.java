@@ -15,7 +15,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Component
 public class 클라우드_지라이슈상태_전략 implements 지라이슈상태_전략 {
 

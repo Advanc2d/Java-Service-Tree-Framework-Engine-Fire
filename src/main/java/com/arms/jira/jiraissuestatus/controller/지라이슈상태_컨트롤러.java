@@ -1,6 +1,5 @@
 package com.arms.jira.jiraissuestatus.controller;
 
-
 import com.arms.jira.jiraissuestatus.model.지라이슈상태_데이터;
 import com.arms.jira.jiraissuestatus.service.지라이슈상태_전략_호출;
 import org.slf4j.Logger;
