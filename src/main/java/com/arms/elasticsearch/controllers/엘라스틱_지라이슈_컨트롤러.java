@@ -5,7 +5,6 @@ import com.arms.elasticsearch.models.지라이슈;
 import com.arms.elasticsearch.services.지라이슈_서비스;
 import com.arms.elasticsearch.util.검색결과;
 import com.arms.elasticsearch.util.검색조건;
-import com.arms.jira.jiraissue.model.지라이슈_데이터;
 import com.arms.jira.jiraissue.service.지라이슈_전략_호출;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -33,37 +32,10 @@ public class 엘라스틱_지라이슈_컨트롤러 {
     지라이슈_전략_호출 지라이슈_전략_호출;
 
     @ResponseBody
-    @RequestMapping(
-            value = {"/add"},
-            method = {RequestMethod.POST}
-    )
-    public 지라이슈 요구사항이슈_추가(@PathVariable("connectId") Long 지라서버_아이디,
-                          ModelMap model, HttpServletRequest request) throws Exception {
-
-        지라이슈.프로젝트 더미프로젝트 = 지라이슈.프로젝트.builder()
-                .id("더미테스트프로젝트")
-                .key("PROJECT-KEY")
-                .name("프로젝트이름")
-                .self("http://www.a-rms.net")
-                .build();
-
-        지라이슈 더미이슈 = 지라이슈.builder()
-                .jira_server_id(지라서버_아이디)
-                .self("http://www.313.co.kr")
-                .key("ISSUE-KEY")
-                .project(더미프로젝트)
-                .build();
-
-        더미이슈.generateId();
-
-        return 지라이슈_검색엔진.이슈_추가하기(더미이슈);
-    }
-
-    @ResponseBody
     @GetMapping("/get/{reqProjectKey}/{reqIssueKey}")
     public 지라이슈 요구사항이슈_조회(@PathVariable("connectId") Long 지라서버_아이디,
-                          @PathVariable("reqProjectKey") String 지라프로젝트_키,
-                          @PathVariable("reqIssueKey") String 지라이슈_키) {
+                              @PathVariable("reqProjectKey") String 지라프로젝트_키,
+                              @PathVariable("reqIssueKey") String 지라이슈_키) {
 
         String 조회조건_아이디 = Long.toString(지라서버_아이디) + "_" + 지라프로젝트_키 + "_" + 지라이슈_키;
 
@@ -102,32 +74,13 @@ public class 엘라스틱_지라이슈_컨트롤러 {
             method = {RequestMethod.GET}
     )
     public 지라이슈 이슈_검색엔진_저장(@PathVariable("connectId") Long 지라서버_아이디,
-                                        @PathVariable("issueKey") String 이슈_키,
+                               @PathVariable("issueKey") String 이슈_키,
+                               @RequestParam("pdServiceId") Long 제품서비스_아이디,
+                               @RequestParam("pdServiceVersion") Long 제품서비스_버전_아이디,
                                         ModelMap model, HttpServletRequest request) throws Exception {
         로그.info("지라 이슈_검색엔진_저장");
 
-        지라이슈_데이터 받아온_이슈 = 지라이슈_전략_호출.이슈_상세정보_가져오기(지라서버_아이디, 이슈_키);
-
-        지라이슈.프로젝트 프로젝트 = 지라이슈.프로젝트.builder()
-                .id(받아온_이슈.getFields().getProject().getId())
-                .key(받아온_이슈.getFields().getProject().getKey())
-                .name(받아온_이슈.getFields().getProject().getName())
-                .self(받아온_이슈.getFields().getProject().getSelf())
-                .build();
-
-        지라이슈 이슈 = 지라이슈.builder()
-                .jira_server_id(지라서버_아이디)
-                .self(받아온_이슈.getSelf())
-                .key(받아온_이슈.getKey())
-                .issueID(받아온_이슈.getId().toString())
-                .project(프로젝트)
-                .parentReqKey("iAmParent")
-                .isReq(true)
-                .build();
-
-        이슈.generateId();
-
-        return 지라이슈_검색엔진.이슈_추가하기(이슈);
+        return 지라이슈_검색엔진.이슈_검색엔진_저장(지라서버_아이디, 이슈_키, 제품서비스_아이디, 제품서비스_버전_아이디);
     }
 
     @ResponseBody
