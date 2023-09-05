@@ -1,12 +1,9 @@
-
 package com.arms.serverinfo.service;
-
 
 import com.arms.errors.codes.에러코드;
 import com.arms.serverinfo.model.서버정보_데이터;
 import com.arms.serverinfo.model.서버정보_엔티티;
 import com.arms.serverinfo.repositories.서버정보_저장소;
-import com.arms.serverinfo.service.서버정보_서비스;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Slf4j
-
 @Service("서버정보_서비스")
 @AllArgsConstructor
 public class 서버정보_서비스_구현 implements 서버정보_서비스 {
@@ -32,10 +28,13 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public 서버정보_엔티티 서버정보_저장(서버정보_데이터 서버정보_데이터){
+    public 서버정보_엔티티 서버정보_저장_또는_수정(서버정보_데이터 서버정보_데이터){
 
         if (서버정보_데이터 == null) {
             throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
+        }
+        else if (서버정보_데이터.getConnectId() == null) {
+            throw new IllegalArgumentException(에러코드.서버_ID정보_오류.getErrorMsg());
         }
         else if (StringUtils.isBlank(서버정보_데이터.getUri())) {
             throw new IllegalArgumentException(에러코드.서버_URI정보_오류.getErrorMsg());
@@ -50,16 +49,7 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
             throw new IllegalArgumentException(에러코드.서버유형_정보오류.getErrorMsg());
         }
 
-        서버정보_데이터 조회한_서버_데이터 = 서버정보_조회(서버정보_데이터.getConnectId());
-        서버정보_엔티티 서버정보_엔티티;
-
-        if (조회한_서버_데이터 != null) {
-            서버정보_엔티티 = modelMapper.map(조회한_서버_데이터, 서버정보_엔티티.class);
-        }
-        else {
-            서버정보_엔티티 = modelMapper.map(서버정보_데이터, 서버정보_엔티티.class);
-        }
-
+        서버정보_엔티티 서버정보_엔티티 = modelMapper.map(서버정보_데이터, 서버정보_엔티티.class);
         서버정보_엔티티 결과 = 서버정보_저장소.save(서버정보_엔티티);
 
         if (결과 == null){
@@ -69,24 +59,24 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
         return 결과;
     }
 
-    @Override
-    public 서버정보_엔티티 서버정보_삭제하기(서버정보_데이터 서버정보_데이터) {
+//    @Override
+//    public 서버정보_엔티티 서버정보_삭제하기(서버정보_데이터 서버정보_데이터) {
+//
+//        서버정보_데이터 이슈 = 서버정보_검증(서버정보_데이터.getConnectId());
+//        서버정보_엔티티 서버정보 = modelMapper.map(이슈, 서버정보_엔티티.class);
+//
+//        if (이슈 == null) {
+//            return null;
+//        } else {
+//            서버정보_저장소.delete(서버정보);
+//            return 서버정보;
+//        }
+//    }
 
-        서버정보_데이터 이슈 = 서버정보_검증(서버정보_데이터.getConnectId());
-        서버정보_엔티티 서버정보 = modelMapper.map(이슈, 서버정보_엔티티.class);
-
-        if (이슈 == null) {
-            return null;
-        } else {
-            서버정보_저장소.delete(서버정보);
-            return 서버정보;
-        }
-    }
-
-    @Override
-    public void 서버정보_전체_삭제하기(){
-        서버정보_저장소.deleteAll();
-    }
+//    @Override
+//    public void 서버정보_전체_삭제하기(){
+//        서버정보_저장소.deleteAll();
+//    }
 
     @Override
     public 서버정보_데이터 서버정보_검증(Long 서버_아이디) {
