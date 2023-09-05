@@ -35,17 +35,17 @@ public class 온프레미스_지라프로젝트_전략 implements 지라프로�
                                                                 서버정보.getUserId(),
                                                                 서버정보.getPasswordOrToken());
 
-            BasicProject 온프레미스_지라_프로젝트 = restClient.getProjectClient()
+            BasicProject 온프레미스_지라프로젝트 = restClient.getProjectClient()
                                                         .getProject(프로젝트_키_또는_아이디)
                                                         .claim();
 
-            지라프로젝트_데이터 반환할_지라_프로젝트_상세정보 = new 지라프로젝트_데이터();
-            반환할_지라_프로젝트_상세정보.setSelf(온프레미스_지라_프로젝트.getSelf().toString());
-            반환할_지라_프로젝트_상세정보.setId(온프레미스_지라_프로젝트.getId().toString());
-            반환할_지라_프로젝트_상세정보.setKey(온프레미스_지라_프로젝트.getKey());
-            반환할_지라_프로젝트_상세정보.setName(온프레미스_지라_프로젝트.getName());
+            지라프로젝트_데이터 반환할_지라프로젝트_데이터 = new 지라프로젝트_데이터();
+            반환할_지라프로젝트_데이터.setSelf(온프레미스_지라프로젝트.getSelf().toString());
+            반환할_지라프로젝트_데이터.setId(온프레미스_지라프로젝트.getId().toString());
+            반환할_지라프로젝트_데이터.setKey(온프레미스_지라프로젝트.getKey());
+            반환할_지라프로젝트_데이터.setName(온프레미스_지라프로젝트.getName());
 
-            return 반환할_지라_프로젝트_상세정보;
+            return 반환할_지라프로젝트_데이터;
 
         } catch (Exception e) {
             로그.error("온프레미스 프로젝트 정보 가져오기에 실패하였습니다." +e.getMessage());
@@ -69,20 +69,20 @@ public class 온프레미스_지라프로젝트_전략 implements 지라프로�
                                                                     .getAllProjects()
                                                                     .claim();
 
-            List<지라프로젝트_데이터> 반환할_지라_프로젝트_목록 = new ArrayList<>();
+            List<지라프로젝트_데이터> 반환할_지라프로젝트_목록 = new ArrayList<>();
 
             for (BasicProject project : 모든_온프레미스_프로젝트) {
 
-                지라프로젝트_데이터 온프레미스_지라_프로젝트 = new 지라프로젝트_데이터();
-                온프레미스_지라_프로젝트.setSelf(project.getSelf().toString());
-                온프레미스_지라_프로젝트.setId(project.getId().toString());
-                온프레미스_지라_프로젝트.setKey(project.getKey());
-                온프레미스_지라_프로젝트.setName(project.getName());
+                지라프로젝트_데이터 온프레미스_지라프로젝트 = new 지라프로젝트_데이터();
+                온프레미스_지라프로젝트.setSelf(project.getSelf().toString());
+                온프레미스_지라프로젝트.setId(project.getId().toString());
+                온프레미스_지라프로젝트.setKey(project.getKey());
+                온프레미스_지라프로젝트.setName(project.getName());
 
-                반환할_지라_프로젝트_목록.add(온프레미스_지라_프로젝트);
+                반환할_지라프로젝트_목록.add(온프레미스_지라프로젝트);
             }
 
-            return 반환할_지라_프로젝트_목록;
+            return 반환할_지라프로젝트_목록;
 
         } catch (Exception e) {
             로그.error("온프레미스 프로젝트 전체 목록 가져오기에 실패하였습니다." +e.getMessage());

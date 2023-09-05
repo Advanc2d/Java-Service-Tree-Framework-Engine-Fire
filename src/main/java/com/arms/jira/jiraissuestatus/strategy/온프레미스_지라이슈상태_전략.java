@@ -38,17 +38,17 @@ public class 온프레미스_지라이슈상태_전략 implements 지라이슈�
             Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
             Iterable<Status> statuses = statusesPromise.claim();
 
-            List<지라이슈상태_데이터> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<>();
+            List<지라이슈상태_데이터> 반환할_지라이슈상태_데이터_목록 = new ArrayList<>();
             for (Status status : statuses) {
                 지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
                 지라이슈상태_데이터.setSelf(status.getSelf().toString());
                 지라이슈상태_데이터.setId(status.getId().toString());
                 지라이슈상태_데이터.setName(status.getName());
                 지라이슈상태_데이터.setDescription(status.getDescription());
-                반환할_지라_이슈_상태_데이터전송객체_목록.add(지라이슈상태_데이터);
+                반환할_지라이슈상태_데이터_목록.add(지라이슈상태_데이터);
             }
 
-            return 반환할_지라_이슈_상태_데이터전송객체_목록;
+            return 반환할_지라이슈상태_데이터_목록;
 
         } catch (Exception e) {
             로그.error("온프레미스 이슈 상태 목록 조회에 실패하였습니다" +e.getMessage());
@@ -74,7 +74,7 @@ public class 온프레미스_지라이슈상태_전략 implements 지라이슈�
             Promise<Iterable<Status>> statusesPromise = restClient.getMetadataClient().getStatuses();
             Iterable<Status> statuses = statusesPromise.claim();
 
-            List<지라이슈상태_데이터> 반환할_지라_이슈_상태_데이터전송객체_목록 = new ArrayList<>();
+            List<지라이슈상태_데이터> 반환할_지라이슈상태_데이터_목록 = new ArrayList<>();
             for (Status status : statuses) {
                 지라이슈상태_데이터 지라이슈상태_데이터 = new 지라이슈상태_데이터();
                 지라이슈상태_데이터.setSelf(status.getSelf().toString());
@@ -82,10 +82,10 @@ public class 온프레미스_지라이슈상태_전략 implements 지라이슈�
                 지라이슈상태_데이터.setName(status.getName());
                 지라이슈상태_데이터.setDescription(status.getDescription());
 
-                반환할_지라_이슈_상태_데이터전송객체_목록.add(지라이슈상태_데이터);
+                반환할_지라이슈상태_데이터_목록.add(지라이슈상태_데이터);
             }
 
-            return 반환할_지라_이슈_상태_데이터전송객체_목록;
+            return 반환할_지라이슈상태_데이터_목록;
 
         } catch (Exception e) {
             로그.error("온프레미스 이슈 상태 목록 조회에 실패하였습니다" +e.getMessage());

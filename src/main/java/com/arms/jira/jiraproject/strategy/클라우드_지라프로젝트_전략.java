@@ -40,12 +40,12 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
             WebClient webClient = 지라유틸.클라우드_통신기_생성(서버정보.getUri(), 서버정보.getUserId(),
                                                             서버정보.getPasswordOrToken());
 
-            지라프로젝트_데이터 반환할_지라_프로젝트_상세정보 = 지라유틸.get(webClient, endpoint,
+            지라프로젝트_데이터 반환할_지라프로젝트_데이터 = 지라유틸.get(webClient, endpoint,
                                                                 지라프로젝트_데이터.class).block();
 
-            로그.info(반환할_지라_프로젝트_상세정보.toString());
+            로그.info(반환할_지라프로젝트_데이터.toString());
 
-            return 반환할_지라_프로젝트_상세정보;
+            return 반환할_지라프로젝트_데이터;
         }catch (Exception e){
             로그.error("클라우드 프로젝트 정보 가져오기에 실패하였습니다." +e.getMessage());
             throw new IllegalArgumentException(에러코드.프로젝트_조회_오류.getErrorMsg());
@@ -67,16 +67,16 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
             int 최대_검색수 = 지라유틸.최대_검색수_가져오기();
             boolean isLast = false;
 
-            List<지라프로젝트_데이터> 반환할_프로젝트_데이터전송객체_목록 = new ArrayList<>();
+            List<지라프로젝트_데이터> 반환할_프로젝트_데이터_목록 = new ArrayList<>();
 
             while(!isLast) {
                 String endpoint = "/rest/api/3/project/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
                 클라우드_지라프로젝트_전체_데이터 클라우드_지라프로젝트_전체_데이터
                                     = 지라유틸.get(webClient, endpoint, 클라우드_지라프로젝트_전체_데이터.class).block();
 
-                반환할_프로젝트_데이터전송객체_목록.addAll(클라우드_지라프로젝트_전체_데이터.getValues());
+                반환할_프로젝트_데이터_목록.addAll(클라우드_지라프로젝트_전체_데이터.getValues());
 
-                if (클라우드_지라프로젝트_전체_데이터.getTotal() == 반환할_프로젝트_데이터전송객체_목록.size()) {
+                if (클라우드_지라프로젝트_전체_데이터.getTotal() == 반환할_프로젝트_데이터_목록.size()) {
                     isLast = true;
                 }
                 else {
@@ -84,9 +84,9 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
                 }
             }
 
-            로그.info(반환할_프로젝트_데이터전송객체_목록.toString());
+            로그.info(반환할_프로젝트_데이터_목록.toString());
 
-            return 반환할_프로젝트_데이터전송객체_목록;
+            return 반환할_프로젝트_데이터_목록;
         }catch (Exception e){
             로그.error("클라우드 프로젝트 전체 목록 가져오기에 실패하였습니다." +e.getMessage());
             throw new IllegalArgumentException(에러코드.프로젝트_조회_오류.getErrorMsg());

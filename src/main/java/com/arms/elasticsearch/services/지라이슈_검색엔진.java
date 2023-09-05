@@ -129,8 +129,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
     @Override
     public int 이슈_링크드이슈_서브테스크_벌크로_추가하기(Long 지라서버_아이디, String 이슈_키 , Long 제품서비스_아이디, Long 제품서비스_버전) throws Exception {
 
-        long beforeTime = System.currentTimeMillis(); //코드 실행 전에 시간 받아오기
-
         if (지라서버_아이디 == null) {
             로그.error("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error: 서버_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
             throw new IllegalArgumentException("이슈_링크드이슈_서브테스크_벌크로_추가하기 Error: 서버_아이디 " + 에러코드.파라미터_서버_아이디_없음.getErrorMsg());
@@ -237,10 +235,6 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
                         .collect(Collectors.toList());
             }
         }
-
-        long afterTime = System.currentTimeMillis(); // 코드 실행 후에 시간 받아오기
-        long secDiffTime = (afterTime - beforeTime) / 1000; //두 시간에 차 계산
-        System.out.println("시간차이(m) : " + secDiffTime);
 
         return 대량이슈_추가하기(벌크_저장_목록);
     }
