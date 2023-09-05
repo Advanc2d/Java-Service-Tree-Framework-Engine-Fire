@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Component
 public class 온프레미스_지라이슈우선순위_전략 implements 지라이슈우선순위_전략 {

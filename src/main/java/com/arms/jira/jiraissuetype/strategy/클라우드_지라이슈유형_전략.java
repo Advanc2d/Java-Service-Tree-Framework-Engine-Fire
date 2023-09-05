@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import com.arms.serverinfo.model.서버정보_데이터;
-import com.arms.serverinfo.service.서버정보_서비스;
+
 @Component
 public class 클라우드_지라이슈유형_전략 implements 지라이슈유형_전략 {
 
@@ -39,7 +38,7 @@ public class 클라우드_지라이슈유형_전략 implements 지라이슈유�
             로그.info(반환할_이슈_유형_목록.toString());
 
             return 반환할_이슈_유형_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("클라우드 지라 이슈 유형 목록 가져오기 가져오기에 실패하였습니다." + e.getMessage());
             throw new IllegalArgumentException(에러코드.이슈유형_조회_오류.getErrorMsg());
         }
@@ -67,7 +66,7 @@ public class 클라우드_지라이슈유형_전략 implements 지라이슈유�
             로그.info(반환할_이슈_유형_목록.toString());
 
             return 반환할_이슈_유형_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("클라우드 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈유형_목록_가져오기에 실패하였습니다.");
             throw new IllegalArgumentException(에러코드.이슈유형_조회_오류.getErrorMsg());
         }

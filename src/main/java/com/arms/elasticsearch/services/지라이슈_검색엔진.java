@@ -93,7 +93,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         지라이슈 이슈 = 이슈_조회하기(지라_이슈.getId());
         log.info("왠만하면 쓰지 마시지...");
 
-        if( 이슈 == null ){
+        if ( 이슈 == null ) {
             return null;
         }else{
             지라이슈저장소.delete(이슈);
@@ -408,7 +408,7 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         Terms 상태별집계_결과 = 검색결과.getAggregations().get("이슈_상태별_집계");
 
         Map<String, Integer> 전체상태값_집계 = new HashMap<>();
-        if(상태별집계_결과.getBuckets().isEmpty()){
+        if (상태별집계_결과.getBuckets().isEmpty()) {
             전체상태값_집계.put("조회된 상태: ",0 );
         }
         for (Terms.Bucket 상태 : 상태별집계_결과.getBuckets()) {
@@ -468,12 +468,12 @@ public class 지라이슈_검색엔진 implements 지라이슈_서비스{
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(QueryBuilders.matchAllQuery()); // You can add your own query here if needed
 
-        if ( 제품서비스_아이디 != null && 제품서비스_아이디 > 9L){
+        if ( 제품서비스_아이디 != null && 제품서비스_아이디 > 9L) {
             MatchQueryBuilder 제품서비스_조회 = QueryBuilders.matchQuery("pdServiceId", 제품서비스_아이디);
             sourceBuilder.query(제품서비스_조회);
         }
 
-        if ( 버전_아이디 != null && 버전_아이디 > 9L){
+        if ( 버전_아이디 != null && 버전_아이디 > 9L) {
             MatchQueryBuilder 제품서비스_버전_조회 = QueryBuilders.matchQuery("pdServiceVersion", 버전_아이디);
             sourceBuilder.query(제품서비스_버전_조회);
         }

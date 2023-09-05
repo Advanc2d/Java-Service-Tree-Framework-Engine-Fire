@@ -1,10 +1,10 @@
 package com.arms.jira.jiraissuetype.strategy;
 
 import com.arms.errors.codes.에러코드;
-import com.arms.serverinfo.model.서버정보_데이터;
-import com.arms.serverinfo.service.서버정보_서비스;
 import com.arms.jira.jiraissuetype.model.지라이슈유형_데이터;
 import com.arms.jira.utils.지라유틸;
+import com.arms.serverinfo.model.서버정보_데이터;
+import com.arms.serverinfo.service.서버정보_서비스;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
 import org.slf4j.Logger;
@@ -17,8 +17,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import com.arms.serverinfo.model.서버정보_데이터;
-import com.arms.serverinfo.service.서버정보_서비스;
+
 @Component
 public class 온프레미스_지라이슈유형_전략 implements 지라이슈유형_전략 {
 
@@ -56,7 +55,7 @@ public class 온프레미스_지라이슈유형_전략 implements 지라이슈�
             로그.info(반환할_이슈_유형_목록.toString());
 
             return 반환할_이슈_유형_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("온프레미스 지라 이슈 유형 목록 가져오기 가져오기에 실패하였습니다." + e.getMessage());
             throw new IllegalArgumentException(에러코드.이슈유형_조회_오류.getErrorMsg());
         }
@@ -96,7 +95,7 @@ public class 온프레미스_지라이슈유형_전략 implements 지라이슈�
             로그.info(반환할_이슈_유형_목록.toString());
 
             return 반환할_이슈_유형_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("온프레미스 지라 프로젝트 아이디("+ 프로젝트_아이디 +")별_이슈유형_목록_가져오기에 실패하였습니다.");
             throw new IllegalArgumentException(에러코드.이슈유형_조회_오류.getErrorMsg());
         }

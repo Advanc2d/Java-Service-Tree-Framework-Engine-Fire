@@ -48,7 +48,7 @@ public class 전역오류처리 {
 
         String variableName = 에러.getVariableName();
         로그.error("커넥트 아이디:", 에러);
-        if("connectId".equals(variableName)){
+        if ("connectId".equals(variableName)) {
             return newResponse(에러코드.파라미터_서버_아이디_없음.getErrorMsg(),HttpStatus.BAD_REQUEST);
         }
         return newResponse(에러코드.파라미터_서버_아이디_없음.getErrorMsg(),HttpStatus.BAD_REQUEST);

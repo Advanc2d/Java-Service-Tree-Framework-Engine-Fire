@@ -1,11 +1,11 @@
 package com.arms.jira.jiraproject.strategy;
 
 import com.arms.errors.codes.에러코드;
+import com.arms.jira.jiraproject.model.지라프로젝트_데이터;
+import com.arms.jira.jiraproject.model.클라우드_지라프로젝트_전체_데이터;
 import com.arms.jira.utils.지라유틸;
 import com.arms.serverinfo.model.서버정보_데이터;
 import com.arms.serverinfo.service.서버정보_서비스;
-import com.arms.jira.jiraproject.model.지라프로젝트_데이터;
-import com.arms.jira.jiraproject.model.클라우드_지라프로젝트_전체_데이터;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.arms.serverinfo.model.서버정보_데이터;
-import com.arms.serverinfo.service.서버정보_서비스;
 
 @Component
 public class 클라우드_지라프로젝트_전략 implements 지라프로젝트_전략 {
@@ -33,7 +31,7 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
 
         로그.info("클라우드 지라 프로젝트 "+ 프로젝트_키_또는_아이디 +" 상세정보 가져오기");
 
-        try{
+        try {
             String endpoint = "/rest/api/3/project/"+ 프로젝트_키_또는_아이디;
 
             서버정보_데이터 서버정보 = 서버정보_서비스.서버정보_검증(연결_아이디);
@@ -46,7 +44,7 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
             로그.info(반환할_지라프로젝트_데이터.toString());
 
             return 반환할_지라프로젝트_데이터;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("클라우드 프로젝트 정보 가져오기에 실패하였습니다." +e.getMessage());
             throw new IllegalArgumentException(에러코드.프로젝트_조회_오류.getErrorMsg());
         }
@@ -87,7 +85,7 @@ public class 클라우드_지라프로젝트_전략 implements 지라프로젝�
             로그.info(반환할_프로젝트_데이터_목록.toString());
 
             return 반환할_프로젝트_데이터_목록;
-        }catch (Exception e){
+        } catch (Exception e) {
             로그.error("클라우드 프로젝트 전체 목록 가져오기에 실패하였습니다." +e.getMessage());
             throw new IllegalArgumentException(에러코드.프로젝트_조회_오류.getErrorMsg());
         }

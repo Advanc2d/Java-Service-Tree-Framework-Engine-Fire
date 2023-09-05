@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.arms.jira.jiraissuestatus.strategy.지라이슈상태_전략_등록_및_실행;
 import com.arms.jira.jiraissuestatus.strategy.온프레미스_지라이슈상태_전략;
 
-
 import java.util.List;
 
 @Service
