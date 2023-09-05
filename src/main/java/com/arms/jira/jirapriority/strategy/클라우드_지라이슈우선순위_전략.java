@@ -38,16 +38,16 @@ public class 클라우드_지라이슈우선순위_전략 implements 지라이�
             int startAt = 0;
             boolean isLast = false;
 
-            List<지라이슈우선순위_데이터> 반환할_지라_이슈_우선순위_데이터전송객체_목록 = new ArrayList<>();
+            List<지라이슈우선순위_데이터> 반환할_지라이슈우선순위_데이터_목록 = new ArrayList<>();
 
             while(!isLast) {
 
                 String endpoint = "/rest/api/3/priority/search?maxResults="+ 최대_검색수 + "&startAt=" + startAt;
                 클라우드_지라이슈우선순위_데이터 클라우드_지라이슈우선순위_데이터 = 지라유틸.get(webClient, endpoint, 클라우드_지라이슈우선순위_데이터.class).block();
 
-                반환할_지라_이슈_우선순위_데이터전송객체_목록.addAll(클라우드_지라이슈우선순위_데이터.getValues());
+                반환할_지라이슈우선순위_데이터_목록.addAll(클라우드_지라이슈우선순위_데이터.getValues());
 
-                if (클라우드_지라이슈우선순위_데이터.getTotal() == 반환할_지라_이슈_우선순위_데이터전송객체_목록.size()) {
+                if (클라우드_지라이슈우선순위_데이터.getTotal() == 반환할_지라이슈우선순위_데이터_목록.size()) {
                     isLast = true;
                 }
                 else {
@@ -55,7 +55,7 @@ public class 클라우드_지라이슈우선순위_전략 implements 지라이�
                 }
             }
 
-            return 반환할_지라_이슈_우선순위_데이터전송객체_목록;
+            return 반환할_지라이슈우선순위_데이터_목록;
 
         } catch (Exception e) {
             로그.error("클라우드 지라 이슈 우선순위 전체 목록 가져오기에 실패하였습니다." + e.getMessage());
