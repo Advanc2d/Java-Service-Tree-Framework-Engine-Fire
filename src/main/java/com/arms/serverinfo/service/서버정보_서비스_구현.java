@@ -28,7 +28,7 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
     private final Logger 로그 = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public 서버정보_엔티티 서버정보_저장_또는_수정(서버정보_데이터 서버정보_데이터){
+    public 서버정보_엔티티 서버정보_저장_또는_수정(서버정보_데이터 서버정보_데이터) {
 
         if (서버정보_데이터 == null) {
             throw new IllegalArgumentException(에러코드.서버정보_오류.getErrorMsg());
@@ -52,7 +52,7 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
         서버정보_엔티티 서버정보_엔티티 = modelMapper.map(서버정보_데이터, 서버정보_엔티티.class);
         서버정보_엔티티 결과 = 서버정보_저장소.save(서버정보_엔티티);
 
-        if (결과 == null){
+        if (결과 == null) {
             throw new IllegalArgumentException(에러코드.서버정보_생성_오류.getErrorMsg());
         }
 
@@ -74,7 +74,7 @@ public class 서버정보_서비스_구현 implements 서버정보_서비스 {
 //    }
 
 //    @Override
-//    public void 서버정보_전체_삭제하기(){
+//    public void 서버정보_전체_삭제하기() {
 //        서버정보_저장소.deleteAll();
 //    }
 
